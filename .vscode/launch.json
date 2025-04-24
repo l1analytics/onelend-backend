@@ -1,0 +1,41 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Node.js - Debug Current File",
+        "type": "node",
+        "request": "launch",
+        "program": "${file}"
+      },
+
+      {
+        "name": "Attach by Process ID",
+        "processId": "${command:PickProcess}",
+        "request": "attach",
+        "skipFiles": [
+          "<node_internals>/**"
+        ],
+        "type": "node"
+      },
+      {
+        "name": "Attach to Azure Functions",
+        "type": "node",
+        "request": "attach",
+        "port": 9229,
+        "preLaunchTask": "func: host start",
+        "timeout": 60000,
+        "sourceMaps": true,
+        "outFiles": [
+          "${workspaceFolder}/src/**/*.js"
+        ]
+      },
+      {
+        "name": "Attach to Node Functions",
+        "type": "node",
+        "request": "attach",
+        "restart": true,
+        "port": 9229,
+        "preLaunchTask": "func: host start"
+      }
+    ]
+  }

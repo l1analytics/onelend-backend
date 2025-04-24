@@ -1,0 +1,266 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Order Schema",
+    "type": "object",
+    "properties": {
+      "referenceNumber": {
+        "type": "string"
+      },
+      "complexProperty": {
+        "type": "boolean"
+      },
+      "priority": {
+        "type": "boolean"
+      },
+      "requestedDueDate": {
+        "type": "string"
+      },
+      "fhaCaseNumber": {
+        "type": "string"
+      },
+      "internalComment": {
+        "type": "string"
+      },
+      "duCaseFileID": {
+        "type": "string"
+      },
+      "lpaKey": {
+        "type": "string"
+      },
+      "vendorInstructions": {
+        "type": "string"
+      },
+      "requestingParty": {
+        "type": "object",
+        "properties": {
+          "clientID": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "contactName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "clientID",
+          "name",
+          "contactName"
+        ]
+      },
+      "request": {
+        "type": "object",
+        "properties": {
+          "internalAccountID": {
+            "type": "string"
+          },
+          "branchID": {
+            "type": "string"
+          },
+          "loanAmount": {
+            "type": "number"
+          },
+          "salesPrice": {
+            "type": "number"
+          },
+          "estimatedValue": {
+            "type": "number"
+          },
+          "loanType": {
+            "type": "string"
+          },
+          "transactionUID": {
+            "type": "string"
+          },
+          "requestData": {
+            "type": "object",
+            "properties": {
+              "action": {
+                "type": "string"
+              },
+              "loan": {
+                "type": "object",
+                "properties": {
+                  "application": {
+                    "type": "object",
+                    "properties": {
+                      "property": {
+                        "type": "object",
+                        "properties": {
+                          "streetAddress": {
+                            "type": "string"
+                          },
+                          "city": {
+                            "type": "string"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "county": {
+                            "type": "string"
+                          },
+                          "zip": {
+                            "type": "string"
+                          },
+                          "propertyType": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "streetAddress",
+                          "city",
+                          "state",
+                          "county",
+                          "zip",
+                          "propertyType"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "property"
+                    ]
+                  },
+                  "product": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "code": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "code"
+                    ]
+                  },
+                  "embeddedFile": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "typeID": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "document": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "typeID",
+                        "name",
+                        "description",
+                        "document"
+                      ]
+                    }
+                  },
+                  "parties": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "partyType": {
+                          "type": "string"
+                        },
+                        "firstName": {
+                          "type": "string"
+                        },
+                        "middleName": {
+                          "type": "string"
+                        },
+                        "lastName": {
+                          "type": "string"
+                        },
+                        "fullName": {
+                          "type": "string"
+                        },
+                        "contactMethod": {
+                          "type": "object",
+                          "properties": {
+                            "contactInfo": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "contactLabel": {
+                                    "type": "string"
+                                  },
+                                  "contactType": {
+                                    "type": "string"
+                                  },
+                                  "contactValue": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "contactLabel",
+                                  "contactType",
+                                  "contactValue"
+                                ]
+                              }
+                            }
+                          },
+                          "required": [
+                            "contactInfo"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "partyType",
+                        "firstName",
+                        "middleName",
+                        "lastName",
+                        "fullName",
+                        "contactMethod"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "application",
+                  "product",
+                  "embeddedFile",
+                  "parties"
+                ]
+              }
+            },
+            "required": [
+              "action",
+              "loan"
+            ]
+          }
+        },
+        "required": [
+          "internalAccountID",
+          "branchID",
+          "loanAmount",
+          "salesPrice",
+          "estimatedValue",
+          "loanType",
+          "transactionUID",
+          "requestData"
+        ]
+      }
+    },
+    "required": [
+      "referenceNumber",
+      "complexProperty",
+      "priority",
+      "requestedDueDate",
+      "fhaCaseNumber",
+      "internalComment",
+      "duCaseFileID",
+      "lpaKey",
+      "vendorInstructions",
+      "requestingParty",
+      "request"
+    ]
+  }
