@@ -4,7 +4,7 @@ const { app, input} = require('@azure/functions');
 
 const blobInput = input.storageBlob({
     path: 'auth/cedar-example.json',
-    connection: 'AzureWebJobsStorage__blobServiceUri', 
+    connection: 'AzureWebJobsStorage__connectionString', 
 });
 
 
