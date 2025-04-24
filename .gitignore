@@ -9,6 +9,7 @@ lerna-debug.log*
 
 #Azurite files
 __azurite*
+*azurite_*
 __azurite_db_blob__.json
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
@@ -139,3 +140,5 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+__azurite_db_blob__.json
+__azurite_db_blob__.json
