@@ -2,6 +2,11 @@
   "IsEncrypted": false,
   "Values": {
     "FUNCTIONS_WORKER_RUNTIME": "node",
-    "AzureWebJobsStorage": "UseDevelopmentStorage=true"
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "ENVIRONMENT_NAME": "dev",
+    "BATCHDATA_ENDPOINT": "https://api.batchdata.com/api/v1/",
+    "BATCHDATA_KEY": "JwEodi1eGpkqnsTc8w62dHofdreM0nCEMoBazBo7",
+    "COSMOSDB_ENDPOINT": "https://cosmos-onelend-dev.documents.azure.com:443/",
+    "DATABASE_NAME": "onelend-dev"
   }
 }
