@@ -1,8 +1,17 @@
-const { app } = require('@azure/functions');
+// /const { app } = require('@azure/functions');
+
+const { app, input} = require('@azure/functions');
+
+const blobInput = input.storageBlob({
+    path: 'auth/cedar-example.json',
+    connection: 'AzureWebJobsStorage', 
+});
+
 
 app.http('getTransactions', {
     methods: ['GET'],
     authLevel: 'anonymous',
+    extraInputs: [blobInput],
     handler: async (request, context) => {
         context.log(`Http function processed request for url "${request.url}"`);
 
@@ -14,6 +23,9 @@ app.http('getTransactions', {
             date: '2023-10-01',
             description: 'Sample transaction'
         }
+
+        transaction = context.extraInputs.get(blobInput);
+        context.log(`Blob input: ${JSON.stringify(transaction)}`);
 
         return { body: JSON.stringify(transaction) };
     }

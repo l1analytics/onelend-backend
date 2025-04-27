@@ -1,0 +1,159 @@
+{
+    "referenceNumber": "demoAPI-012345",
+    "complexProperty": false,
+    "priority": false,
+    "requestedDueDate": "12/22/2023",
+    "fhaCaseNumber": "456-1569785",
+    "internalComment": "Comments for the appraisal desk and review team.",
+    "duCaseFileID": "02-34567890",
+    "lpaKey": "01-23456789",
+    "vendorInstructions": "Comments for the appraiser or AMC.",
+    "requestingParty": {
+        "clientID": "4564",
+        "name": "ABC Lender",
+        "contactName": "John Smith"
+    },
+    "request": {
+        "internalAccountID": "12345",
+        "branchID": "Branch4567",
+        "loanAmount": 300000.00,
+        "salesPrice": 350000.00,
+        "estimatedValue": 350000.00,
+        "loanType": "Purchase",
+        "transactionUID": "81B9-F16E-03D8-4C3F",
+        "requestData": {
+       	    "action": "Original",
+            "loan": {
+               "application": {
+                   "property": {
+                      "streetAddress": "6000 Freedom Square Dr.",
+                      "city": "Independence",
+                      "state": "OH",
+                      "county": "Cuyahoga",
+                      "zip": "44131",
+                      "propertyType": "Single Family"
+                   }
+               },
+               "product": {
+                  "name": "FNMA 1004 Single Family",
+                  "code": "A001"
+               },
+               "embeddedFile": [
+               {
+       	          "typeID": "1010",
+                  "name": "purchasecontract.PDF",
+      	          "description": "Purchase Contract",
+      	          "document": "Base64 encoded document"
+               }
+               ],
+               "parties": [
+               {
+                  "partyType": "Borrower",
+                  "firstName": "Connie",
+                  "middleName": "H",
+                  "lastName": "Borrower",
+                  "fullName": "Connie H Borrower",
+                  "contactMethod": {
+                     "contactInfo": [
+                     {
+                        "contactLabel": "Home",
+                        "contactType": "Phone",
+                        "contactValue": "(440) 222-3333"
+                     },
+                     {
+                        "contactLabel": "Home",
+                        "contactType": "Email",
+                        "contactValue": "connie@donotusetest.com"
+                     }
+                     ]
+                  }
+               },   
+               {
+                  "partyType": "Appraisal Coordinator",
+                  "firstName": "Angie",
+                  "middleName": "T",
+                  "lastName": "Manager",
+                  "fullName": "Angie T Manager",
+                  "contactMethod": {
+                     "contactInfo": [
+                     {
+                        "contactLabel": "Mobile",
+                        "contactType": "Phone",
+                        "contactValue": "(919) 933-7717"
+                     },
+                     {
+                        "contactLabel": "Home",
+                        "contactType": "Email",
+                        "contactValue": "angie@donotusetest.com"
+                     }
+                     ]
+                  }
+               },
+               {
+                  "partyType": "Property Contact",
+                  "firstName": "Peter",
+                  "middleName": "T",
+                  "lastName": "contact",
+                  "fullName": "Peter T Contact",
+                  "contactMethod": {
+                     "contactInfo": [
+                     {
+                        "contactLabel": "Home",
+                        "contactType": "Phone",
+                        "contactValue": "(919) 933-2517"
+                     },
+                     {
+                        "contactLabel": "Work",
+                        "contactType": "Email",
+                        "contactValue": "peter@donotusetest.com"
+                     }
+                     ]
+                  }
+               },
+               {
+                  "partyType": "Loan Officer",
+                  "firstName": "Debbie",
+                  "middleName": "",
+                  "lastName": "Officer",
+                  "fullName": "Debbie Officer",
+                  "contactMethod": {
+                     "contactInfo": [
+                     {
+                        "contactLabel": "Work",
+                        "contactType": "Phone",
+                        "contactValue": "(984) 219-5641"
+                     },
+                     {
+                        "contactLabel": "Work",
+                        "contactType": "Email",
+                        "contactValue": "Debbie@donotusetest.com"
+                     }
+                     ]
+                  }
+               },
+               {
+                  "partyType": "Loan Processor",
+                  "firstName": "Martin",
+                  "middleName": "J",
+                  "lastName": "Processor",
+                  "fullName": "Martin J Processor",
+                  "contactMethod": {
+                     "contactInfo": [
+                     {
+                        "contactLabel": "Work",
+                        "contactType": "Phone",
+                        "contactValue": "(222) 333-5555"
+                     },
+                     {
+                        "contactLabel": "Work",
+                        "contactType": "Email",
+                        "contactValue": "Martin@donotuse.test.com"
+                     }
+                     ]
+                  }
+               }
+               ] 
+            }  
+        }
+    }
+}
