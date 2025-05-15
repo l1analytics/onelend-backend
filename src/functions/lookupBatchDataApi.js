@@ -1,8 +1,9 @@
 const { app } = require("@azure/functions");
-const { CosmosClient, PatchOperation } = require("@azure/cosmos");
-const { DefaultAzureCredential } = require("@azure/identity");
-const { postRequest } = require("../utils/sendApiRequests.js");
-const uuid = require("uuid");
+// const { CosmosClient, PatchOperation } = require("@azure/cosmos");
+// const { DefaultAzureCredential } = require("@azure/identity");
+// const { postRequest } = require("../utils/sendApiRequests.js");
+const { lookupBatchData } = require("../utils/batchDataApis");
+// const uuid = require("uuid");
 
 app.http("lookupBatchDataApi", {
   methods: ["POST"],
@@ -25,6 +26,7 @@ app.http("lookupBatchDataApi", {
     }
 
     let requestBody;
+
     try {
       requestBody = await request.json();
       if (!Array.isArray(requestBody)) {
@@ -51,6 +53,7 @@ app.http("lookupBatchDataApi", {
     /*==================================
         Send request to Batch Data API
       ==================================*/
+    /*
     const endpointBatchData = process.env.BATCHDATA_ENDPOINT;
     const keyBatchData = process.env.BATCHDATA_KEY;
 
@@ -59,46 +62,27 @@ app.http("lookupBatchDataApi", {
         `Required Batch Data API configuration values are missing: endpoint ${endpointBatchData}, key ${keyBatchData}`
       );
     }
+    */
+    let responseData;
 
     var batchDataRequestBody = {
       requests: requestBody,
       options: {
         skip: 0,
-        take: 0,
+        take: 1,
         images: true,
       },
     };
 
-    let responseData;
-    try {
-      responseData = await postRequest(
-        context,
-        endpointBatchData + "property/lookup/all-attributes",
-        batchDataRequestBody,
-        {
-          headers: {
-            Accept: "application/json, application/xml",
-            Authorization: "Bearer " + keyBatchData,
-          },
-        }
-      );
-    } catch (error) {
-      context.log.error(
-        `Batch Data API request (lookup) failed for request body: ${batchDataRequestBody}: `,
-        error
-      );
-      return {
-        status: 502,
-        body: JSON.stringify({
-          error: "Failed to retrieve data from Batch Data API (lookup)",
-          details: error.message,
-        }),
-      };
-    }
+    responseData = await lookupBatchData(
+      context,
+      batchDataRequestBody
+    );
 
     /*=========================================================
         Save results to Cosmos DB
       ========================================================*/
+      /*
     const cosmosEndpoint = process.env.COSMOSDB_ENDPOINT;
     const databaseName = process.env.DATABASE_NAME;
 
@@ -135,9 +119,9 @@ app.http("lookupBatchDataApi", {
         }
       })
     );
-
+  */
     context.log(
-      `Batch Data "lookup" success on ${responseData.results.properties.length} items`
+      `Successfully pulled BatchData ("lookup") on ${responseData.results.properties.length} items`
     );
 
     return { body: JSON.stringify(responseData.results) };
