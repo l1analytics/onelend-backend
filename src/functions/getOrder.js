@@ -21,8 +21,12 @@ if (!cosmosEndpoint || !databaseName) {
 
 const containerNameTransactions = "transactions";
 const containerNameOrders = "orders";
+const containerNameBatchData = "batchData";
+const contiainerNameComps = "comps";
 
 const credential = new DefaultAzureCredential();
+
+// Create container connection for transactions
 var client1 = new CosmosClient({
   endpoint: cosmosEndpoint,
   aadCredentials: credential,
@@ -30,6 +34,7 @@ var client1 = new CosmosClient({
 const database1 = client1.database(databaseName);
 const containerTransactions = database1.container(containerNameTransactions);
 
+// Create container connection for orders
 var client2 = new CosmosClient({
   endpoint: cosmosEndpoint,
   aadCredentials: credential,
@@ -37,10 +42,21 @@ var client2 = new CosmosClient({
 const database2 = client2.database(databaseName);
 const containerOrders = database2.container(containerNameOrders);
 
-const containers = {
-  transactions: containerTransactions,
-  orders: containerOrders,
-};
+// Create container connection for batchData
+var client3 = new CosmosClient({
+  endpoint: cosmosEndpoint,
+  aadCredentials: credential,
+});
+const database3 = client3.database(databaseName);
+const containerBatchData = database3.container(containerNameBatchData);
+
+// Create container connection for orders
+var client4 = new CosmosClient({
+  endpoint: cosmosEndpoint,
+  aadCredentials: credential,
+});
+const database4 = client4.database(databaseName);
+const containerComps = database2.container(contiainerNameComps);
 
 app.http("getOrder", {
   methods: ["POST"],
@@ -50,19 +66,9 @@ app.http("getOrder", {
     context.log(`Http function processed request for url "${request.url}"`);
 
     //==============================
-    //    Parse request body
+    //    Run initial checks
     //==============================
-    // if (request.params.action === "") {
-    //   const error_message = JSON.stringify({
-    //     error: "Need action in the request URL",
-    //   });
-    //   context.log(error_message);
-    //   return {
-    //     status: 400,
-    //     body: error_message,
-    //   };
-    // }
-
+    // Check if request body is present
     if (!request.body) {
       const error_message = JSON.stringify({
         error: "Request body is required",
@@ -74,6 +80,7 @@ app.http("getOrder", {
       };
     }
 
+    // Check if request body is a valid JSON
     let requestBody;
     try {
       requestBody = await request.json();
@@ -98,10 +105,6 @@ app.http("getOrder", {
       };
     }
 
-    //===========================
-    //  Get transactions
-    //===========================
-
     // Check if clientId is sent over
     const requiredFields = ["clientId"];
 
@@ -116,6 +119,37 @@ app.http("getOrder", {
           body: error_message,
         };
       }
+    }
+
+    // If getPropertyData == true, then it needs to provide orderId as well
+    if (
+      requestBody.hasOwnProperty("getPropertyData") &&
+      requestBody.getPropertyData === true &&
+      !requestBody.hasOwnProperty("orderId")
+    ) {
+      const error_message = JSON.stringify({
+        error:
+          "Field 'orderId' is required when 'getPropertyData' is set to true",
+      });
+      context.log(error_message);
+      return {
+        status: 400,
+        body: error_message,
+      };
+    } else if (
+      requestBody.hasOwnProperty("getPropertyData") &&
+      requestBody.getPropertyData === true &&
+      typeof requestBody.orderId !== "number" &&
+      !Array.isArray(requestBody.orderId)
+    ) {
+      const error_message = JSON.stringify({
+        error: "Field 'orderId' must be a number or an array of numbers",
+      });
+      context.log(error_message);
+      return {
+        status: 400,
+        body: error_message,
+      };
     }
 
     //========================================
@@ -154,9 +188,11 @@ app.http("getOrder", {
       };
     }
 
-    //========================================
+    //============================================================================
     // Create array of requesteted orderIds
-    //========================================
+    // If orderId is not provided, return all orders for the requested clientIds
+    //============================================================================
+
     let requestedOrderIds = []; // Optional field
 
     // Check if orderId is a single number or an array
@@ -217,7 +253,7 @@ app.http("getOrder", {
       const { resources: output } = await containerOrders.items
         .query(querySpec)
         .fetchAll();
-      console.log(output);
+      console.log("Orders data successfully retrieved from Cosmos DB.");
 
       if (output) {
         orders = output; // Using spread operator to push individual items
@@ -229,8 +265,100 @@ app.http("getOrder", {
       throw error;
     }
 
-    const finalMessage = `Successfully retrieved ${orders.length} orders for clientId ${requestBody.clientId}`;
+    let finalMessage = `Successfully retrieved ${orders.length} orders for clientId ${requestBody.clientId}.`;
     context.log(finalMessage);
+
+    //==============================================================================
+    //   If getPropertyData is true, then retrieve property data and comps data
+    //==============================================================================
+    if (
+      requestBody.hasOwnProperty("getPropertyData") &&
+      requestBody.getPropertyData === true
+    ) {
+      for (const order of orders) {
+        // Retrieve subject property data
+        if (order.propertyRecordId) {
+          let query_string_subject = `SELECT * FROM c WHERE c.propertyRecordId = "${order.propertyRecordId}"`;
+
+          const querySpecSubject = {
+            query: query_string_subject,
+          };
+
+          let propertyData;
+
+          try {
+            const { resources: output } = await containerBatchData.items
+              .query(querySpecSubject)
+              .fetchAll();
+            console.log("Property data (batchData) successfully retrieved.");
+
+            if (output) {
+              propertyData = output; // Using spread operator to push individual items
+              order.propertyData = propertyData; // Assuming you want the first item
+            } else {
+              context.log(
+                `No property data found for requested orderId "${order.orderId}"`
+              );
+            }
+          } catch (error) {
+            context.log(
+              `Error: failed to pull property data for orderId "${order.orderId}". ${error.message}`
+            );
+            throw error;
+          }
+
+          context.log(`Processing property data for orderId: ${order.orderId}`);
+        } else {
+          return {
+            status: 400,
+            body: `Property data for orderId ${order.orderId} is not available. You need to request property data first.`,
+          };
+        }
+
+        // Retrieve comps data
+        if (order.compsRecordIds && order.compsRecordIds.length > 0) {
+          let query_string_comps = ""; //`SELECT * FROM c WHERE c.propertyRecordId = "${order.propertyRecordId}"`;
+
+          query_string_comps = `SELECT * FROM f where f.propertyRecordId IN ('${order.compsRecordIds.join(
+            "','"
+          )}')`;
+ 
+          const querySpecComps = {
+            query: query_string_comps,
+          };
+
+          let compsData;
+
+          try {
+            const { resources: output } = await containerComps.items
+              .query(querySpecComps)
+              .fetchAll();
+            console.log("Comps data successfully retrieved.");
+
+            if (output) {
+              compsData = output; // Using spread operator to push individual items
+              order.compsData = compsData; // Assuming you want the first item
+            } else {
+              context.log(
+                `No comps data found for requested orderId "${order.orderId}"`
+              );
+            }
+          } catch (error) {
+            context.log(
+              `Error: failed to pull comps data for orderId "${order.orderId}". ${error.message}`
+            );
+            throw error;
+          }
+
+          context.log(`Processing comps data for orderId: ${order.orderId}`);
+        } else {
+          return {
+            status: 400,
+            body: `Comps data for orderId ${order.orderId} is not available. You need to request comps data first.`,
+          };
+        }
+      }
+    }
 
     responseMessage = {
       message: finalMessage,

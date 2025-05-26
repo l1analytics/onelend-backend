@@ -3,10 +3,7 @@ const { DefaultAzureCredential } = require("@azure/identity");
 const uuid = require("uuid");
 const { postRequest } = require("./sendApiRequests");
 
-const lookupBatchData = async (
-  context,
-  batchDataRequestBody
-) => {
+const lookupBatchData = async (context, batchDataRequestBody) => {
   const endpointBatchData = process.env.BATCHDATA_ENDPOINT;
   const keyBatchData = process.env.BATCHDATA_KEY;
 
@@ -105,30 +102,73 @@ const searchBatchData = async (
 
   let responseData;
 
-  try {
-    responseData = await postRequest(
-      context,
-      endpointBatchData + "property/search",
-      batchDataRequestBody,
-      {
-        headers: {
-          Accept: "application/json, application/xml",
-          Authorization: "Bearer " + keyBatchData,
-        },
+  let requestBody = batchDataRequestBody;
+  const requestedNumComps = requestBody.options.take;
+  requestBody.options.take = 0;
+  requestBody.options.distanceMiles = 0.5;
+  let requestedNumCompsFound = false;
+
+  while (!requestedNumCompsFound) {
+    try {
+      responseData = await postRequest(
+        context,
+        endpointBatchData + "property/search",
+        requestBody,
+        {
+          headers: {
+            Accept: "application/json, application/xml",
+            Authorization: "Bearer " + keyBatchData,
+          },
+        }
+      );
+    } catch (error) {
+      context.log(
+        `Batch Data API request (search) failed for request body: ${batchDataRequestBody}: `,
+        error
+      );
+      return {
+        status: 502,
+        body: JSON.stringify({
+          error: "Failed to retrieve data from Batch Data API (search)",
+          details: error.message,
+        }),
+      };
+    }
+
+    // If at least the requested number of comps are found, pull the data and break the loop
+    if (responseData.results.meta.results.resultsFound >= requestedNumComps) {
+      requestBody.options.take = requestedNumComps;
+      try {
+        responseData = await postRequest(
+          context,
+          endpointBatchData + "property/search",
+          requestBody,
+          {
+            headers: {
+              Accept: "application/json, application/xml",
+              Authorization: "Bearer " + keyBatchData,
+            },
+          }
+        );
+      } catch (error) {
+        context.log(
+          `Batch Data API request (search) failed for request body: ${batchDataRequestBody}: `,
+          error
+        );
+        return {
+          status: 502,
+          body: JSON.stringify({
+            error: "Failed to retrieve data from Batch Data API (search)",
+            details: error.message,
+          }),
+        };
       }
-    );
-  } catch (error) {
-    context.log(
-      `Batch Data API request (search) failed for request body: ${batchDataRequestBody}: `,
-      error
-    );
-    return {
-      status: 502,
-      body: JSON.stringify({
-        error: "Failed to retrieve data from Batch Data API (search)",
-        details: error.message,
-      }),
-    };
+
+      requestedNumCompsFound = true;
+      
+    } else {
+      requestBody.options.distanceMiles += 0.5;
+    }
   }
 
   //========================================================
@@ -164,7 +204,8 @@ const searchBatchData = async (
       resultItem.fipsCodePlusApn =
         resultItem?.ids?.fipsCode + "+" + resultItem?.ids?.apn;
       resultItem.dateRetrieved = new Date().toISOString();
-      resultItem.subjectPropertyRecordId = batchDataPropertySubject.propertyRecordId;
+      resultItem.subjectPropertyRecordId =
+        batchDataPropertySubject.propertyRecordId;
       resultItem.distanceToSubejct = calculateDistance(
         latSubject,
         lonSubject,
@@ -210,8 +251,7 @@ const calculateDistance = (lat1, lon1, lat2, lon2, inMiles = false) => {
   return distance;
 };
 
-
 module.exports = {
   lookupBatchData,
-  searchBatchData
+  searchBatchData,
 };
