@@ -161,7 +161,7 @@ app.http("createOrder", {
       transactionRecord.streetAddress = requestBody.streetAddress;
       transactionRecord.city = requestBody.city;
       transactionRecord.state = requestBody.state;
-      transactionRecord.zip = requestBody.zipCode;
+      transactionRecord.zip = requestBody.zip;
       transactionRecord.dateCreated = new Date().toISOString();
       transactionRecord.orderId = [];
       transactionRecord.productType = [];
@@ -234,7 +234,7 @@ app.http("createOrder", {
     newOrder.streetAddress = transactionRecord.streetAddress;
     newOrder.city = transactionRecord.city;
     newOrder.state = transactionRecord.state;
-    newOrder.zipCode = transactionRecord.zipCode;
+    newOrder.zip = transactionRecord.zip;
     newOrder.productType = requestBody.productType || null;
     newOrder.dateCreated = new Date().toISOString();
     newOrder.status = "Ordered";
@@ -261,7 +261,7 @@ app.http("createOrder", {
             street: newOrder.streetAddress,
             city: newOrder.city,
             state: newOrder.state,
-            zip: newOrder.zipCode,
+            zip: newOrder.zip,
           },
         },
       ],
@@ -291,7 +291,19 @@ app.http("createOrder", {
     // *********************************
     const today = new Date();
     const lastYear = new Date(today.getTime() - 365 * 24 * 60 * 60 * 1000);
-    const compStartDate = lastYear.toISOString().split('T')[0];
+    const compStartDate = lastYear.toISOString().split("T")[0];
+    const maxDaysOnMarket = 365; // Maximum days on market for active comps
+
+    // Purse comps options in request body
+    let numComps = 20;
+    let compType = "Both";
+    if (requestBody.compsOptions && requestBody.compsOptions.numComps) {
+      numComps = requestBody.compsOptions.numComps;
+    }
+
+    if (requestBody.compsOptions && requestBody.compsOptions.compType) {
+      compType = requestBody.compsOptions.compType;
+    }
 
     let batchDataRequestBodyComps = {
       searchCriteria: {
@@ -309,11 +321,14 @@ app.http("createOrder", {
                 .propertyTypeDetail,
           },
         },
-        listing: { status: {inList: ["Sold"]}, soldDate: {minDate: compStartDate}}
+        listing: {
+          status: { inList: ["Sold"] },
+          soldDate: { minDate: compStartDate },
+        },
       },
       options: {
         skip: 0,
-        take: 20,
+        take: numComps,
         useDistance: true,
         distanceMiles: 3.0,
         images: true,
@@ -321,23 +336,49 @@ app.http("createOrder", {
     };
 
     // Pull sold comps
-    let responseBatchDataSoldComps = await searchBatchData(context, batchDataRequestBodyComps, responseBatchDataSubject.results.properties[0]);
-
-    // Pull active comps
-    batchDataRequestBodyComps.searchCriteria.listing = { listing: { status: {inList: ["Active","Pending"]}, daysOnMarket: {max: 365}}};
-    let responseBatchDataActiveComps = await searchBatchData(context, batchDataRequestBodyComps, responseBatchDataSubject.results.properties[0]);
-
-    // Add the propertyRecordId to compsRecordIds for the order record
-    for (let i = 0; i < responseBatchDataSoldComps.results.properties.length; i++) {
-      newOrder.compsRecordIds.push(
-        responseBatchDataSoldComps.results.properties[i].propertyRecordId
+    let responseBatchDataSoldComps;
+    if (compType === "Sold" || compType === "Both") {
+      responseBatchDataSoldComps = await searchBatchData(
+        context,
+        batchDataRequestBodyComps,
+        responseBatchDataSubject.results.properties[0]
       );
+      // Add the propertyRecordId to compsRecordIds for the order record
+      for (
+        let i = 0;
+        i < responseBatchDataSoldComps.results.properties.length;
+        i++
+      ) {
+        newOrder.compsRecordIds.push(
+          responseBatchDataSoldComps.results.properties[i].propertyRecordId
+        );
+      }
     }
 
-    for (let i = 0; i < responseBatchDataActiveComps.results.properties.length; i++) {
-      newOrder.compsRecordIds.push(
-        responseBatchDataActiveComps.results.properties[i].propertyRecordId
+    // Pull active comps
+    let responseBatchDataActiveComps;
+    if (compType === "Active" || compType === "Both") {
+      batchDataRequestBodyComps.searchCriteria.listing = {
+        listing: {
+          status: { inList: ["Active", "Pending"] },
+          daysOnMarket: { max: maxDaysOnMarket },
+        },
+      };
+      responseBatchDataActiveComps = await searchBatchData(
+        context,
+        batchDataRequestBodyComps,
+        responseBatchDataSubject.results.properties[0]
       );
+
+      for (
+        let i = 0;
+        i < responseBatchDataActiveComps.results.properties.length;
+        i++
+      ) {
+        newOrder.compsRecordIds.push(
+          responseBatchDataActiveComps.results.properties[i].propertyRecordId
+        );
+      }
     }
 
     //========================================================
@@ -377,10 +418,16 @@ app.http("createOrder", {
       streetAddress: newOrder.streetAddress,
       city: newOrder.city,
       state: newOrder.state,
-      zipCode: newOrder.zipCode,
+      zip: newOrder.zip,
       dateCreated: newOrder.dateCreated,
-      numSoldComps: responseBatchDataSoldComps.results.properties.length,
-      numActiveComps: responseBatchDataActiveComps.results.properties.length
+      numSoldComps:
+        typeof responseBatchDataSoldComps == "object"
+          ? responseBatchDataSoldComps.results.properties.length
+          : 0,
+      numActiveComps:
+        typeof responseBatchDataActiveComps == "object"
+          ? responseBatchDataActiveComps.results.properties.length
+          : 0,
     };
 
     return { body: JSON.stringify(responseBody) };
