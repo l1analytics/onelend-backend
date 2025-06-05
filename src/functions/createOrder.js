@@ -61,17 +61,6 @@ app.http("createOrder", {
     //==============================
     //    Parse request body
     //==============================
-    // if (request.params.action === "") {
-    //   const error_message = JSON.stringify({
-    //     error: "Need action in the request URL",
-    //   });
-    //   context.log(error_message);
-    //   return {
-    //     status: 400,
-    //     body: error_message,
-    //   };
-    // }
-
     if (!request.body) {
       const error_message = JSON.stringify({
         error: "Request body is required",
@@ -248,9 +237,11 @@ app.http("createOrder", {
     transactionRecord.productType.push(newOrder.productType);
     // }
 
-    //========================================================
+    //=================================================================================
     // Pull BatchData for subejct (lookup) and comps (search)
-    //========================================================
+    // Note: Always pull BatchData for subject property when a new order is created,
+    //       regardless of productType
+    //=================================================================================
     // *********************************
     // Subject property data (lookup)
     // *********************************
@@ -295,7 +286,9 @@ app.http("createOrder", {
     const maxDaysOnMarket = 365; // Maximum days on market for active comps
 
     // Purse comps options in request body
-    let numComps = 20;
+    // Default number of comps is 20. 
+    // Default compType is "Both" (ie, both Sold and Active comps). 20 Sold comps and 20 Active comps
+    let numComps = 20; 
     let compType = "Both";
     if (requestBody.compsOptions && requestBody.compsOptions.numComps) {
       numComps = requestBody.compsOptions.numComps;

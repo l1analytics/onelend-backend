@@ -1,0 +1,191 @@
+const { app } = require("@azure/functions");
+const { CosmosClient, PatchOperation } = require("@azure/cosmos");
+const { DefaultAzureCredential } = require("@azure/identity");
+const { postRequest } = require("../utils/sendApiRequests.js");
+const { getMaxId } = require("../utils/getIds.js");
+const { lookupBatchData, searchBatchData } = require("../utils/batchDataApis");
+const { selectComps } = require("../utils/selectComps");
+// const { ordersCreate } = require("./ordersUtils/ordersCreate.js");
+const uuid = require("uuid");
+
+/*==================================================
+        Set up connection to Cosmos DB
+  ==================================================*/
+const cosmosEndpoint = process.env.COSMOSDB_ENDPOINT;
+const databaseName = process.env.DATABASE_NAME;
+
+if (!cosmosEndpoint || !databaseName) {
+  console.log(
+    `COSMOSDB_ENDPOINT ${cosmosEndpoint} or DATABASE_NAME ${databaseName} could not be retrieved from App Configuration.`
+  );
+}
+
+const containerNameBatchData = "batchData";
+const containerNameComps = "comps";
+const containerNameReporting = "reporting";
+const containerNameOrders = "orders";
+
+const credential = new DefaultAzureCredential();
+var client = new CosmosClient({
+  endpoint: cosmosEndpoint,
+  aadCredentials: credential,
+});
+const database = client.database(databaseName);
+const containerBatchData = database.container(containerNameBatchData);
+const containerComps = database.container(containerNameComps);
+const containerReporting = database.container(containerNameReporting);
+
+app.http("runOrder", {
+  methods: ["POST"],
+  authLevel: "anonymous",
+  // route: "createOrder",
+  handler: async (request, context) => {
+    context.log(`Http function processed request for url "${request.url}"`);
+
+    if (!request.body) {
+      const error_message = JSON.stringify({
+        error: "Request body is required",
+      });
+      context.log(error_message);
+      return {
+        status: 400,
+        body: error_message,
+      };
+    }
+
+    let requestBody;
+    try {
+      requestBody = await request.json();
+      if (typeof requestBody !== "object") {
+        const error_message = JSON.stringify({
+          error: "Request body must be a JSON",
+        });
+        context.log(error_message);
+        return {
+          status: 400,
+          body: error_message,
+        };
+      }
+    } catch (error) {
+      const error_message = JSON.stringify({
+        error: "Invalid JSON in request body",
+      });
+      context.log(error_message);
+      return {
+        status: 400,
+        body: error_message,
+      };
+    }
+
+    //===========================================================
+    //  Retrieve subject property and comps data for the order
+    //===========================================================
+    // Subject property data
+    let query_string_subejct;
+
+    query_string_subejct = `SELECT * FROM f where f.id = '${requestBody.propertyRecordId}'`;
+
+    const querySpec = {
+      query: query_string_subejct,
+    };
+
+    let subjectPropertyData;
+
+    try {
+      const { resources: output } = await containerBatchData.items
+        .query(querySpec)
+        .fetchAll();
+      console.log(
+        "Subject property data successfully retrieved from Cosmos DB."
+      );
+
+      if (output) {
+        subjectPropertyData = output; // Using spread operator to push individual items
+      } else {
+        context.log(
+          `No property data found for requested propertyRecordId "${requestBody.propertyRecordId}"`
+        );
+      }
+    } catch (error) {
+      context.log(
+        `Error: failed to pull requested property data. ${error.message}`
+      );
+      throw error;
+    }
+
+    // Comps data
+    let query_string_comps;
+
+    if (requestBody.compsRecordIds.length === 0) {
+      return {
+        status: 500,
+        body: `No compsRecordIds found for this order: clientId: ${requestBody.clientId} orderId: ${requestBody.orderId}.`,
+      };
+    } else {
+      query_string_comps = `SELECT * FROM f where f.id IN ('${requestBody.compsRecordIds.join(
+        "','"
+      )}')`;
+    }
+
+    const querySpecComps = {
+      query: query_string_comps,
+    };
+
+    let compsData;
+
+    try {
+      const { resources: output } = await containerComps.items
+        .query(querySpecComps)
+        .fetchAll();
+      console.log("Comps data successfully retrieved from Cosmos DB.");
+
+      if (output) {
+        compsData = output; // Using spread operator to push individual items
+      } else {
+        context.log(
+          `No comps data found for requested clientId: ${requestBody.clientId} orderId: ${requestBody.orderId}`
+        );
+      }
+    } catch (error) {
+      context.log(
+        `Error: failed to pull requested comps data. ${error.message}`
+      );
+      throw error;
+    }
+
+    console.log(subjectPropertyData);
+    console.log(compsData);
+
+    //===========================================================
+    //  Run comp selection model
+    //===========================================================
+    const salesTypes = ["Sold", "Active"];
+    const selectedComps = await selectComps(
+      subjectPropertyData[0],
+      compsData,
+      salesTypes,
+      3
+    );
+
+    // console.log("Selected comps:", selectedComps);
+
+    //===========================================================
+    //  Save reporting object in Cosmos DB
+    //===========================================================
+    let reportingData = requestBody;
+    reportingData.selectedComps = selectedComps;
+    reportingData.id = uuid.v4(); // Generate a new unique ID for the reporting data
+    reportingData.reportRecordId = reportingData.id; // Set the reportingRecordId to the same value as id
+
+    try {
+      await containerReporting.items.upsert(reportingData);
+    } catch (error) {
+      context.log(
+        `Error upserting item to CosmosDB database: ${databaseName}. container: ${containerNameReporting}. data: ${reportingData}  ${error.message}`
+      );
+      throw error;
+    }
+
+    return { body: JSON.stringify(reportingData) };
+  },
+});
