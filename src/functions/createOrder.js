@@ -227,7 +227,7 @@ app.http("createOrder", {
     newOrder.zip = transactionRecord.zip;
     newOrder.productType = requestBody.productType || null;
     newOrder.dateCreated = new Date().toISOString();
-    newOrder.status = "Ordered";
+    newOrder.status = requestBody.productType == "Property Data" ? "Ordered" : "Pending";
     newOrder.fipsCodePlusApn = null;
     newOrder.propertyRecordId;
     newOrder.propertyRecordDate;
