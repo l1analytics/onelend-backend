@@ -216,6 +216,7 @@ app.http("createOrder", {
     const newOrder = {};
     // if (requestBody.productType && requestBody.productType.trim() != "") {
     newOrder.id = uuid.v4();
+    newOrder.orderRecordId = newOrder.id;
     newOrder.orderId = typeof maxOrderId === "undefined" ? 1 : maxOrderId + 1; // Generate a new UUID for the order ID
     newOrder.clientId = transactionRecord.clientId; // Optional field
     newOrder.transactionId = transactionRecord.transactionId; // Optional field
