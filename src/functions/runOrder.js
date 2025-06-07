@@ -168,25 +168,11 @@ app.http("runOrder", {
       3
     );
 
-    // console.log("Selected comps:", selectedComps);
-
-    //===========================================================
-    //  Save order object in Cosmos DB with updated status
-    //===========================================================
-    requestBody.status = "Valuation Complete";
-    try {
-      await containerOrders.items.upsert(requestBody);
-    } catch (error) {
-      context.log(
-        `Error upserting item to CosmosDB database: ${databaseName}. container: ${containerNameOrders}. data: ${requestBody}  ${error.message}`
-      );
-      throw error;
-    }
-
     //===========================================================
     //  Save reporting object in Cosmos DB
     //===========================================================
-    let reportingData = requestBody;
+    requestBody.status = "Valuation Complete";
+    let reportingData = JSON.parse(JSON.stringify(requestBody)); // Create a deep copy of requestBody
     reportingData.selectedComps = selectedComps;
     reportingData.id = uuid.v4(); // Generate a new unique ID for the reporting data
     reportingData.reportRecordId = reportingData.id; // Set the reportingRecordId to the same value as id
@@ -196,6 +182,21 @@ app.http("runOrder", {
     } catch (error) {
       context.log(
         `Error upserting item to CosmosDB database: ${databaseName}. container: ${containerNameReporting}. data: ${reportingData}  ${error.message}`
+      );
+      throw error;
+    }
+
+    //=======================================================================
+    //  Save order object in Cosmos DB with updated status & reportRecordId
+    //=======================================================================
+    
+    requestBody.reportRecordId = reportingData.reportRecordId; // Set the reportRecordId to the same value as id
+
+    try {
+      await containerOrders.items.upsert(requestBody);
+    } catch (error) {
+      context.log(
+        `Error upserting item to CosmosDB database: ${databaseName}. container: ${containerNameOrders}. data: ${requestBody}  ${error.message}`
       );
       throw error;
     }
