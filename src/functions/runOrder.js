@@ -34,6 +34,7 @@ const database = client.database(databaseName);
 const containerBatchData = database.container(containerNameBatchData);
 const containerComps = database.container(containerNameComps);
 const containerReporting = database.container(containerNameReporting);
+const containerOrders = database.container(containerNameOrders);
 
 app.http("runOrder", {
   methods: ["POST"],
@@ -168,6 +169,19 @@ app.http("runOrder", {
     );
 
     // console.log("Selected comps:", selectedComps);
+
+    //===========================================================
+    //  Save order object in Cosmos DB with updated status
+    //===========================================================
+    requestBody.status = "Valuation Complete";
+    try {
+      await containerOrders.items.upsert(requestBody);
+    } catch (error) {
+      context.log(
+        `Error upserting item to CosmosDB database: ${databaseName}. container: ${containerNameOrders}. data: ${requestBody}  ${error.message}`
+      );
+      throw error;
+    }
 
     //===========================================================
     //  Save reporting object in Cosmos DB
