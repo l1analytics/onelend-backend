@@ -203,6 +203,30 @@ app.http("runOrder", {
 
     reportData.selectedComps = selectedComps;
 
+    // Add selectedCompFlag to reportData.compsData
+    if (reportData.compsData && Array.isArray(reportData.compsData)) {
+      ["Sold", "Active"].forEach((type) => {
+        if (selectedComps[type] && Array.isArray(selectedComps[type])) {
+          selectedComps[type].forEach((comp, index) => {
+            for (let i = 0; i < reportData.compsData.length; i++) {
+              if (
+                reportData.compsData[i].propertyRecordId ===
+                comp.propertyRecordId
+              ) {
+                reportData.compsData[i].selectedCompFlag =
+                  type[0] + String(index + 1);
+              } else if (
+                !reportData.compsData[i].selectedCompFlag ||
+                reportData.compsData[i].selectedCompFlag === ""
+              ) {
+                reportData.compsData[i].selectedCompFlag = "";
+              }
+            }
+          });
+        }
+      });
+    }
+
     try {
       await containerReporting.items.upsert(reportData);
     } catch (error) {
