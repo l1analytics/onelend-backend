@@ -30,26 +30,17 @@ if (!cosmosEndpoint || !databaseName) {
 
 const containerNameTransactions = "transactions";
 const containerNameOrders = "orders";
+const containerNameReporting = "reporting";
 
 const credential = new DefaultAzureCredential();
-var client1 = new CosmosClient({
+var client = new CosmosClient({
   endpoint: cosmosEndpoint,
   aadCredentials: credential,
 });
-const database1 = client1.database(databaseName);
-const containerTransactions = database1.container(containerNameTransactions);
-
-var client2 = new CosmosClient({
-  endpoint: cosmosEndpoint,
-  aadCredentials: credential,
-});
-const database2 = client2.database(databaseName);
-const containerOrders = database2.container(containerNameOrders);
-
-const containers = {
-  transactions: containerTransactions,
-  orders: containerOrders,
-};
+const database = client.database(databaseName);
+const containerTransactions = database.container(containerNameTransactions);
+const containerOrders = database.container(containerNameOrders);
+const containerReporting = database.container(containerNameReporting);
 
 app.http("createOrder", {
   methods: ["POST"],
@@ -173,7 +164,7 @@ app.http("createOrder", {
         }
       }
 
-      // Pull the transaction record from Cosmos DB
+      // If transactionId is submitted, pull the transaction record from Cosmos DB
       let query_string = `SELECT * FROM f where f.clientId = ${requestBody.clientId} and f.transactionId = ${requestBody.transactionId}`;
       const querySpec = {
         query: query_string,
@@ -227,7 +218,8 @@ app.http("createOrder", {
     newOrder.zip = transactionRecord.zip;
     newOrder.productType = requestBody.productType || null;
     newOrder.dateCreated = new Date().toISOString();
-    newOrder.status = requestBody.productType == "Property Data" ? "Ordered" : "Pending";
+    newOrder.status =
+      requestBody.productType == "Property Data" ? "Ordered" : "Pending";
     newOrder.fipsCodePlusApn = null;
     newOrder.propertyRecordId;
     newOrder.propertyRecordDate;
@@ -287,9 +279,9 @@ app.http("createOrder", {
     const maxDaysOnMarket = 365; // Maximum days on market for active comps
 
     // Purse comps options in request body
-    // Default number of comps is 20. 
+    // Default number of comps is 20.
     // Default compType is "Both" (ie, both Sold and Active comps). 20 Sold comps and 20 Active comps
-    let numComps = 20; 
+    let numComps = 20;
     let compType = "Both";
     if (requestBody.compsOptions && requestBody.compsOptions.numComps) {
       numComps = requestBody.compsOptions.numComps;
@@ -373,6 +365,35 @@ app.http("createOrder", {
           responseBatchDataActiveComps.results.properties[i].propertyRecordId
         );
       }
+    }
+
+    /*=========================================================
+        Create a report record for order
+    =========================================================*/
+    if (requestBody.productType != "Property Data") {
+      const reportRecord = JSON.parse(JSON.stringify(newOrder));
+      reportRecord.id = uuid.v4();
+      reportRecord.reportRecordId = reportRecord.id;
+      delete reportRecord.status;
+      reportRecord.propertyData =
+        responseBatchDataSubject.results.properties[0];
+      reportRecord.compsData = [
+        ...(responseBatchDataSoldComps?.results?.properties || []),
+        ...(responseBatchDataActiveComps?.results?.properties || []),
+      ];
+
+      // Save the report record to Cosmos DB
+      try {
+        await containerReporting.items.upsert(reportRecord);
+      } catch (error) {
+        context.log(
+          `Error upserting item to CosmosDB database: ${databaseName}. container: ${containerNameReporting}. data: ${reportRecord}  ${error.message}`
+        );
+        throw error;
+      }
+
+      // Add the reportRecordId to the order record
+      newOrder.reportRecordId = reportRecord.reportRecordId;
     }
 
     //========================================================

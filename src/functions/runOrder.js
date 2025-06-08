@@ -169,19 +169,45 @@ app.http("runOrder", {
     );
 
     //===========================================================
-    //  Save reporting object in Cosmos DB
+    //  Update report with selected comps in Cosmos DB
     //===========================================================
-    requestBody.status = "Valuation Complete";
-    let reportingData = JSON.parse(JSON.stringify(requestBody)); // Create a deep copy of requestBody
-    reportingData.selectedComps = selectedComps;
-    reportingData.id = uuid.v4(); // Generate a new unique ID for the reporting data
-    reportingData.reportRecordId = reportingData.id; // Set the reportingRecordId to the same value as id
+
+    let query_string;
+
+    query_string = `SELECT * FROM f where f.id = '${requestBody.reportRecordId}'`;
+
+    const querySpecReport = {
+      query: query_string,
+    };
+
+    let reportData;
 
     try {
-      await containerReporting.items.upsert(reportingData);
+      const { resources: output } = await containerReporting.items
+        .query(querySpecReport)
+        .fetchAll();
+      console.log("Report data successfully retrieved from Cosmos DB.");
+      if (typeof output !== "undefined" && output.length > 0) {
+        reportData = output[0]; // Using spread operator to push individual items
+      } else {
+        context.log(
+          `No report data found for requested reportRecordId "${requestBody.reportRecordId}"`
+        );
+      }
     } catch (error) {
       context.log(
-        `Error upserting item to CosmosDB database: ${databaseName}. container: ${containerNameReporting}. data: ${reportingData}  ${error.message}`
+        `Error: failed to pull requested report data. ${error.message}`
+      );
+      throw error;
+    }
+
+    reportData.selectedComps = selectedComps;
+
+    try {
+      await containerReporting.items.upsert(reportData);
+    } catch (error) {
+      context.log(
+        `Error upserting item to CosmosDB database: ${databaseName}. container: ${containerNameReporting}. data: ${reportData}  ${error.message}`
       );
       throw error;
     }
@@ -189,8 +215,8 @@ app.http("runOrder", {
     //=======================================================================
     //  Save order object in Cosmos DB with updated status & reportRecordId
     //=======================================================================
-    
-    requestBody.reportRecordId = reportingData.reportRecordId; // Set the reportRecordId to the same value as id
+    requestBody.status = "Valuation Complete";
+    // requestBody.reportRecordId = reportingData.reportRecordId; // Set the reportRecordId to the same value as id
 
     try {
       await containerOrders.items.upsert(requestBody);
@@ -201,6 +227,6 @@ app.http("runOrder", {
       throw error;
     }
 
-    return { body: JSON.stringify(reportingData) };
+    return { body: JSON.stringify(reportData) };
   },
 });
