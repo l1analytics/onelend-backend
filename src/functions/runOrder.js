@@ -201,7 +201,7 @@ app.http("runOrder", {
       throw error;
     }
 
-    // reportData.selectedComps = selectedComps;
+    reportData.valuationEstimate = selectedComps.finalvaluation;
 
     // Add selectedCompFlag to reportData.compsData
     if (reportData.compsData && Array.isArray(reportData.compsData)) {
