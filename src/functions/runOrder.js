@@ -201,7 +201,7 @@ app.http("runOrder", {
       throw error;
     }
 
-    reportData.selectedComps = selectedComps;
+    // reportData.selectedComps = selectedComps;
 
     // Add selectedCompFlag to reportData.compsData
     if (reportData.compsData && Array.isArray(reportData.compsData)) {
@@ -215,11 +215,13 @@ app.http("runOrder", {
               ) {
                 reportData.compsData[i].selectedCompFlag =
                   type[0] + String(index + 1);
+                reportData.compsData[i].comp_level = comp.comp_level;
               } else if (
                 !reportData.compsData[i].selectedCompFlag ||
                 reportData.compsData[i].selectedCompFlag === ""
               ) {
                 reportData.compsData[i].selectedCompFlag = "";
+                reportData.compsData[i].comp_level = null;
               }
             }
           });
