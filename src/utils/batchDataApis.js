@@ -248,7 +248,7 @@ const calculateDistance = (lat1, lon1, lat2, lon2, inMiles = false) => {
     distance *= 0.621371; // Convert kilometers to miles
   }
 
-  return distance;
+  return Number(distance.toFixed(2));
 };
 
 module.exports = {
