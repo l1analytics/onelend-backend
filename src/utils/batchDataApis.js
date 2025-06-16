@@ -108,7 +108,7 @@ const searchBatchData = async (
   requestBody.options.distanceMiles = 0.5;
   let requestedNumCompsFound = false;
 
-  while (!requestedNumCompsFound) {
+  while (!requestedNumCompsFound && requestBody.options.distanceMiles < 5.0) {
     try {
       responseData = await postRequest(
         context,
