@@ -322,7 +322,7 @@ app.http("getOrder", {
           query_string_comps = `SELECT * FROM f where f.propertyRecordId IN ('${order.compsRecordIds.join(
             "','"
           )}')`;
- 
+
           const querySpecComps = {
             query: query_string_comps,
           };
@@ -352,10 +352,14 @@ app.http("getOrder", {
 
           context.log(`Processing comps data for orderId: ${order.orderId}`);
         } else {
-          return {
-            status: 400,
-            body: `Comps data for orderId ${order.orderId} is not available. You need to request comps data first.`,
-          };
+          // return {
+          //   status: 400,
+          //   body: `Comps data for orderId ${order.orderId} is not available. You need to request comps data first.`,
+          // };
+          order.compsData = [];
+          context.log(
+            `Comps data for orderId ${order.orderId} is not available.`
+          );
         }
       }
     }
