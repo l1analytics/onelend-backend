@@ -69,7 +69,6 @@ const assignCompLevel = (compData, subjectData) => {
       compLevel = 1;
     } else if (
       distance <= 1 &&
-      daysSinceSale > 90 &&
       daysSinceSale <= 180 &&
       diffGla <= 10 &&
       diffBed <= 1 &&
@@ -78,7 +77,6 @@ const assignCompLevel = (compData, subjectData) => {
       compLevel = 2;
     } else if (
       distance <= 3 &&
-      daysSinceSale > 180 &&
       daysSinceSale <= 365 &&
       diffGla <= 15 &&
       diffBed <= 2 &&
@@ -87,7 +85,6 @@ const assignCompLevel = (compData, subjectData) => {
       compLevel = 3;
     } else if (
       distance <= 10 &&
-      daysSinceSale > 365 &&
       daysSinceSale <= 730 &&
       diffGla <= 25 &&
       diffBed <= 3 &&
