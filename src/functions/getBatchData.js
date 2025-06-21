@@ -1,3 +1,11 @@
+/*==============================================================================
+   getBatchData API:
+   Get BatchData for subject property and comps
+   Built to speed up BatchData order and sent back resutls to ALFRed quickly
+   Saves order, BatchData, and comps to Cosmos DB (not transaction)
+  ==============================================================================*/
+
+
 const { app } = require("@azure/functions");
 const { CosmosClient, PatchOperation } = require("@azure/cosmos");
 const { DefaultAzureCredential } = require("@azure/identity");
@@ -42,7 +50,7 @@ const containerTransactions = database.container(containerNameTransactions);
 const containerOrders = database.container(containerNameOrders);
 const containerReporting = database.container(containerNameReporting);
 
-app.http("createOrder", {
+app.http("getBatchData", {
   methods: ["POST"],
   authLevel: "anonymous",
   // route: "createOrder",
@@ -91,110 +99,29 @@ app.http("createOrder", {
     //  Create Order
     //===========================
 
-    // If a transaction ID is not submitted, create a new transaction record:
-    let transactionRecord = {};
+    // Check if required fields are sent over
+    const requiredFields = [
+      "clientId",
+      "streetAddress",
+      "city",
+      "state",
+      "zip",
+      "productType",
+    ];
 
-    if (
-      !requestBody.transactionId ||
-      requestBody.transactionId.toString().trim() === ""
-    ) {
-      // Check if required fields are sent over
-      const requiredFields = [
-        "clientId",
-        "streetAddress",
-        "city",
-        "state",
-        "zip",
-        "productType",
-      ];
-
-      for (const field of requiredFields) {
-        if (
-          !requestBody[field] ||
-          requestBody[field].toString().trim() === ""
-        ) {
-          const error_message = JSON.stringify({
-            error: `Field '${field}' is required and cannot be blank`,
-          });
-          context.log(error_message);
-          return {
-            status: 400,
-            body: error_message,
-          };
-        }
-      }
-
-      // Get the max transactionId for this clientId
-      const maxTransactionId = await getMaxId(
-        context,
-        requestBody.clientId,
-        containerTransactions,
-        "transactionId"
-      );
-
-      // Create a new transaction and save it to Cosmos DB
-      transactionRecord.id = uuid.v4();
-      transactionRecord.transactionId =
-        typeof maxTransactionId === "undefined" ? 1 : maxTransactionId + 1; // Generate a new transaction ID
-      transactionRecord.clientId = requestBody.clientId || null; // Optional field
-      transactionRecord.clientOrderId = requestBody.clientOrderId || null; // Optional field
-      transactionRecord.streetAddress = requestBody.streetAddress;
-      transactionRecord.city = requestBody.city;
-      transactionRecord.state = requestBody.state;
-      transactionRecord.zip = requestBody.zip;
-      transactionRecord.dateCreated = new Date().toISOString();
-      transactionRecord.orderId = [];
-      transactionRecord.productType = [];
-    } else {
-      const requiredFields = ["clientId", "productType"];
-
-      for (const field of requiredFields) {
-        if (
-          !requestBody[field] ||
-          requestBody[field].toString().trim() === ""
-        ) {
-          const error_message = JSON.stringify({
-            error: `Field '${field}' is required and cannot be blank`,
-          });
-          context.log(error_message);
-          return {
-            status: 400,
-            body: error_message,
-          };
-        }
-      }
-
-      // If transactionId is submitted, pull the transaction record from Cosmos DB
-      let query_string = `SELECT * FROM f where f.clientId = ${requestBody.clientId} and f.transactionId = ${requestBody.transactionId}`;
-      const querySpec = {
-        query: query_string,
-      };
-
-      try {
-        const { resources: results } = await containerTransactions.items
-          .query(querySpec)
-          .fetchAll();
-
-        if (results) {
-          transactionRecord = results[0];
-          if (results.length > 1) {
-            context.log(
-              `Warning: Multiple records found for clientId ${requestBody.clientId} and transactionId "${requestBody.transactionId}". Using the first one.`
-            );
-          }
-        } else {
-          context.log(
-            `No results found for requested clientId ${requestBody.clientId} and transactionId "${requestBody.transactionId}"`
-          );
-        }
-      } catch (error) {
-        context.log(
-          `Error querying Cosmos DB database: ${databaseName}. container: ${containerTransactions}. ${error.message}`
-        );
-        throw error;
+    for (const field of requiredFields) {
+      if (!requestBody[field] || requestBody[field].toString().trim() === "") {
+        const error_message = JSON.stringify({
+          error: `Field '${field}' is required and cannot be blank`,
+        });
+        context.log(error_message);
+        return {
+          status: 400,
+          body: error_message,
+        };
       }
     }
-
+   
     // Get the max orderId for this clientId
     const maxOrderId = await getMaxId(
       context,
@@ -209,13 +136,13 @@ app.http("createOrder", {
     newOrder.id = uuid.v4();
     newOrder.orderRecordId = newOrder.id;
     newOrder.orderId = typeof maxOrderId === "undefined" ? 1 : maxOrderId + 1; // Generate a new UUID for the order ID
-    newOrder.clientId = transactionRecord.clientId; // Optional field
-    newOrder.transactionId = transactionRecord.transactionId; // Optional field
-    newOrder.clientOrderId = transactionRecord.clientOrderId || null; // Optional field
-    newOrder.streetAddress = transactionRecord.streetAddress;
-    newOrder.city = transactionRecord.city;
-    newOrder.state = transactionRecord.state;
-    newOrder.zip = transactionRecord.zip;
+    newOrder.clientId = requestBody.clientId || null; // Optional field
+    newOrder.transactionId = requestBody.transactionId || null; // Optional field
+    newOrder.clientOrderId = requestBody.clientOrderId || null; // Optional field
+    newOrder.streetAddress = requestBody.streetAddress;
+    newOrder.city = requestBody.city;
+    newOrder.state = requestBody.state;
+    newOrder.zip = requestBody.zip;
     newOrder.productType = requestBody.productType || null;
     newOrder.dateCreated = new Date().toISOString();
     newOrder.status =
@@ -225,11 +152,7 @@ app.http("createOrder", {
     newOrder.propertyRecordDate;
     newOrder.compsRecordIds = [];
 
-    // Add this order to the transaction record
-    transactionRecord.orderId.push(newOrder.orderId);
-    transactionRecord.productType.push(newOrder.productType);
-    // }
-
+ 
     //=================================================================================
     // Pull BatchData for subejct (lookup) and comps (search)
     // Note: Always pull BatchData for subject property when a new order is created,
@@ -267,9 +190,6 @@ app.http("createOrder", {
     newOrder.propertyRecordDate =
       responseBatchDataSubject.results.properties[0].dateRetrieved;
 
-    transactionRecord.fipsCodePlusApn =
-      responseBatchDataSubject.results.properties[0].fipsCodePlusApn;
-
     // *********************************
     //  Comps property data (search)
     // *********************************
@@ -281,8 +201,8 @@ app.http("createOrder", {
     // Purse comps options in request body
     // Default number of comps is 20.
     // Default compType is "Both" (ie, both Sold and Active comps). 20 Sold comps and 20 Active comps
-    let numComps = 20;
-    let compType = "Both";
+    let numComps = 5;
+    let compType = "Sold";
     if (requestBody.compsOptions && requestBody.compsOptions.numComps) {
       numComps = requestBody.compsOptions.numComps;
     }
@@ -367,48 +287,9 @@ app.http("createOrder", {
       }
     }
 
-    /*=========================================================
-        Create a report record for order
-    =========================================================*/
-    if (requestBody.productType != "Property Data") {
-      var reportRecord = JSON.parse(JSON.stringify(newOrder));
-      reportRecord.id = uuid.v4();
-      reportRecord.reportRecordId = reportRecord.id;
-      delete reportRecord.status;
-      reportRecord.propertyData =
-        responseBatchDataSubject.results.properties[0];
-      reportRecord.compsData = [
-        ...(responseBatchDataSoldComps?.results?.properties || []),
-        ...(responseBatchDataActiveComps?.results?.properties || []),
-      ];
-
-      // Save the report record to Cosmos DB
-      try {
-        await containerReporting.items.upsert(reportRecord);
-      } catch (error) {
-        context.log(
-          `Error upserting item to CosmosDB database: ${databaseName}. container: ${containerNameReporting}. data: ${reportRecord}  ${error.message}`
-        );
-        throw error;
-      }
-
-      // Add the reportRecordId to the order record
-      newOrder.reportRecordId = reportRecord.reportRecordId;
-    }
-
     //========================================================
     //        Save results to Cosmos DB
     //========================================================
-
-    // Transaction record
-    try {
-      await containerTransactions.items.upsert(transactionRecord);
-    } catch (error) {
-      context.log(
-        `Error upserting item to CosmosDB database: ${databaseName}. container: ${containerNameTransactions}. data: ${transactionRecord}  ${error.message}`
-      );
-      throw error;
-    }
 
     // Order record
     try {
@@ -424,8 +305,7 @@ app.http("createOrder", {
 
     responseBody = {
       message: `Ordered successfully created OrderId ${"newOrder.orderId"}`,
-      clientId: transactionRecord.clientId,
-      transactionId: transactionRecord.transactionId,
+      clientId: newOrder.clientId,
       orderId: newOrder.orderId,
       productType: newOrder.productType,
       status: newOrder.status,
@@ -435,14 +315,15 @@ app.http("createOrder", {
       state: newOrder.state,
       zip: newOrder.zip,
       dateCreated: newOrder.dateCreated,
-      numSoldComps:
+      propertyData: responseBatchDataSubject.results.properties,
+      compsDataSold:
         typeof responseBatchDataSoldComps == "object"
-          ? responseBatchDataSoldComps.results.properties.length
-          : 0,
-      numActiveComps:
+          ? responseBatchDataSoldComps.results.properties
+          : [],
+      compsDataActive:
         typeof responseBatchDataActiveComps == "object"
-          ? responseBatchDataActiveComps.results.properties.length
-          : 0,
+          ? responseBatchDataActiveComps.results.properties
+          : [],
     };
 
     return { body: JSON.stringify(responseBody) };
