@@ -5,7 +5,6 @@
    Saves order, BatchData, and comps to Cosmos DB (not transaction)
   ==============================================================================*/
 
-
 const { app } = require("@azure/functions");
 const { CosmosClient, PatchOperation } = require("@azure/cosmos");
 const { DefaultAzureCredential } = require("@azure/identity");
@@ -121,7 +120,7 @@ app.http("getBatchData", {
         };
       }
     }
-   
+
     // Get the max orderId for this clientId
     const maxOrderId = await getMaxId(
       context,
@@ -152,7 +151,6 @@ app.http("getBatchData", {
     newOrder.propertyRecordDate;
     newOrder.compsRecordIds = [];
 
- 
     //=================================================================================
     // Pull BatchData for subejct (lookup) and comps (search)
     // Note: Always pull BatchData for subject property when a new order is created,
@@ -183,6 +181,29 @@ app.http("getBatchData", {
       context,
       batchDataRequestBody
     );
+
+    // If there is no property data returned from BatchData, return the message
+    if (responseBatchDataSubject.results.properties.length == 0) {
+      responseBody = {
+        message: `No subject property data returned from BatchData`,
+        clientId: newOrder.clientId,
+        orderId: newOrder.orderId,
+        productType: newOrder.productType,
+        status: newOrder.status,
+        clientOrderId: newOrder.clientOrderId,
+        streetAddress: newOrder.streetAddress,
+        city: newOrder.city,
+        state: newOrder.state,
+        zip: newOrder.zip,
+        dateCreated: newOrder.dateCreated,
+        propertyData: [],
+        compsDataSold:[],
+        compsDataActive: [],
+      };
+
+      return { body: JSON.stringify(responseBody) };
+    }
+
     newOrder.propertyRecordId =
       responseBatchDataSubject.results.properties[0].propertyRecordId;
     newOrder.fipsCodePlusApn =

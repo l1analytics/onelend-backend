@@ -41,6 +41,11 @@ const lookupBatchData = async (context, batchDataRequestBody) => {
     };
   }
 
+  // If no property data returned from BatchData, return empty array
+  if(responseData.results.properties.length == 0){
+    return responseData;
+  }
+
   //========================================================
   //      Save results to Cosmos DB
   //========================================================
