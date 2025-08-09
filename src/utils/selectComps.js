@@ -192,6 +192,9 @@ const computeValueEstimate = (subjectData, selectedComps) => {
     finalvaluation.confidenceScore = null;
   }
 
+  // Add estimatedValueDate as current date in ISO format
+  finalvaluation.valuationEstimateDate = new Date().toISOString();
+
   return finalvaluation;
 };
 
@@ -199,7 +202,7 @@ const computeValueEstimate = (subjectData, selectedComps) => {
 const selectComps = async (
   subjectDataTemp,
   compsDataTemp,
-  saleTypes = ["Sold", "Active"],
+  saleTypes = ["sold", "active"],
   numCompsRequired = 3
 ) => {
   // Assign comp level to comps data
@@ -252,13 +255,12 @@ const selectComps = async (
     "src/utils/queryCompSelection.txt",
     "utf-8"
   );
-  let selectedComps = { Sold: [], Active: [] };
+  let selectedComps = { sold: [], active: [] };
   const dataFieldsForReporting = ["propertyRecordId", "comp_level"];
 
   for (const saleType of saleTypes) {
-    // const saleType = 'Sold';
     let selectedCompsTemp = [];
-    const compsData = saleType === "Sold" ? soldCompsData : activeCompsData;
+    const compsData = saleType === "sold" ? soldCompsData : activeCompsData;
 
     // Process comp levels
     for (let compLevel = 1; compLevel <= 5; compLevel++) {
@@ -356,7 +358,7 @@ const selectComps = async (
   }
 
   // Compute the final valuation
-  const valuationCompType = "Sold";
+  const valuationCompType = "sold";
   // Get building and valuation data from comps for the selected comps
   selectedComps[valuationCompType].forEach((comp) => {
     const match = compsDataTemp.find(
@@ -380,4 +382,5 @@ const selectComps = async (
 
 module.exports = {
   selectComps,
+  computeValueEstimate
 };

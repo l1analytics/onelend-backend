@@ -4,9 +4,11 @@ const { DefaultAzureCredential } = require("@azure/identity");
 const { postRequest } = require("../utils/sendApiRequests.js");
 const { getMaxId } = require("../utils/getIds.js");
 const { lookupBatchData, searchBatchData } = require("../utils/batchDataApis");
+const { fillCompAnalysis } = require("../utils/fillReportData");
 const { selectComps } = require("../utils/selectComps");
 // const { ordersCreate } = require("./ordersUtils/ordersCreate.js");
 const uuid = require("uuid");
+const { ReportData, SelectedCompData } = require("../data/ReportData");
 
 /*==================================================
         Set up connection to Cosmos DB
@@ -160,7 +162,7 @@ app.http("runOrder", {
     //===========================================================
     //  Run comp selection model
     //===========================================================
-    const salesTypes = ["Sold", "Active"];
+    const salesTypes = ["sold", "active"];
     const selectedComps = await selectComps(
       subjectPropertyData[0],
       compsData,
@@ -180,15 +182,16 @@ app.http("runOrder", {
       query: query_string,
     };
 
-    let reportData;
+    let reporting;
 
+    // Fetch reporting data from Cosmos DB (which is intially created by createOrder API)
     try {
       const { resources: output } = await containerReporting.items
         .query(querySpecReport)
         .fetchAll();
       console.log("Report data successfully retrieved from Cosmos DB.");
       if (typeof output !== "undefined" && output.length > 0) {
-        reportData = output[0]; // Using spread operator to push individual items
+        reporting = output[0]; // Using spread operator to push individual items
       } else {
         context.log(
           `No report data found for requested reportRecordId "${requestBody.reportRecordId}"`
@@ -201,27 +204,37 @@ app.http("runOrder", {
       throw error;
     }
 
-    reportData.valuationEstimate = selectedComps.finalvaluation;
+    // Add valuationEstimate to reporting data
+    reporting.valuationEstimate = selectedComps.finalvaluation;
 
-    // Add selectedCompFlag to reportData.compsData
-    if (reportData.compsData && Array.isArray(reportData.compsData)) {
-      ["Sold", "Active"].forEach((type) => {
+    // Add selectedCompFlag to reporting.compsData
+    let selectedCompsIds = {};
+
+    if (reporting.compsData && Array.isArray(reporting.compsData)) {
+      ["sold", "active"].forEach((type) => {
         if (selectedComps[type] && Array.isArray(selectedComps[type])) {
+          selectedCompsIds[type] = [];
+
           selectedComps[type].forEach((comp, index) => {
-            for (let i = 0; i < reportData.compsData.length; i++) {
+            for (let i = 0; i < reporting.compsData.length; i++) {
               if (
-                reportData.compsData[i].propertyRecordId ===
+                reporting.compsData[i].propertyRecordId ===
                 comp.propertyRecordId
               ) {
-                reportData.compsData[i].selectedCompFlag =
-                  type[0] + String(index + 1);
-                reportData.compsData[i].comp_level = comp.comp_level;
+                reporting.compsData[i].selectedCompFlag =
+                  type[0].toUpperCase() + String(index + 1);
+                reporting.compsData[i].comp_level = comp.comp_level;
+
+                let this_selectedComp = {};
+                this_selectedComp[reporting.compsData[i].selectedCompFlag] =
+                  comp.propertyRecordId;
+                selectedCompsIds[type].push(this_selectedComp);
               } else if (
-                !reportData.compsData[i].selectedCompFlag ||
-                reportData.compsData[i].selectedCompFlag === ""
+                !reporting.compsData[i].selectedCompFlag ||
+                reporting.compsData[i].selectedCompFlag === ""
               ) {
-                reportData.compsData[i].selectedCompFlag = "";
-                reportData.compsData[i].comp_level = null;
+                reporting.compsData[i].selectedCompFlag = "";
+                reporting.compsData[i].comp_level = null;
               }
             }
           });
@@ -229,11 +242,31 @@ app.http("runOrder", {
       });
     }
 
+    // Add selectedCompsIds to valuationEstimate
+    reporting.valuationEstimate.selectedCompsIds = selectedCompsIds;
+    reporting.valuationEstimate.createdBy = "Model";
+    reporting.valuationEstimateByModel = reporting.valuationEstimate;
+
+    //===========================================================
+    //  Fill reportData data fields
+    //===========================================================
+    // Add reportData to reporting. reportData contains all data elements that are used in valuation report
+    let reportData = ReportData;
+    reporting.reportData = reportData;
+
+    // Fill reportData.selectedComps:
+    fillCompAnalysis(reporting);
+
+    reporting.reportDataByModel = reporting.reportData;
+
+    //============================================================
+    // Upsert updated reporting data back to Cosmos DB
+    //============================================================
     try {
-      await containerReporting.items.upsert(reportData);
+      await containerReporting.items.upsert(reporting);
     } catch (error) {
       context.log(
-        `Error upserting item to CosmosDB database: ${databaseName}. container: ${containerNameReporting}. data: ${reportData}  ${error.message}`
+        `Error upserting item to CosmosDB database: ${databaseName}. container: ${containerNameReporting}. data: ${reporting}  ${error.message}`
       );
       throw error;
     }
@@ -241,7 +274,7 @@ app.http("runOrder", {
     //=======================================================================
     //  Save order object in Cosmos DB with updated status & reportRecordId
     //=======================================================================
-    requestBody.status = "Valuation Complete";
+    requestBody.status = "Model Valuation Complete";
     // requestBody.reportRecordId = reportingData.reportRecordId; // Set the reportRecordId to the same value as id
 
     try {
@@ -253,6 +286,6 @@ app.http("runOrder", {
       throw error;
     }
 
-    return { body: JSON.stringify(reportData) };
+    return { body: JSON.stringify(reporting) };
   },
 });
