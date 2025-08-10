@@ -18,44 +18,44 @@ const fillCompAnalysisDataMapping = (
 ) => {
   let reportToFill = SelectedCompData;
 
-  reportToFill.selecteCompType = selecteCompType;
-  reportToFill.selectedCompFlag = selectedCompFlag;
-  reportToFill.percelNumber = propData.ids.apn || null;
-  reportToFill.street = propData.address.street || null;
-  reportToFill.city = propData.address.city || null;
-  reportToFill.state = propData.address.state || null;
-  reportToFill.zip = propData.address.zip || null;
-  reportToFill.latitude = propData.address.latitude || null;
-  reportToFill.longitude = propData.address.longitude || null;
-  reportToFill.lastSalePrice = propData.sale.lastSale.price || null;
-  reportToFill.lastSaleDate = propData.sale.lastSale.saleDate || null;
-  reportToFill.yearBuilt = propData.building.yearBuilt || null;
-  reportToFill.yearBuiltAdj = 0 || null;
-  reportToFill.bed = propData.building.bedroomCount || null;
-  reportToFill.bedAdj = 0 || null;
-  reportToFill.bath = propData.building.calculatedBathroomCount || null;
-  reportToFill.bathAdj = 0 || null;
-  reportToFill.livingArea = propData.building.livingAreaSquareFeet || null;
-  reportToFill.livingAreaAdj = 0 || null;
-  reportToFill.basementArea = propData.building.basementSquareFeet || null;
-  reportToFill.basementAreaAdj = 0 || null;
-  reportToFill.heating = propData.building.heatSource || null;
-  reportToFill.heatingAdj = 0 || null;
-  reportToFill.ac = propData.building.airConditioningSource || null;
-  reportToFill.acAdj = 0 || null;
-  reportToFill.garage =
+  reportToFill.values.selecteCompType = selecteCompType;
+  reportToFill.values.selectedCompFlag = selectedCompFlag;
+  reportToFill.values.percelNumber = propData.ids.apn || null;
+  reportToFill.values.street = propData.address.street || null;
+  reportToFill.values.city = propData.address.city || null;
+  reportToFill.values.state = propData.address.state || null;
+  reportToFill.values.zip = propData.address.zip || null;
+  reportToFill.values.latitude = propData.address.latitude || null;
+  reportToFill.values.longitude = propData.address.longitude || null;
+  reportToFill.values.lastSalePrice = propData.sale.lastSale.price || null;
+  reportToFill.values.lastSaleDate = propData.sale.lastSale.saleDate || null;
+  reportToFill.values.yearBuilt = propData.building.yearBuilt || null;
+  reportToFill.adjustments.yearBuiltAdj = 0 || null;
+  reportToFill.values.bed = propData.building.bedroomCount || null;
+  reportToFill.adjustments.bedAdj = 0 || null;
+  reportToFill.values.bath = propData.building.calculatedBathroomCount || null;
+  reportToFill.adjustments.bathAdj = 0 || null;
+  reportToFill.values.livingArea = propData.building.livingAreaSquareFeet || null;
+  reportToFill.adjustments.livingAreaAdj = 0 || null;
+  reportToFill.values.basementArea = propData.building.basementSquareFeet || null;
+  reportToFill.adjustments.basementAreaAdj = 0 || null;
+  reportToFill.values.heating = propData.building.heatSource || null;
+  reportToFill.adjustments.heatingAdj = 0 || null;
+  reportToFill.values.ac = propData.building.airConditioningSource || null;
+  reportToFill.adjustments.acAdj = 0 || null;
+  reportToFill.values.garage =
     String(propData.building.garageParkingSpaceCount) +
     "/" +
     propData.building.garage;
-  reportToFill.garageAdj = 0 || null;
-  reportToFill.pool = propData.building.pool || null;
-  reportToFill.poolAdj = 0 || null;
-  reportToFill.porch = propData.building.porch || null;
-  reportToFill.porchAdj = 0 || null;
-  reportToFill.patio = propData.building.patio || null;
-  reportToFill.patioAdj = 0 || null;
+  reportToFill.adjustments.garageAdj = 0 || null;
+  reportToFill.values.pool = propData.building.pool || null;
+  reportToFill.adjustments.poolAdj = 0 || null;
+  reportToFill.values.porch = propData.building.porch || null;
+  reportToFill.adjustments.porchAdj = 0 || null;
+  reportToFill.values.patio = propData.building.patio || null;
+  reportToFill.adjustments.patioAdj = 0 || null;
 
-  reportToFill.totalAdj = 0 || null;
+  reportToFill.adjustments.totalAdj = 0 || null;
 
   return reportToFill;
 };
