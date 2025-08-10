@@ -162,7 +162,7 @@ app.http("runOrder", {
     //===========================================================
     //  Run comp selection model
     //===========================================================
-    const salesTypes = ["sold", "active"];
+    const salesTypes = ["sold", "list"];
     const selectedComps = await selectComps(
       subjectPropertyData[0],
       compsData,
@@ -211,7 +211,7 @@ app.http("runOrder", {
     let selectedCompsIds = {};
 
     if (reporting.compsData && Array.isArray(reporting.compsData)) {
-      ["sold", "active"].forEach((type) => {
+      ["sold", "list"].forEach((type) => {
         if (selectedComps[type] && Array.isArray(selectedComps[type])) {
           selectedCompsIds[type] = [];
 

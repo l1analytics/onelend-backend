@@ -7,7 +7,7 @@ const { report } = require("process");
     This function fills the compAnalysis section of reportData in the reporting object
 
     Parameters:
-    selectedCompsIds: selected propertyRecordIds of selected comps (Sold and Active)
+    selectedCompsIds: selected propertyRecordIds of selected comps (Sold and list)
     reporting: reporting object that contains all reporting data, including reportData
   =========================================================================================*/
 
@@ -68,10 +68,10 @@ const fillCompAnalysis = (reporting) => {
     reporting.propertyData
   );
 
-  // Fill in sold and active comps data
+  // Fill in sold and list comps data
   const selectedCompsIds = reporting.valuationEstimate.selectedCompsIds;
 
-  const compTypes = ["sold", "active"];
+  const compTypes = ["sold", "list"];
 
   compTypes.forEach((type) => {
     if (selectedCompsIds[type].length > 0) {
@@ -82,11 +82,11 @@ const fillCompAnalysis = (reporting) => {
         const compData = reporting.compsData.find(
           (obj) => obj.propertyRecordId === selectedComp[compFlag]
         );
-        const filledData = fillCompAnalysisDataMapping(
+        const filledData = JSON.parse(JSON.stringify(fillCompAnalysisDataMapping(
           compFlag,
           compFlag,
           compData
-        );
+        )));
         foundComps.push({ ...filledData });
       }
 

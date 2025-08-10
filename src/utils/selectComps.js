@@ -202,7 +202,7 @@ const computeValueEstimate = (subjectData, selectedComps) => {
 const selectComps = async (
   subjectDataTemp,
   compsDataTemp,
-  saleTypes = ["sold", "active"],
+  saleTypes = ["sold", "list"],
   numCompsRequired = 3
 ) => {
   // Assign comp level to comps data
@@ -235,7 +235,7 @@ const selectComps = async (
 
   // Process comps data
   const soldCompsData = [];
-  const activeCompsData = [];
+  const listCompsData = [];
 
   compsDataTempWithLevels.forEach((comp) => {
     const thisCompsData = {};
@@ -246,7 +246,7 @@ const selectComps = async (
     if (comp.listing.status === "Sold") {
       soldCompsData.push(thisCompsData);
     } else if (["Active", "Pending"].includes(comp.listing.status)) {
-      activeCompsData.push(thisCompsData);
+      listCompsData.push(thisCompsData);
     }
   });
 
@@ -255,12 +255,12 @@ const selectComps = async (
     "src/utils/queryCompSelection.txt",
     "utf-8"
   );
-  let selectedComps = { sold: [], active: [] };
+  let selectedComps = { sold: [], list: [] };
   const dataFieldsForReporting = ["propertyRecordId", "comp_level"];
 
   for (const saleType of saleTypes) {
     let selectedCompsTemp = [];
-    const compsData = saleType === "sold" ? soldCompsData : activeCompsData;
+    const compsData = saleType === "sold" ? soldCompsData : listCompsData;
 
     // Process comp levels
     for (let compLevel = 1; compLevel <= 5; compLevel++) {

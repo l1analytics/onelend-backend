@@ -280,7 +280,7 @@ app.http("createOrder", {
 
     // Purse comps options in request body
     // Default number of comps is 20.
-    // Default compType is "Both" (ie, both Sold and Active comps). 20 Sold comps and 20 Active comps
+    // Default compType is "Both" (ie, both Sold and List comps). 20 Sold comps and 20 List comps
     let numComps = 20;
     let compType = "Both";
     if (requestBody.compsOptions && requestBody.compsOptions.numComps) {
@@ -343,7 +343,7 @@ app.http("createOrder", {
 
     // Pull active comps
     let responseBatchDataActiveComps;
-    if (compType === "Active" || compType === "Both") {
+    if (compType === "List" || compType === "Both") {
       batchDataRequestBodyComps.searchCriteria.listing = {
         listing: {
           status: { inList: ["Active", "Pending"] },

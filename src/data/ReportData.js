@@ -1,5 +1,5 @@
 const ReportData = {
-  compAnalysis: { subject: {}, sold: [], active: [] },
+  compAnalysis: { subject: {}, sold: [], list: [] },
   orderInformation: {},
   propertyInformation: {},
   neighborhoodInformation: {},
