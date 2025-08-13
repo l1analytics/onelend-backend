@@ -192,6 +192,10 @@ const computeValueEstimate = (subjectData, selectedComps) => {
     finalvaluation.confidenceScore = null;
   }
 
+  // Add As-Repair value and rehab estimate
+  finalvaluation.estimatedValueAsRepair = finalvaluation.estimatedValue;
+  finalvaluation.repairEstimate = 0; // Assuming no rehab
+
   // Add estimatedValueDate as current date in ISO format
   finalvaluation.valuationEstimateDate = new Date().toISOString();
 
