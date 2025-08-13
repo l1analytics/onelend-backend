@@ -196,6 +196,10 @@ const computeValueEstimate = (subjectData, selectedComps) => {
   finalvaluation.estimatedValueAsRepair = finalvaluation.estimatedValue;
   finalvaluation.repairEstimate = 0; // Assuming no rehab
 
+  // Add marketingTime and fairMarketMonthlyRent. TODO HH: Need to make these values dynamic
+  finalvaluation.marketingTime = 60;
+  finalvaluation.fairMarketMonthlyRent = 2800; // Assuming no rehab
+
   // Add estimatedValueDate as current date in ISO format
   finalvaluation.valuationEstimateDate = new Date().toISOString();
 
