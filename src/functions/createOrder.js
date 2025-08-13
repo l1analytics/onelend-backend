@@ -276,7 +276,7 @@ app.http("createOrder", {
     const today = new Date();
     const lastYear = new Date(today.getTime() - 365 * 24 * 60 * 60 * 1000);
     const compStartDate = lastYear.toISOString().split("T")[0];
-    const maxDaysOnMarket = 365; // Maximum days on market for active comps
+    const maxDaysOnMarket = 730; // Maximum days on market for active comps
 
     // Purse comps options in request body
     // Default number of comps is 20.
