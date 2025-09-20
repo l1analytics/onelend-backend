@@ -219,7 +219,7 @@ const computeValueEstimate = (compAnalysis) => {
   selectedComps.forEach((comp) => {
     if (
       comp.valuation &&
-      comp.building.livingAreaSquareFeet &&
+      // comp.building.livingAreaSquareFeet &&
       !isNaN(comp.values.livingArea)
     ) {
       // Get AVM value

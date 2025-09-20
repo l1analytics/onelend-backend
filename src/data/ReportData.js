@@ -6,6 +6,7 @@ const ReportData = {
 };
 
 const SelectedCompData = {
+  propertyRecordId: null,
   values: {
     selectedCompType: null,
     selectedCompFlag: null,

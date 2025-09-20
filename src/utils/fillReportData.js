@@ -18,6 +18,7 @@ const fillCompAnalysisDataMapping = (
 ) => {
   let reportToFill = SelectedCompData;
 
+  reportToFill.propertyRecordId = propData.propertyRecordId || null;
   reportToFill.values.selecteCompType = selecteCompType;
   reportToFill.values.selectedCompFlag = selectedCompFlag;
   reportToFill.values.percelNumber = propData.ids.apn || null;
@@ -59,12 +60,13 @@ const fillCompAnalysisDataMapping = (
 
   reportToFill.adjustments.totalAdj = 0;
 
-  reportToFill.avm = propData?.valuation;
+  // reportToFill.avm = propData?.valuation;
+  reportToFill.valuation = propData?.valuation;
 
   return reportToFill;
 };
 
-const fillCompAnalysis = (reporting) => {
+const fillCompAnalysis = (reporting, selectedCompsIds) => {
   // Fill in subject property data
   reporting.reportData.compAnalysis.subject = JSON.parse(
           JSON.stringify(fillCompAnalysisDataMapping(
@@ -74,7 +76,7 @@ const fillCompAnalysis = (reporting) => {
   )));
 
   // Fill in sold and list comps data
-  const selectedCompsIds = reporting.valuationEstimate.selectedCompsIds;
+  // const selectedCompsIds = reporting.valuationEstimate.selectedCompsIds;
 
   const compTypes = ["sold", "list"];
 

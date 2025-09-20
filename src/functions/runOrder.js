@@ -250,7 +250,7 @@ app.http("runOrder", {
     reporting.reportData = reportData;
 
     // Fill reportData.selectedComps:
-    fillCompAnalysis(reporting);
+    fillCompAnalysis(reporting, selectedCompsIds);
 
     //===========================================================
     //  Calculate final valuation
