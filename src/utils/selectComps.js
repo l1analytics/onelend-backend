@@ -102,7 +102,7 @@ const assignCompLevel = (compData, subjectData) => {
   return compData;
 };
 
-const computeValueEstimate = (subjectData, selectedComps) => {
+const computeValueEstimate_original = (subjectData, selectedComps) => {
   const subjectGla = subjectData.building.livingAreaSquareFeet;
   let compsPricePerSqft = [];
   let compsPricePerSqftMin = [];
@@ -141,6 +141,112 @@ const computeValueEstimate = (subjectData, selectedComps) => {
       ) {
         compsPricePerSqftMax.push(
           comp.valuation.priceRangeMax / comp.building.livingAreaSquareFeet
+        );
+      }
+      // Get confidence score
+      if (
+        typeof comp.valuation.confidenceScore === "number" &&
+        !isNaN(comp.valuation.confidenceScore)
+      ) {
+        compsConfScore.push(comp.valuation.confidenceScore);
+      }
+    }
+  });
+
+  // Calculate final valuation
+  if (compsPricePerSqft.length > 0) {
+    const avgPricePerSqft =
+      compsPricePerSqft.reduce((a, b) => a + b, 0) / compsPricePerSqft.length;
+    finalvaluation.estimatedValue = avgPricePerSqft * subjectGla;
+    finalvaluation.estimatedValue = finalvaluation.estimatedValue.toFixed(2); // Round to 2 decimal places
+  } else {
+    finalvaluation.estimatedValue = null;
+  }
+  // Caculate lower bound valuation
+  if (compsPricePerSqftMin.length > 0) {
+    const avgPricePerSqftMin =
+      compsPricePerSqftMin.reduce((a, b) => a + b, 0) /
+      compsPricePerSqftMin.length;
+    finalvaluation.lowerBound = avgPricePerSqftMin * subjectGla;
+    finalvaluation.lowerBound = finalvaluation.lowerBound.toFixed(2); // Round to 2 decimal places
+  } else {
+    finalvaluation.lowerBound = null;
+  }
+  // Caculate upper bound valuation
+  if (compsPricePerSqftMax.length > 0) {
+    const avgPricePerSqftMax =
+      compsPricePerSqftMax.reduce((a, b) => a + b, 0) /
+      compsPricePerSqftMax.length;
+    finalvaluation.upperBound = avgPricePerSqftMax * subjectGla;
+    finalvaluation.upperBound = finalvaluation.upperBound.toFixed(2); // Round to 2 decimal places
+  } else {
+    finalvaluation.upperBound = null;
+  }
+
+  // Caculate confidence score
+  if (compsConfScore.length > 0) {
+    finalvaluation.confidenceScore =
+      compsConfScore.reduce((a, b) => a + b, 0) / compsConfScore.length;
+    finalvaluation.confidenceScore = finalvaluation.confidenceScore.toFixed(2); // Round to 2 decimal places
+  } else {
+    finalvaluation.confidenceScore = null;
+  }
+
+  // Add As-Repair value and rehab estimate
+  finalvaluation.estimatedValueAsRepair = finalvaluation.estimatedValue;
+  finalvaluation.repairEstimate = 0; // Assuming no rehab
+
+  // Add marketingTime and fairMarketMonthlyRent. TODO HH: Need to make these values dynamic
+  finalvaluation.marketingTime = 60;
+  finalvaluation.fairMarketMonthlyRent = 2800; // Assuming no rehab
+
+  // Add estimatedValueDate as current date in ISO format
+  finalvaluation.valuationEstimateDate = new Date().toISOString();
+
+  return finalvaluation;
+};
+
+const computeValueEstimate = (compAnalysis) => {
+  const subjectData = compAnalysis.subject; 
+  const selectedComps = compAnalysis.sold;
+  const subjectGla = subjectData.values.livingArea;
+  let compsPricePerSqft = [];
+  let compsPricePerSqftMin = [];
+  let compsPricePerSqftMax = [];
+  let compsConfScore = [];
+  let finalvaluation = {};
+
+  selectedComps.forEach((comp) => {
+    if (
+      comp.valuation &&
+      comp.building.livingAreaSquareFeet &&
+      !isNaN(comp.values.livingArea)
+    ) {
+      // Get AVM value
+      if (
+        typeof comp.valuation.estimatedValue === "number" &&
+        !isNaN(comp.valuation.estimatedValue)
+      ) {
+        compsPricePerSqft.push(
+          comp.valuation.estimatedValue / comp.values.livingArea
+        );
+      }
+      // Get Minimum AVM value
+      if (
+        typeof comp.valuation.priceRangeMin === "number" &&
+        !isNaN(comp.valuation.priceRangeMin)
+      ) {
+        compsPricePerSqftMin.push(
+          comp.valuation.priceRangeMin / comp.values.livingArea
+        );
+      }
+      // Get Maximum AVM value
+      if (
+        typeof comp.valuation.priceRangeMax === "number" &&
+        !isNaN(comp.valuation.priceRangeMax)
+      ) {
+        compsPricePerSqftMax.push(
+          comp.valuation.priceRangeMax / comp.values.livingArea
         );
       }
       // Get confidence score
@@ -379,16 +485,17 @@ const selectComps = async (
     }
   });
 
-  const finalvaluation = computeValueEstimate(
-    subjectData,
-    selectedComps[valuationCompType]
-  );
-  selectedComps.finalvaluation = finalvaluation;
+  // TODO HH: maybe take this out of selectComps. Do this in runOrder so that adjustments are available
+  // const finalvaluation = computeValueEstimate(
+  //   subjectData,
+  //   selectedComps[valuationCompType]
+  // );
+  // selectedComps.finalvaluation = finalvaluation;
 
   return selectedComps;
 };
 
 module.exports = {
   selectComps,
-  computeValueEstimate
+  computeValueEstimate,
 };
