@@ -18,88 +18,72 @@ const fillCompAnalysisDataMapping = (
 ) => {
   let reportToFill = SelectedCompData;
 
-  reportToFill.propertyRecordId = propData.propertyRecordId || null;
-  reportToFill.values.selecteCompType = selecteCompType;
-  reportToFill.values.selectedCompFlag = selectedCompFlag;
-  reportToFill.values.percelNumber = propData.ids.apn || null;
-  reportToFill.values.street = propData.address.street || null;
-  reportToFill.values.city = propData.address.city || null;
-  reportToFill.values.state = propData.address.state || null;
-  reportToFill.values.zip = propData.address.zip || null;
-  reportToFill.values.latitude = propData.address.latitude || null;
-  reportToFill.values.longitude = propData.address.longitude || null;
-  reportToFill.values.lastSalePrice = propData.sale.lastSale.price || null;
-  reportToFill.values.lastSaleDate = propData.sale.lastSale.saleDate || null;
-  reportToFill.values.yearBuilt = propData.building.yearBuilt || null;
+  reportToFill.dataValues.selecteCompType = selecteCompType;
+  reportToFill.dataValues.selectedCompFlag = selectedCompFlag;
+  reportToFill.dataValues.percelNumber = propData.ids.apn || null;
+  reportToFill.dataValues.street = propData.address.street || null;
+  reportToFill.dataValues.city = propData.address.city || null;
+  reportToFill.dataValues.state = propData.address.state || null;
+  reportToFill.dataValues.zip = propData.address.zip || null;
+  reportToFill.dataValues.latitude = propData.address.latitude || null;
+  reportToFill.dataValues.longitude = propData.address.longitude || null;
+  reportToFill.dataValues.lastSalePrice = propData.sale.lastSale.price || null;
+  reportToFill.dataValues.lastSaleDate = propData.sale.lastSale.saleDate || null;
+  reportToFill.dataValues.yearBuilt = propData.building.yearBuilt || null;
   reportToFill.adjustments.yearBuiltAdj = 0;
-  reportToFill.values.bed = propData.building.bedroomCount || null;
+  reportToFill.dataValues.bed = propData.building.bedroomCount || null;
   reportToFill.adjustments.bedAdj = 0;
-  reportToFill.values.bath = propData.building.calculatedBathroomCount || null;
+  reportToFill.dataValues.bath = propData.building.calculatedBathroomCount || null;
   reportToFill.adjustments.bathAdj = 0;
-  reportToFill.values.livingArea =
+  reportToFill.dataValues.livingArea =
     propData.building.livingAreaSquareFeet || null;
   reportToFill.adjustments.livingAreaAdj = 0;
-  reportToFill.values.basementArea =
+  reportToFill.dataValues.basementArea =
     propData.building.basementSquareFeet || null;
   reportToFill.adjustments.basementAreaAdj = 0;
-  reportToFill.values.heating = propData.building.heatSource || null;
+  reportToFill.dataValues.heating = propData.building.heatSource || null;
   reportToFill.adjustments.heatingAdj = 0;
-  reportToFill.values.ac = propData.building.airConditioningSource || null;
+  reportToFill.dataValues.ac = propData.building.airConditioningSource || null;
   reportToFill.adjustments.acAdj = 0;
-  reportToFill.values.garage =
+  reportToFill.dataValues.garage =
     String(propData.building.garageParkingSpaceCount) +
     "/" +
     propData.building.garage;
   reportToFill.adjustments.garageAdj = 0;
-  reportToFill.values.pool = propData.building.pool || null;
+  reportToFill.dataValues.pool = propData.building.pool || null;
   reportToFill.adjustments.poolAdj = 0;
-  reportToFill.values.porch = propData.building.porch || null;
+  reportToFill.dataValues.porch = propData.building.porch || null;
   reportToFill.adjustments.porchAdj = 0;
-  reportToFill.values.patio = propData.building.patio || null;
+  reportToFill.dataValues.patio = propData.building.patio || null;
   reportToFill.adjustments.patioAdj = 0;
 
   reportToFill.adjustments.totalAdj = 0;
 
   // reportToFill.avm = propData?.valuation;
-  reportToFill.valuation = propData?.valuation;
+  // reportToFill.valuation = propData?.valuation;
 
   return reportToFill;
 };
 
 const fillCompAnalysis = (reporting, selectedCompsIds) => {
-  // Fill in subject property data
-  reporting.reportData.compAnalysis.subject = JSON.parse(
-          JSON.stringify(fillCompAnalysisDataMapping(
-    "Subject",
-    "Subject",
-    reporting.propertyData
-  )));
+  // Create compAnalysis to subject property data (propertyData)
+  reporting.propertyData.compAnalysis = JSON.parse(
+    JSON.stringify(
+      fillCompAnalysisDataMapping("Subject", "Subject", reporting.propertyData)
+    )
+  );
 
-  // Fill in sold and list comps data
-  // const selectedCompsIds = reporting.valuationEstimate.selectedCompsIds;
-
-  const compTypes = ["sold", "list"];
-
-  compTypes.forEach((type) => {
-    if (selectedCompsIds[type].length > 0) {
-      const foundComps = [];
-      for (let i = 0; i < selectedCompsIds[type].length; i++) {
-        const selectedComp = selectedCompsIds[type][i];
-        const compFlag = Object.keys(selectedComp)[0];
-        const compData = reporting.compsData.find(
-          (obj) => obj.propertyRecordId === selectedComp[compFlag]
-        );
-        const filledData = JSON.parse(
-          JSON.stringify(
-            fillCompAnalysisDataMapping(compFlag, compFlag, compData)
-          )
-        );
-        foundComps.push({ ...filledData });
-      }
-
-      // reporting.reportData.compAnalysis[type].push([...foundComps]);
-      reporting.reportData.compAnalysis[type] = foundComps;
-    }
+  // Create compAnalysis to each comp data
+  reporting.compsData.forEach((comp) => {
+    comp.compAnalysis = JSON.parse(
+      JSON.stringify(
+        fillCompAnalysisDataMapping(
+          comp.selectedCompFlag,
+          comp.selectedCompFlag,
+          comp
+        )
+      )
+    );
   });
 
   return reporting;

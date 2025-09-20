@@ -1,13 +1,12 @@
 const ReportData = {
-  compAnalysis: { subject: {}, sold: [], list: [] },
+  // compAnalysis: { subject: {}, sold: [], list: [] },
   orderInformation: {},
   propertyInformation: {},
   neighborhoodInformation: {},
 };
 
 const SelectedCompData = {
-  propertyRecordId: null,
-  values: {
+  dataValues: {
     selectedCompType: null,
     selectedCompFlag: null,
     percelNumber: null,

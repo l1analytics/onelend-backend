@@ -206,27 +206,21 @@ const computeValueEstimate_original = (subjectData, selectedComps) => {
   return finalvaluation;
 };
 
-const computeValueEstimate = (reporting) => {
-  const subjectData = reporting.propertyData.compAnalysis; 
-  // const selectedComps = compAnalysis.sold;
-  const subjectGla = subjectData.dataValues.livingArea;
+const computeValueEstimate = (compAnalysis) => {
+  const subjectData = compAnalysis.subject; 
+  const selectedComps = compAnalysis.sold;
+  const subjectGla = subjectData.values.livingArea;
   let compsPricePerSqft = [];
   let compsPricePerSqftMin = [];
   let compsPricePerSqftMax = [];
   let compsConfScore = [];
   let finalvaluation = {};
 
-  reporting.compsData.forEach((comp) => {
-
-    // Compute value based only on SOLD comps
-    if(comp.selectedCompFlag === "" || comp.selectedCompFlag === "Subject" || comp.selectedCompFlag.startsWith("L")) {
-      return;
-    }
-
+  selectedComps.forEach((comp) => {
     if (
       comp.valuation &&
       // comp.building.livingAreaSquareFeet &&
-      !isNaN(comp.compAnalysis.dataValues.livingArea)
+      !isNaN(comp.values.livingArea)
     ) {
       // Get AVM value
       if (
@@ -234,7 +228,7 @@ const computeValueEstimate = (reporting) => {
         !isNaN(comp.valuation.estimatedValue)
       ) {
         compsPricePerSqft.push(
-          comp.valuation.estimatedValue / comp.compAnalysis.dataValues.livingArea
+          comp.valuation.estimatedValue / comp.values.livingArea
         );
       }
       // Get Minimum AVM value
@@ -243,7 +237,7 @@ const computeValueEstimate = (reporting) => {
         !isNaN(comp.valuation.priceRangeMin)
       ) {
         compsPricePerSqftMin.push(
-          comp.valuation.priceRangeMin / comp.compAnalysis.dataValues.livingArea
+          comp.valuation.priceRangeMin / comp.values.livingArea
         );
       }
       // Get Maximum AVM value
@@ -252,7 +246,7 @@ const computeValueEstimate = (reporting) => {
         !isNaN(comp.valuation.priceRangeMax)
       ) {
         compsPricePerSqftMax.push(
-          comp.valuation.priceRangeMax / comp.compAnalysis.dataValues.livingArea
+          comp.valuation.priceRangeMax / comp.values.livingArea
         );
       }
       // Get confidence score
