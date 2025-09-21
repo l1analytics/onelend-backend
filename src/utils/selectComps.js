@@ -230,7 +230,7 @@ const computeValueEstimate = (reporting) => {
     ) {
       // Get Total Adjustment Value for this comp
       let totalAdj = 0;
-      totalAdj = comp?.compAnalysis?.adjustments?.totalAdj ?? totalAdj;
+      totalAdj = Number(comp?.compAnalysis?.adjustments?.totalAdj ?? totalAdj);
 
       // Get AVM value
       if (
