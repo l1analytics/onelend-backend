@@ -228,13 +228,17 @@ const computeValueEstimate = (reporting) => {
       // comp.building.livingAreaSquareFeet &&
       !isNaN(comp.compAnalysis.dataValues.livingArea)
     ) {
+      // Get Total Adjustment Value for this comp
+      let totalAdj = 0;
+      totalAdj = comp?.compAnalysis?.adjustments?.totalAdj ?? totalAdj;
+
       // Get AVM value
       if (
         typeof comp.valuation.estimatedValue === "number" &&
         !isNaN(comp.valuation.estimatedValue)
       ) {
         compsPricePerSqft.push(
-          comp.valuation.estimatedValue / comp.compAnalysis.dataValues.livingArea
+          (comp.valuation.estimatedValue + totalAdj) / comp.compAnalysis.dataValues.livingArea
         );
       }
       // Get Minimum AVM value
@@ -243,7 +247,7 @@ const computeValueEstimate = (reporting) => {
         !isNaN(comp.valuation.priceRangeMin)
       ) {
         compsPricePerSqftMin.push(
-          comp.valuation.priceRangeMin / comp.compAnalysis.dataValues.livingArea
+          (comp.valuation.priceRangeMin + totalAdj) / comp.compAnalysis.dataValues.livingArea
         );
       }
       // Get Maximum AVM value
@@ -252,7 +256,7 @@ const computeValueEstimate = (reporting) => {
         !isNaN(comp.valuation.priceRangeMax)
       ) {
         compsPricePerSqftMax.push(
-          comp.valuation.priceRangeMax / comp.compAnalysis.dataValues.livingArea
+          (comp.valuation.priceRangeMax + totalAdj) / comp.compAnalysis.dataValues.livingArea
         );
       }
       // Get confidence score
