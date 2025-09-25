@@ -237,11 +237,11 @@ app.http("getOrder", {
     if (requestedOrderIds.length === 0) {
       query_string = `SELECT * FROM f where f.clientId IN (${requestedClientIds.join(
         ","
-      )})`;
+      )}) and f.productType not in ("Property Data")`;
     } else {
       query_string = `SELECT * FROM f where f.clientId IN (${requestedClientIds.join(
         ","
-      )}) and f.orderId IN (${requestedOrderIds.join(",")})`;
+      )}) and f.orderId IN (${requestedOrderIds.join(",")}) and f.productType not in ("Property Data")`;
     }
     const querySpec = {
       query: query_string,
