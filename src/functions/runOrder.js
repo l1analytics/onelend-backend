@@ -45,6 +45,8 @@ app.http("runOrder", {
   handler: async (request, context) => {
     context.log(`Http function processed request for url "${request.url}"`);
 
+    let returnMessage = "";
+
     if (!request.body) {
       const error_message = JSON.stringify({
         error: "Request body is required",
@@ -111,7 +113,7 @@ app.http("runOrder", {
       }
     } catch (error) {
       context.log(
-        `Error: failed to pull requested property data. ${error.message}`
+        `Error: failed to pull requested property data from Cosmos DB. ${error.message}`
       );
       throw error;
     }
@@ -120,40 +122,45 @@ app.http("runOrder", {
     let query_string_comps;
 
     if (requestBody.compsRecordIds.length === 0) {
-      return {
-        status: 500,
-        body: `No comps (compsRecordIds) found for this order: clientId: ${requestBody.clientId} orderId: ${requestBody.orderId}.`,
-      };
+      // return {
+      //   status: 500,
+      //   body: `No comps (compsRecordIds) found for this order: clientId: ${requestBody.clientId} orderId: ${requestBody.orderId}.`,
+      // };
+      returnMessage += "No comps (compsRecordIds) found for this order. ";
+      context.log(returnMessage);
     } else {
       query_string_comps = `SELECT * FROM f where f.id IN ('${requestBody.compsRecordIds.join(
         "','"
       )}')`;
     }
 
-    const querySpecComps = {
-      query: query_string_comps,
-    };
+    let compsData = [];
 
-    let compsData;
+    // Pull comps data from Cosmos DB only if requestBody.compsRecordIds.length > 0
+    if (requestBody.compsRecordIds.length > 0) {
+      const querySpecComps = {
+        query: query_string_comps,
+      };
 
-    try {
-      const { resources: output } = await containerComps.items
-        .query(querySpecComps)
-        .fetchAll();
-      console.log("Comps data successfully retrieved from Cosmos DB.");
+      try {
+        const { resources: output } = await containerComps.items
+          .query(querySpecComps)
+          .fetchAll();
+        console.log("Comps data successfully retrieved from Cosmos DB.");
 
-      if (output) {
-        compsData = output; // Using spread operator to push individual items
-      } else {
+        if (output) {
+          compsData = output; // Using spread operator to push individual items
+        } else {
+          context.log(
+            `No comps data found for requested clientId: ${requestBody.clientId} orderId: ${requestBody.orderId}`
+          );
+        }
+      } catch (error) {
         context.log(
-          `No comps data found for requested clientId: ${requestBody.clientId} orderId: ${requestBody.orderId}`
+          `Error: failed to pull requested comps data. ${error.message}`
         );
+        throw error;
       }
-    } catch (error) {
-      context.log(
-        `Error: failed to pull requested comps data. ${error.message}`
-      );
-      throw error;
     }
 
     console.log(`Number of Subject Prop Data: ${subjectPropertyData.length}`);
@@ -162,13 +169,17 @@ app.http("runOrder", {
     //===========================================================
     //  Run comp selection model
     //===========================================================
-    const salesTypes = ["sold", "list"];
-    const selectedComps = await selectComps(
-      subjectPropertyData[0],
-      compsData,
-      salesTypes,
-      3
-    );
+    let selectedComps = {};
+
+    if (requestBody.compsRecordIds.length > 0) {
+      const salesTypes = ["sold", "list"];
+      selectedComps = await selectComps(
+        subjectPropertyData[0],
+        compsData,
+        salesTypes,
+        3
+      );
+    }
 
     //===========================================================
     //  Update report with selected comps in Cosmos DB
@@ -210,7 +221,11 @@ app.http("runOrder", {
     // Add selectedCompFlag to reporting.compsData
     let selectedCompsIds = {};
 
-    if (reporting.compsData && Array.isArray(reporting.compsData)) {
+    if (
+      reporting.compsData &&
+      reporting.compsData.length > 0 &&
+      Array.isArray(reporting.compsData)
+    ) {
       ["sold", "list"].forEach((type) => {
         if (selectedComps[type] && Array.isArray(selectedComps[type])) {
           selectedCompsIds[type] = [];
@@ -302,6 +317,8 @@ app.http("runOrder", {
       throw error;
     }
 
-    return { body: JSON.stringify(reporting) };
+    context.log(`Order processed successfully for orderRecordId ${reporting.orderRecordId}.`);
+
+    return { body: JSON.stringify(reporting), status: 200 };
   },
 });
