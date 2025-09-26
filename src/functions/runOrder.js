@@ -122,7 +122,7 @@ app.http("runOrder", {
     if (requestBody.compsRecordIds.length === 0) {
       return {
         status: 500,
-        body: `No compsRecordIds found for this order: clientId: ${requestBody.clientId} orderId: ${requestBody.orderId}.`,
+        body: `No comps (compsRecordIds) found for this order: clientId: ${requestBody.clientId} orderId: ${requestBody.orderId}.`,
       };
     } else {
       query_string_comps = `SELECT * FROM f where f.id IN ('${requestBody.compsRecordIds.join(

@@ -25,7 +25,7 @@ var client = new CosmosClient({
 const database = client.database(databaseName);
 const containerReporting = database.container(containerNameReporting);
 
-app.http("runDynamicAvm", {
+app.http("runInteractiveAvm", {
   methods: ["POST"],
   authLevel: "anonymous",
   // route: "createOrder",
