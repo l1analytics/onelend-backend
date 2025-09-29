@@ -207,7 +207,7 @@ const computeValueEstimate_original = (subjectData, selectedComps) => {
 };
 
 const computeValueEstimate = (compAnalysis) => {
-  const subjectData = compAnalysis.subject; 
+  const subjectData = compAnalysis.subject;
   const selectedComps = compAnalysis.sold;
   const subjectGla = subjectData.values.livingArea;
   let compsPricePerSqft = [];
@@ -299,8 +299,11 @@ const computeValueEstimate = (compAnalysis) => {
   }
 
   // Add As-Repair value and rehab estimate
-  finalvaluation.estimatedValueAsRepair = finalvaluation.estimatedValue;
-  finalvaluation.repairEstimate = 0; // Assuming no rehab
+  finalvaluation.repairEstimate = 55000; // Assuming no rehab
+  finalvaluation.estimatedValueAsRepair = (
+    (finalvaluation.estimatedValue + finalvaluation.repairEstimate) *
+    1.15
+  ).toFixed(2);
 
   // Add marketingTime and fairMarketMonthlyRent. TODO HH: Need to make these values dynamic
   finalvaluation.marketingTime = 60;

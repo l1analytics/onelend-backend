@@ -207,7 +207,7 @@ const computeValueEstimate_original = (subjectData, selectedComps) => {
 };
 
 const computeValueEstimate = (reporting) => {
-  const subjectData = reporting.propertyData.compAnalysis; 
+  const subjectData = reporting.propertyData.compAnalysis;
   // const selectedComps = compAnalysis.sold;
   const subjectGla = subjectData.dataValues.livingArea;
   let compsPricePerSqft = [];
@@ -217,9 +217,12 @@ const computeValueEstimate = (reporting) => {
   let finalvaluation = {};
 
   reporting.compsData.forEach((comp) => {
-
     // Compute value based only on SOLD comps
-    if(comp.selectedCompFlag === "" || comp.selectedCompFlag === "Subject" || comp.selectedCompFlag.startsWith("L")) {
+    if (
+      comp.selectedCompFlag === "" ||
+      comp.selectedCompFlag === "Subject" ||
+      comp.selectedCompFlag.startsWith("L")
+    ) {
       return;
     }
 
@@ -238,7 +241,8 @@ const computeValueEstimate = (reporting) => {
         !isNaN(comp.valuation.estimatedValue)
       ) {
         compsPricePerSqft.push(
-          (comp.valuation.estimatedValue + totalAdj) / comp.compAnalysis.dataValues.livingArea
+          (comp.valuation.estimatedValue + totalAdj) /
+            comp.compAnalysis.dataValues.livingArea
         );
       }
       // Get Minimum AVM value
@@ -247,7 +251,8 @@ const computeValueEstimate = (reporting) => {
         !isNaN(comp.valuation.priceRangeMin)
       ) {
         compsPricePerSqftMin.push(
-          (comp.valuation.priceRangeMin + totalAdj) / comp.compAnalysis.dataValues.livingArea
+          (comp.valuation.priceRangeMin + totalAdj) /
+            comp.compAnalysis.dataValues.livingArea
         );
       }
       // Get Maximum AVM value
@@ -256,7 +261,8 @@ const computeValueEstimate = (reporting) => {
         !isNaN(comp.valuation.priceRangeMax)
       ) {
         compsPricePerSqftMax.push(
-          (comp.valuation.priceRangeMax + totalAdj) / comp.compAnalysis.dataValues.livingArea
+          (comp.valuation.priceRangeMax + totalAdj) /
+            comp.compAnalysis.dataValues.livingArea
         );
       }
       // Get confidence score
@@ -309,8 +315,11 @@ const computeValueEstimate = (reporting) => {
   }
 
   // Add As-Repair value and rehab estimate
-  finalvaluation.estimatedValueAsRepair = finalvaluation.estimatedValue;
-  finalvaluation.repairEstimate = 0; // Assuming no rehab
+  finalvaluation.repairEstimate = 55000; // Assuming no rehab
+  finalvaluation.estimatedValueAsRepair = (
+    (finalvaluation.estimatedValue + finalvaluation.repairEstimate) *
+    1.15
+  ).toFixed(2);
 
   // Add marketingTime and fairMarketMonthlyRent. TODO HH: Need to make these values dynamic
   finalvaluation.marketingTime = 60;
