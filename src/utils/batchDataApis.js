@@ -42,7 +42,7 @@ const lookupBatchData = async (context, batchDataRequestBody) => {
   }
 
   // If no property data returned from BatchData, return empty array
-  if(responseData.results.properties.length == 0){
+  if (responseData.results.properties.length == 0) {
     return responseData;
   }
 
@@ -106,6 +106,7 @@ const searchBatchData = async (
   }
 
   let responseData;
+  let fetchedActualData;
 
   let requestBody = batchDataRequestBody;
   const requestedNumComps = requestBody.options.take;
@@ -144,7 +145,7 @@ const searchBatchData = async (
     if (responseData.results.meta.results.resultsFound >= requestedNumComps) {
       requestBody.options.take = requestedNumComps;
       try {
-        responseData = await postRequest(
+        fetchedActualData = await postRequest(
           context,
           endpointBatchData + "property/search",
           requestBody,
@@ -170,9 +171,41 @@ const searchBatchData = async (
       }
 
       requestedNumCompsFound = true;
-      
     } else {
       requestBody.options.distanceMiles += 0.5;
+    }
+  }
+
+  // If no property data returned from BatchData, return empty array
+  if (
+    !fetchedActualData ||
+    responseData.results.meta.results.resultsFound > 0
+  ) {
+    requestBody.options.take = requestedNumComps;
+    try {
+      fetchedActualData = await postRequest(
+        context,
+        endpointBatchData + "property/search",
+        requestBody,
+        {
+          headers: {
+            Accept: "application/json, application/xml",
+            Authorization: "Bearer " + keyBatchData,
+          },
+        }
+      );
+    } catch (error) {
+      context.log(
+        `Batch Data API request (search) failed for request body: ${batchDataRequestBody}: `,
+        error
+      );
+      return {
+        status: 502,
+        body: JSON.stringify({
+          error: "Failed to retrieve data from Batch Data API (search)",
+          details: error.message,
+        }),
+      };
     }
   }
 
@@ -202,7 +235,7 @@ const searchBatchData = async (
   const latSubject = batchDataPropertySubject?.address?.latitude;
 
   await Promise.all(
-    responseData.results.properties.map((resultItem) => {
+    fetchedActualData.results.properties.map((resultItem) => {
       // container.items.create(itemDef)
       resultItem.id = uuid.v4(); // Generate a new UUID for the item
       resultItem.propertyRecordId = resultItem.id;
@@ -229,7 +262,7 @@ const searchBatchData = async (
     })
   );
 
-  return responseData;
+  return fetchedActualData;
 };
 
 const calculateDistance = (lat1, lon1, lat2, lon2, inMiles = false) => {

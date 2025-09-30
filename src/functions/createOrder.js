@@ -6,6 +6,8 @@ const { getMaxId } = require("../utils/getIds.js");
 const { lookupBatchData, searchBatchData } = require("../utils/batchDataApis");
 // const { ordersCreate } = require("./ordersUtils/ordersCreate.js");
 const uuid = require("uuid");
+const fs = require("fs");
+const path = require("path");
 
 /*==================================================
         Set up connection to Cosmos DB
@@ -367,6 +369,34 @@ app.http("createOrder", {
       }
     }
 
+    // Temporary!! For Debugging Purposes!!
+    // Save batch data responses as JSON files locally
+    /*
+    try {
+      // Create a directory for batch data if it doesn't exist
+      const batchDataDir = path.join(__dirname, 'batch-data');
+      if (!fs.existsSync(batchDataDir)) {
+      fs.mkdirSync(batchDataDir, { recursive: true });
+      }
+      
+      // Save sold comps data if it exists
+      if (responseBatchDataSoldComps) {
+      const soldCompsFilePath = path.join(batchDataDir, `sold-comps-${newOrder.orderId}-${Date.now()}.json`);
+      fs.writeFileSync(soldCompsFilePath, JSON.stringify(responseBatchDataSoldComps, null, 2));
+      context.log(`Saved sold comps data to: ${soldCompsFilePath}`);
+      }
+      
+      // Save active comps data if it exists
+      if (responseBatchDataActiveComps) {
+      const activeCompsFilePath = path.join(batchDataDir, `active-comps-${newOrder.orderId}-${Date.now()}.json`);
+      fs.writeFileSync(activeCompsFilePath, JSON.stringify(responseBatchDataActiveComps, null, 2));
+      context.log(`Saved active comps data to: ${activeCompsFilePath}`);
+      }
+    } catch (error) {
+      context.log(`Error saving batch data files: ${error.message}`);
+    }
+    */
+   
     /*=========================================================
         Create a report record for order
     =========================================================*/
