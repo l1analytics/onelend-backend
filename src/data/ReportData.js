@@ -1,8 +1,13 @@
 const ReportData = {
   // compAnalysis: { subject: {}, sold: [], list: [] },
-  orderInformation: {},
-  propertyInformation: {},
-  neighborhoodInformation: {},
+  bpo: {
+    orderInformation: {},
+    propertyInformation: {},
+    neighborhoodInformation: {},
+  },
+  dvr: {
+    
+  }
 };
 
 const SelectedCompData = {

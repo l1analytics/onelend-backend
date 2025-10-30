@@ -6,6 +6,8 @@
     "BATCHDATA_ENDPOINT": "https://api.batchdata.com/api/v1/",
     "BATCHDATA_KEY": "JwEodi1eGpkqnsTc8w62dHofdreM0nCEMoBazBo7",
     "COSMOSDB_ENDPOINT": "https://cosmos-onelend-dev.documents.azure.com:443/",
-    "DATABASE_NAME": "onelend-dev"
+    "DATABASE_NAME": "onelend-dev",
+    "AzureWebJobsStorage__connectionString": "DefaultEndpointsProtocol=https;AccountName=stonelenddev;EndpointSuffix=core.windows.net;AccountKey=wXVESuONXvg2BSC0pfwnhPeGOjg8jD3fZJbMY17HksSO9TCe08aK/COpNvDz2F8qYUpkU7anl7AK+ASt6eC1Kw==",
+    "AZURE_STORAGE_CONNECTION_STRING": "DefaultEndpointsProtocol=https;AccountName=visiononedev;AccountKey=wf89nSRoLYFYNu0wBcstO0e8Xf/pmBw2Rzd9ZP0aKHyPeCa/QuJnnfh1r1jx3NJ8dOwV69vTpkY6+ASt68x1qQ==;EndpointSuffix=core.windows.net"
   }
 }

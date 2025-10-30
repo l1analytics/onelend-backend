@@ -1,0 +1,119 @@
+{
+    "P1_Image": "",
+    "P1_OriginalAppraisedValue": {
+        "pageNumber": "Page 2",
+        "path": "extractedData.Reconciliation.finalOpinionOfMarketValue.value"
+    },
+    "P1_AppraisalDate": {
+        "pageNumber": "Page 2",
+        "path": "extractedData.Reconciliation.effectiveDateOfAppraisal.value"
+    },
+    "P1_ResetForm": "",
+    "P1_FormType": "",
+    "P1_AppraisalReviewValue": "",
+    "P1_AppraisalReviewDate": "",
+    "P1_PctVariance": "",
+    "P1_LoanId": "",
+    "P1_StreetAddress": {
+        "pageNumber": "Page 1",
+        "path": "extractedData.Subject.propertyAddress.value"
+    },
+    "P1_City": {
+        "pageNumber": "Page 1",
+        "path": "extractedData.Subject.propertyCity.value"
+    },
+    "P1_State": {
+        "pageNumber": "Page 1",
+        "path": "extractedData.Subject.propertyState.value"
+    },
+    "P1_ZipCode": {
+        "pageNumber": "Page 1",
+        "path": "extractedData.Subject.propertyPostalCode.value"
+    },
+    "P1_GradeBoxesA": "",
+    "P1_GradeBoxesB": "",
+    "P1_GradeBoxesC": "",
+    "P1_GradeBoxesD": "",
+    "P1_AARYes": "",
+    "P1_AARNo": "",
+    "P1_LoanPurpose": {
+        "pageNumber": "Page 1",
+        "path": "extractedData.Subject.assignmentTypes.value"
+    },
+    "P1_PriorSalesPrice": {
+        "pageNumber": "Page 2",
+        "path": "extractedData.SalesComparisonAnalysis.subjectPriceOfPriorSaleTransfer.value"
+    },
+    "P1_DateOfPriorSale": {
+        "pageNumber": "Page 2",
+        "path": "extractedData.SalesComparisonAnalysis.subjectDateOfPriorSaleTransfer.value"
+    },
+    "P1_PropertyType": "",
+    "P1_Condition": {
+        "pageNumber": "Page 2",
+        "path": "extractedData.SubjectProperty.conditionSubject.value"
+    },
+    "P1_Units": {
+        "pageNumber": "Page 1",
+        "path": "extractedData.Improvements.units.value"
+    },
+    "P1_YearBuilt": {
+        "pageNumber": "Page 1",
+        "path": "extractedData.Improvements.yearBuilt.value"
+    },
+    "P1_LotSize": {
+        "pageNumber": "Page 1",
+        "path": "extractedData.Site.siteArea.value"
+    },
+    "P1_Rooms": {
+        "pageNumber": "Page 1",
+        "path": "extractedData.Improvements.finishedAreaAboveGradeRooms.value"
+    },
+    "P1_Beds": {
+        "pageNumber": "Page 1",
+        "path": "extractedData.Improvements.finishedAreaAboveGradeBedrooms.value"
+    },
+    "P1_Baths": {
+        "pageNumber": "Page 1",
+        "path": "extractedData.Improvements.finishedAreaAboveGradeBathrooms.value"
+    },
+    "P1_LocationType": {
+        "pageNumber": "Page 1",
+        "path": "extractedData.Neighborhood.location.value"
+    },
+    "P1_Values": {
+        "pageNumber": "Page 1",
+        "path": "extractedData.Neighborhood.propertyValues.value"
+    },
+    "P1_DemandSupply": {
+        "pageNumber": "Page 1",
+        "path": "extractedData.Neighborhood.demandSupply.value"
+    },
+    "P1_MarketingTime": {
+        "pageNumber": "Page 1",
+        "path": "extractedData.Neighborhood.marketingTime.value"
+    },
+    "P1_Quality": {
+        "pageNumber": "Page 2",
+        "path": "extractedData.SubjectProperty.qualityOfConstructionSubject.value"
+    },
+    "P1_AarQ1Yes": "",
+    "P1_AarQ1No": "",
+    "P1_AarQ2Yes": "",
+    "P1_AarQ2No": "",
+    "P1_AarQ3Yes": "",
+    "P1_AarQ3No": "",
+    "P1_AarQ4Yes": "",
+    "P1_AarQ4No": "",
+    "P1_AarQ5Yes": "",
+    "P1_AarQ5No": "",
+    "P1_AarQ6Yes": "",
+    "P1_AarQ6No": "",
+    "P2_Comments": "",
+    "P4_Comments": "",
+    "P4_ReviewAppraiserName": "",
+    "P4_StateLicenseNumber": "",
+    "P4_State": "",
+    "P4_ExpirationDate": "",
+    "P4_SignatureLine": ""
+}

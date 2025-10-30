@@ -1,6 +1,7 @@
 const { app } = require("@azure/functions");
 const { CosmosClient, PatchOperation } = require("@azure/cosmos");
 const { DefaultAzureCredential } = require("@azure/identity");
+const { BlobServiceClient } = require("@azure/storage-blob");
 const { postRequest } = require("../utils/sendApiRequests.js");
 const { getMaxId } = require("../utils/getIds.js");
 const { lookupBatchData, searchBatchData } = require("../utils/batchDataApis");
@@ -108,6 +109,7 @@ app.http("createOrder", {
         "state",
         "zip",
         "productType",
+        "productSubType",
       ];
 
       for (const field of requiredFields) {
@@ -147,6 +149,7 @@ app.http("createOrder", {
       transactionRecord.dateCreated = new Date().toISOString();
       transactionRecord.orderId = [];
       transactionRecord.productType = [];
+      transactionRecord.productSubType = [];
     } else {
       const requiredFields = ["clientId", "productType"];
 
@@ -219,6 +222,7 @@ app.http("createOrder", {
     newOrder.state = transactionRecord.state;
     newOrder.zip = transactionRecord.zip;
     newOrder.productType = requestBody.productType || null;
+    newOrder.productSubType = requestBody.productSubType || null;
     newOrder.dateCreated = new Date().toISOString();
     newOrder.status =
       requestBody.productType == "Property Data" ? "Ordered" : "Pending";
@@ -230,6 +234,7 @@ app.http("createOrder", {
     // Add this order to the transaction record
     transactionRecord.orderId.push(newOrder.orderId);
     transactionRecord.productType.push(newOrder.productType);
+    transactionRecord.productSubType.push(newOrder.productSubType);
     // }
 
     //=================================================================================
@@ -396,7 +401,7 @@ app.http("createOrder", {
       context.log(`Error saving batch data files: ${error.message}`);
     }
     */
-   
+
     /*=========================================================
         Create a report record for order
     =========================================================*/
@@ -458,6 +463,7 @@ app.http("createOrder", {
       transactionId: transactionRecord.transactionId,
       orderId: newOrder.orderId,
       productType: newOrder.productType,
+      productSubType: newOrder.productSubType,
       status: newOrder.status,
       clientOrderId: newOrder.clientOrderId,
       streetAddress: newOrder.streetAddress,
@@ -474,6 +480,47 @@ app.http("createOrder", {
           ? responseBatchDataActiveComps.results.properties.length
           : 0,
     };
+
+    //========================================================
+    //  Create a folder in Blob Storage
+    //========================================================
+
+    const blobServiceClient = BlobServiceClient.fromConnectionString(
+      process.env.AZURE_STORAGE_CONNECTION_STRING
+    );
+    const containerName = "orders";
+    const orderPath = `${newOrder.clientId}/${newOrder.orderId}/`;
+
+    // Create folder in blob storage by creating a placeholder blob
+    try {
+      const containerClient =
+        blobServiceClient.getContainerClient(containerName);
+
+      // Ensure the container exists
+      await containerClient.createIfNotExists();
+
+      // Create a folder by uploading an empty placeholder blob with the folder path
+      // Azure Blob Storage doesn't have true folders, but uses blob names with "/" to simulate folder structure
+      const placeholderBlobName = `${orderPath}.folderPlaceholder`;
+      const blockBlobClient =
+        containerClient.getBlockBlobClient(placeholderBlobName);
+
+      // Upload empty content to create the folder structure
+      await blockBlobClient.upload("", 0, {
+        metadata: {
+          isPlaceholder: "true",
+          createdBy: "createOrder",
+          createdDate: new Date().toISOString(),
+        },
+      });
+
+      context.log(
+        `Successfully created folder structure: ${orderPath} in container: ${containerName}`
+      );
+    } catch (error) {
+      context.log(`Error creating folder in blob storage: ${error.message}`);
+      // Don't throw - we want the order to still be created even if folder creation fails
+    }
 
     return { body: JSON.stringify(responseBody) };
   },
