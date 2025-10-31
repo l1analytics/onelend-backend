@@ -106,11 +106,12 @@ const fillPdf = async (reporting, context) => {
   try {
     const addressName = `${reporting.streetAddress}_${reporting.city}`;
     const orderPath = `${reporting.clientId}/${reporting.orderId}/`;
-    const filledPdfBlobName = `${orderPath}${reportType}_${addressName}.pdf`;
+    const pdfFileName = `${reportType}_${addressName}.pdf`;
+    const filledPdfBlobName = `${orderPath}${pdfFileName}`;
     const filledPdfBlobClient =
       ordersContainerClient.getBlockBlobClient(filledPdfBlobName);
     await filledPdfBlobClient.upload(filledPdfBytes, filledPdfBytes.length);
-
+    reporting.productReportFileName = pdfFileName;
     context.log(`Uploaded filled PDF to Blob Storage: ${filledPdfBlobName}`);
   } catch (uploadError) {
     context.log(`Error uploading filled PDF: ${uploadError.message}`);
