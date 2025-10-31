@@ -1,7 +1,5 @@
 const { app } = require("@azure/functions");
 const { BlobServiceClient } = require("@azure/storage-blob");
-const { PDFDocument } = require("pdf-lib");
-const axios = require("axios");
 
 app.http("getPdfReport", {
   methods: ["GET", "POST"],
@@ -10,7 +8,7 @@ app.http("getPdfReport", {
     context.log("getPdfReport function triggered");
 
     try {
-      // Get reportType from query or body
+      // Get parameters from query or body
       let reportFileName = request.query.get("reportFileName");
       let clientId = request.query.get("clientId");
       let orderId = request.query.get("orderId");
@@ -38,32 +36,37 @@ app.http("getPdfReport", {
       const containerClient =
         blobServiceClient.getContainerClient(containerName);
 
-      // Pull report from Blob Storage
-      const pdfBlobName = `${clientId}/${orderId}/${reportFileName}`;
-      const pdfBlobClient = containerClient.getBlobClient(pdfBlobName);
-      const pdfDownloadResponse = await pdfBlobClient.download();
-      const pdfBuffer = await streamToBuffer(
-        pdfDownloadResponse.readableStreamBody
+      // Pull file from Blob Storage
+      const blobName = `${clientId}/${orderId}/${reportFileName}`;
+      const blobClient = containerClient.getBlobClient(blobName);
+      
+      // Get blob properties to retrieve content type
+      const blobProperties = await blobClient.getProperties();
+      const contentType = blobProperties.contentType || getContentTypeFromFileName(reportFileName);
+      
+      const downloadResponse = await blobClient.download();
+      const fileBuffer = await streamToBuffer(
+        downloadResponse.readableStreamBody
       );
 
-      // Return the PDF as base64 for React UI display
+      // Return the file as base64 for React UI display
       return {
         status: 200,
         headers: {
           "Content-Type": "application/json",
         },
         jsonBody: {
-          pdf: pdfBuffer.toString('base64'),
+          file: fileBuffer.toString('base64'),
           fileName: reportFileName,
-          contentType: 'application/pdf'
+          contentType: contentType
         }
       };
     } catch (error) {
-      context.log("Error filling PDF:", error);
+      context.log("Error retrieving file:", error);
       return {
         status: 500,
         jsonBody: {
-          error: "Error processing PDF report",
+          error: "Error processing file",
           details: error.message,
         },
       };
@@ -83,4 +86,26 @@ async function streamToBuffer(readableStream) {
     });
     readableStream.on("error", reject);
   });
+}
+
+// Helper function to determine content type from file extension
+function getContentTypeFromFileName(fileName) {
+  const extension = fileName.split('.').pop().toLowerCase();
+  const contentTypeMap = {
+    'pdf': 'application/pdf',
+    'jpg': 'image/jpeg',
+    'jpeg': 'image/jpeg',
+    'png': 'image/png',
+    'gif': 'image/gif',
+    'doc': 'application/msword',
+    'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'xls': 'application/vnd.ms-excel',
+    'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'txt': 'text/plain',
+    'csv': 'text/csv',
+    'json': 'application/json',
+    'xml': 'application/xml',
+    'zip': 'application/zip'
+  };
+  return contentTypeMap[extension] || 'application/octet-stream';
 }

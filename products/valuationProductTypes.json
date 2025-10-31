@@ -1,0 +1,22 @@
+[
+    {
+        "productType": "DVR",
+        "productSubType": [
+            "1_Value_NonOwner_Occupied_Desk_Review_10"
+        ]
+    },
+    {
+        "productType": "Full Appraisal",
+        "productSubType": [
+            "As-Is",
+            "As-Repair"
+        ]
+    },
+    {
+        "productType": "BPO",
+        "productSubType": [
+            "Exterior",
+            "Interior-Exterior"
+        ]
+    }
+]

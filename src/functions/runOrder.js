@@ -333,7 +333,7 @@ app.http("runOrder", {
     //=======================================================================
     //  Save order object in Cosmos DB with updated status & reportRecordId
     //=======================================================================
-    requestBody.status = "Model Valuation Complete";
+    requestBody.status = "Ready For Review";
     // requestBody.reportRecordId = reportingData.reportRecordId; // Set the reportRecordId to the same value as id
 
     try {
