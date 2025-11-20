@@ -18,7 +18,7 @@ const uuid = require("uuid");
         Set up connection to Cosmos DB
   ==================================================*/
 const endpointBatchData = process.env.ENDPOINT_BATCH_DATA;
-const keyBatchData = process.env.KEY_BATCH_DATA;
+const keyBatchData = "bAvjToxKsdPSjltgFTjw0uVf92Rjr3KPdwOBMfuE"; //process.env.KEY_BATCH_DATA;
 
 if (!endpointBatchData || !keyBatchData) {
   console.log(
