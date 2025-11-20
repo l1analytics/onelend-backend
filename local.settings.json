@@ -4,7 +4,7 @@
     "FUNCTIONS_WORKER_RUNTIME": "node",
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "BATCHDATA_ENDPOINT": "https://api.batchdata.com/api/v1/",
-    "BATCHDATA_KEY": "JwEodi1eGpkqnsTc8w62dHofdreM0nCEMoBazBo7",
+    "BATCHDATA_KEY": "bAvjToxKsdPSjltgFTjw0uVf92Rjr3KPdwOBMfuE",
     "COSMOSDB_ENDPOINT": "https://cosmos-onelend-dev.documents.azure.com:443/",
     "DATABASE_NAME": "onelend-dev",
     "AzureWebJobsStorage__connectionString": "DefaultEndpointsProtocol=https;AccountName=stonelenddev;EndpointSuffix=core.windows.net;AccountKey=wXVESuONXvg2BSC0pfwnhPeGOjg8jD3fZJbMY17HksSO9TCe08aK/COpNvDz2F8qYUpkU7anl7AK+ASt6eC1Kw==",

@@ -212,7 +212,7 @@ app.http("getBatchData", {
       responseBatchDataSubject.results.properties[0].dateRetrieved;
 
     // *********************************
-    //  Comps property data (search)
+    //  Comps property data (search) 
     // *********************************
     const today = new Date();
     const lastYear = new Date(today.getTime() - 365 * 24 * 60 * 60 * 1000);
