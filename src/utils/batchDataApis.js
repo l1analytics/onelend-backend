@@ -5,7 +5,8 @@ const { postRequest } = require("./sendApiRequests");
 
 const lookupBatchData = async (context, batchDataRequestBody) => {
   const endpointBatchData = process.env.BATCHDATA_ENDPOINT;
-  const keyBatchData = process.env.BATCHDATA_KEY;
+  // const keyBatchData = process.env.BATCHDATA_KEY;
+  const keyBatchData = "bAvjToxKsdPSjltgFTjw0uVf92Rjr3KPdwOBMfuE";
 
   if (!endpointBatchData || !keyBatchData) {
     context.log(
@@ -100,7 +101,8 @@ const searchBatchData = async (
   batchDataPropertySubject
 ) => {
   const endpointBatchData = process.env.BATCHDATA_ENDPOINT;
-  const keyBatchData = process.env.BATCHDATA_KEY;
+  // const keyBatchData = process.env.BATCHDATA_KEY;
+  const keyBatchData = "bAvjToxKsdPSjltgFTjw0uVf92Rjr3KPdwOBMfuE";
 
   if (!endpointBatchData || !keyBatchData) {
     context.log(
