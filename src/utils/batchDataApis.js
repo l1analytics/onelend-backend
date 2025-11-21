@@ -15,6 +15,9 @@ const lookupBatchData = async (context, batchDataRequestBody) => {
 
   let responseData;
 
+  context.log(`@@@@@@ Inside lookupBatchData @@@@@@`);
+  context.log('@@@@@@ request body:', JSON.stringify(batchDataRequestBody));
+  
   try {
     responseData = await postRequest(
       context,

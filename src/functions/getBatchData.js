@@ -98,6 +98,8 @@ app.http("getBatchData", {
     //  Create Order
     //===========================
 
+    context.log(`@@@@@@ Create Order @@@@@@`);
+
     // Check if required fields are sent over
     const requiredFields = [
       "clientId",
@@ -121,6 +123,7 @@ app.http("getBatchData", {
       }
     }
 
+    context.log(`@@@@@@ getMaxId @@@@@@`);
     // Get the max orderId for this clientId
     const maxOrderId = await getMaxId(
       context,
@@ -177,6 +180,7 @@ app.http("getBatchData", {
       },
     };
 
+    context.log(`@@@@@@ lookupBatchData @@@@@@`);
     const responseBatchDataSubject = await lookupBatchData(
       context,
       batchDataRequestBody
