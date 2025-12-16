@@ -5,8 +5,29 @@ const { PDFDocument } = require("pdf-lib");
 const axios = require("axios");
 
 /*========================================================================================
-    fillReportDvr:
-    Fill reporting.reportData for DVR report type
+    fillPdf:
+    Takes a reporting object containing report data and populates a PDF template with that data.
+    
+    This function performs the following steps:
+    1. Downloads the appropriate PDF template from Azure Blob Storage based on report type
+    2. Loads the PDF and extracts its form fields
+    3. Iterates through the reportData object and fills matching PDF form fields
+       - Handles text fields, checkboxes, dropdowns, radio buttons, and image buttons
+       - For image buttons, fetches images from URLs and embeds them in the PDF
+    4. Saves the completed PDF
+    5. Uploads the filled PDF back to Blob Storage under the client's order directory
+    
+    @param {Object} reporting - Object containing report data and metadata
+    @param {string} reporting.productType - The type of report product
+    @param {string} reporting.productSubType - The subtype of report product
+    @param {Object} reporting.reportData - Key-value pairs mapping PDF field names to values
+    @param {string} reporting.clientId - Client identifier for storage path
+    @param {string} reporting.orderId - Order identifier for storage path
+    @param {string} reporting.streetAddress - Property street address
+    @param {string} reporting.city - Property city
+    @param {Object} context - Azure Function context for logging
+    
+    @returns {Promise<void>} Updates reporting.productReportFileName with the generated PDF filename
   =========================================================================================*/
 
 const fillPdf = async (reporting, context) => {

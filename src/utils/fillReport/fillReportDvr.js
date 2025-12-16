@@ -45,7 +45,35 @@ const appraisalContainer = database.container("appraisalData");
 
 /*========================================================================================
     fillReportDvr:
-    Fill reporting.reportData for DVR report type
+    Populates the reportData object with values from appraisal data and property data
+    for DVR (Desk Value Review) report types.
+    
+    This function performs the following steps:
+    1. Downloads a JSON template mapping file from Azure Blob Storage that defines
+       how to map data sources to PDF report fields
+    2. Queries CosmosDB for appraisal data using clientId and orderId
+    3. Iterates through each field in reportData and populates it based on:
+       - Template mapping configurations (either direct paths or page-specific paths)
+       - Appraisal data from CosmosDB (primary source)
+       - Property data from the reporting object (fallback if appraisal data not found)
+    4. Adds hardcoded comments for specific pages (P2 and P4)
+    
+    Template Mapping Format:
+    - Direct path: "fieldName": "path.to.data" - extracts from appraisalData directly
+    - Page-specific: "fieldName": {"pageNumber": 1, "path": "data.field"} - extracts
+      from a specific page within the appraisalData array
+    - Empty string or no mapping: field is skipped
+    
+    @param {Object} reporting - Object containing report and property data
+    @param {string} reporting.clientId - Client identifier for database query
+    @param {string} reporting.orderId - Order identifier for database query
+    @param {string} reporting.productType - The type of report product
+    @param {string} reporting.productSubType - The subtype of report product
+    @param {Object} reporting.reportData - Object to be populated with report field values
+    @param {Object} reporting.propertyData - Fallback data source if appraisal data not found
+    @param {Object} context - Azure Function context for logging
+    
+    @returns {Promise<void>} Modifies reporting.reportData in place
   =========================================================================================*/
 
 const fillReportDvr = async (reporting, context) => {
