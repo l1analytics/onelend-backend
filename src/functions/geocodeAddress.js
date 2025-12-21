@@ -11,6 +11,30 @@ if (!azureMapsSubscriptionKey) {
   console.log("AZURE_MAPS_SUBSCRIPTION_KEY could not be retrieved from environment variables.");
 }
 
+/*==================================================
+    Helper function to calculate distance in miles
+  ==================================================*/
+function calculateDistance(coord1, coord2) {
+  // coord1 and coord2 are [longitude, latitude]
+  const [lon1, lat1] = coord1;
+  const [lon2, lat2] = coord2;
+  
+  const R = 3959; // Earth's radius in miles
+  
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  
+  const a = 
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const distance = R * c;
+  
+  return Math.round(distance * 100) / 100; // Round to 2 decimal places
+}
+
 app.http("geocodeAddress", {
   methods: ["POST"],
   authLevel: "anonymous",
@@ -58,11 +82,33 @@ app.http("geocodeAddress", {
     //==============================
     //    Validate required fields
     //==============================
-    const { address } = requestBody;
+    const { address, subjectCoordinate } = requestBody;
 
     if (!address) {
       const error_message = JSON.stringify({
         error: "address is required in request body",
+      });
+      context.log(error_message);
+      return {
+        status: 400,
+        body: error_message,
+      };
+    }
+
+    if (!subjectCoordinate) {
+      const error_message = JSON.stringify({
+        error: "subjectCoordinate is required in request body",
+      });
+      context.log(error_message);
+      return {
+        status: 400,
+        body: error_message,
+      };
+    }
+
+    if (!Array.isArray(subjectCoordinate) || subjectCoordinate.length !== 2) {
+      const error_message = JSON.stringify({
+        error: "subjectCoordinate must be an array of [longitude, latitude]",
       });
       context.log(error_message);
       return {
@@ -108,11 +154,19 @@ app.http("geocodeAddress", {
       }
       
       const firstFeature = features[0];
+      const geocodedCoordinates = firstFeature.geometry?.coordinates || null;
+      
+      // Calculate distance between subject property and geocoded address
+      const distanceToSubjectInMiles = geocodedCoordinates 
+        ? calculateDistance(subjectCoordinate, geocodedCoordinates)
+        : null;
+      
       const result = {
-        coordinates: firstFeature.geometry?.coordinates || null,
+        coordinates: geocodedCoordinates,
         type: firstFeature.properties?.type || null,
         confidence: firstFeature.properties?.confidence || null,
         matchCode: firstFeature.properties?.matchCodes?.[0] || null,
+        distanceToSubjectInMiles: distanceToSubjectInMiles,
       };
       
       // Return the extracted geocoding data
