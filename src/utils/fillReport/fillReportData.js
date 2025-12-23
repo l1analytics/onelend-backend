@@ -23,43 +23,39 @@ const fillCompAnalysisDataMapping = (
 
   reportToFill.dataValues.selecteCompType = selecteCompType;
   reportToFill.dataValues.selectedCompFlag = selectedCompFlag;
-  reportToFill.dataValues.percelNumber = propData.ids.apn || null;
-  reportToFill.dataValues.street = propData.address.street || null;
-  reportToFill.dataValues.city = propData.address.city || null;
-  reportToFill.dataValues.state = propData.address.state || null;
-  reportToFill.dataValues.zip = propData.address.zip || null;
-  reportToFill.dataValues.latitude = propData.address.latitude || null;
-  reportToFill.dataValues.longitude = propData.address.longitude || null;
-  reportToFill.dataValues.lastSalePrice = propData.sale.lastSale.price || null;
-  reportToFill.dataValues.lastSaleDate =
-    propData.sale.lastSale.saleDate || null;
-  reportToFill.dataValues.yearBuilt = propData.building.yearBuilt || null;
+  reportToFill.dataValues.percelNumber = propData?.ids?.apn || null;
+  reportToFill.dataValues.street = propData?.address?.street || null;
+  reportToFill.dataValues.city = propData?.address?.city || null;
+  reportToFill.dataValues.state = propData?.address?.state || null;
+  reportToFill.dataValues.zip = propData?.address?.zip || null;
+  reportToFill.dataValues.latitude = propData?.address?.latitude || null;
+  reportToFill.dataValues.longitude = propData?.address?.longitude || null;
+  reportToFill.dataValues.lastSalePrice = propData?.sale?.lastSale?.price || null;
+  reportToFill.dataValues.lastSaleDate = propData?.sale?.lastSale?.saleDate || null;
+  reportToFill.dataValues.yearBuilt = propData?.building?.yearBuilt || null;
   reportToFill.adjustments.yearBuiltAdj = 0;
-  reportToFill.dataValues.bed = propData.building.bedroomCount || null;
+  reportToFill.dataValues.bed = propData?.building?.bedroomCount || null;
   reportToFill.adjustments.bedAdj = 0;
-  reportToFill.dataValues.bath =
-    propData.building.calculatedBathroomCount || null;
+  reportToFill.dataValues.bath = propData?.building?.calculatedBathroomCount || null;
   reportToFill.adjustments.bathAdj = 0;
-  reportToFill.dataValues.livingArea =
-    propData.building.livingAreaSquareFeet || null;
+  reportToFill.dataValues.livingArea = propData?.building?.livingAreaSquareFeet || null;
   reportToFill.adjustments.livingAreaAdj = 0;
-  reportToFill.dataValues.basementArea =
-    propData.building.basementSquareFeet || null;
+  reportToFill.dataValues.basementArea = propData?.building?.basementSquareFeet || null;
   reportToFill.adjustments.basementAreaAdj = 0;
-  reportToFill.dataValues.heating = propData.building.heatSource || null;
+  reportToFill.dataValues.heating = propData?.building?.heatSource || null;
   reportToFill.adjustments.heatingAdj = 0;
-  reportToFill.dataValues.ac = propData.building.airConditioningSource || null;
+  reportToFill.dataValues.ac = propData?.building?.airConditioningSource || null;
   reportToFill.adjustments.acAdj = 0;
   reportToFill.dataValues.garage =
-    String(propData.building.garageParkingSpaceCount) +
+    String(propData?.building?.garageParkingSpaceCount || "") +
     "/" +
-    propData.building.garage;
+    (propData?.building?.garage || "");
   reportToFill.adjustments.garageAdj = 0;
-  reportToFill.dataValues.pool = propData.building.pool || null;
+  reportToFill.dataValues.pool = propData?.building?.pool || null;
   reportToFill.adjustments.poolAdj = 0;
-  reportToFill.dataValues.porch = propData.building.porch || null;
+  reportToFill.dataValues.porch = propData?.building?.porch || null;
   reportToFill.adjustments.porchAdj = 0;
-  reportToFill.dataValues.patio = propData.building.patio || null;
+  reportToFill.dataValues.patio = propData?.building?.patio || null;
   reportToFill.adjustments.patioAdj = 0;
 
   reportToFill.adjustments.totalAdj = 0;
@@ -109,4 +105,5 @@ const fillReportData = async (reporting, context) => {
 module.exports = {
   fillCompAnalysis,
   fillReportData,
+  fillCompAnalysisDataMapping
 };

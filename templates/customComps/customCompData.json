@@ -1,15 +1,27 @@
 {
+  "selectedCompFlag": "",
+  "distanceToSubejct": "",
+  "address": {
     "street": "",
     "city": "",
     "state": "",
-    "zip": "",
-    "beds": "",
-    "baths": "",
-    "sqft": "",
-    "lotSize": "",
-    "yearBuilt": "",
-    "propertyType": "",
-    "lastSoldPrice": "",
-    "lastSoldDate": "",
-    "listPrice": ""
-  }
+    "zip": ""
+  },
+  "general": {
+    "propertyTypeDetail": ""
+  },
+  "building": {
+    "unitCount": "",
+    "livingAreaSquareFeet": "",
+    "bedroomCount": "",
+    "calculatedBathroomCount": "",
+    "yearBuilt": ""
+  },
+  "listing": {
+    "status": "",
+    "listingNumber": "",
+    "soldPrice": "",
+    "soldDate": ""
+  },
+  "fipsCodePlusApn": ""
+}
