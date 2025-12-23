@@ -5,7 +5,9 @@
     "street": "",
     "city": "",
     "state": "",
-    "zip": ""
+    "zip": "",
+    "latitude": null,
+    "longitude": null
   },
   "general": {
     "propertyTypeDetail": ""
