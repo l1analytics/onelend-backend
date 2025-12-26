@@ -267,17 +267,44 @@ app.http("runOrder", {
     const reportType = `${requestBody.productType}_${requestBody.productSubType}`;
     const connectionString = process.env.AZURE_STORAGE_CONNECTION_STRING;
     const containerName = "pdf-report-templates";
-    const blobServiceClient =
-      BlobServiceClient.fromConnectionString(connectionString);
-    const containerClient = blobServiceClient.getContainerClient(containerName);
-    const mappingBlobName = `${reportType}-template.json`;
-    const mappingBlobClient = containerClient.getBlobClient(mappingBlobName);
-    const mappingDownloadResponse = await mappingBlobClient.download();
-    const mappingBuffer = await streamToBuffer(
-      mappingDownloadResponse.readableStreamBody
-    );
+    
+    let reportData;
+    try {
+      const blobServiceClient =
+        BlobServiceClient.fromConnectionString(connectionString);
+      const containerClient = blobServiceClient.getContainerClient(containerName);
+      const mappingBlobName = `${reportType}-template.json`;
+      const mappingBlobClient = containerClient.getBlobClient(mappingBlobName);
+      
+      // Check if blob exists
+      const exists = await mappingBlobClient.exists();
+      if (!exists) {
+        const error_message = JSON.stringify({
+          error: `Report template not found: ${mappingBlobName}`,
+        });
+        context.log(error_message);
+        return {
+          status: 404,
+          body: error_message,
+        };
+      }
+      
+      const mappingDownloadResponse = await mappingBlobClient.download();
+      const mappingBuffer = await streamToBuffer(
+        mappingDownloadResponse.readableStreamBody
+      );
 
-    let reportData = JSON.parse(mappingBuffer.toString());
+      reportData = JSON.parse(mappingBuffer.toString());
+    } catch (error) {
+      const error_message = JSON.stringify({
+        error: `Failed to retrieve report template from blob storage: ${error.message}`,
+      });
+      context.log(error_message);
+      return {
+        status: 500,
+        body: error_message,
+      };
+    }
 
     // Set all values in reportData to empty strings: xxxx-template.json has data paths as values
     for (const key in reportData) {

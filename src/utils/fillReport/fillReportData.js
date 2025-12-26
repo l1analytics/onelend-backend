@@ -1,6 +1,7 @@
 const fs = require("fs");
 const { SelectedCompData } = require("../../data/ReportData.js");
 const { fillReportDvr } = require("./fillReportDvr.js");
+const { fillReportBpo } = require("./fillReportBpo.js");
 const { fillPdf } = require("./fillPdf.js");
 const { report } = require("process");
 const { fill } = require("pdf-lib");
@@ -30,21 +31,27 @@ const fillCompAnalysisDataMapping = (
   reportToFill.dataValues.zip = propData?.address?.zip || null;
   reportToFill.dataValues.latitude = propData?.address?.latitude || null;
   reportToFill.dataValues.longitude = propData?.address?.longitude || null;
-  reportToFill.dataValues.lastSalePrice = propData?.sale?.lastSale?.price || null;
-  reportToFill.dataValues.lastSaleDate = propData?.sale?.lastSale?.saleDate || null;
+  reportToFill.dataValues.lastSalePrice =
+    propData?.sale?.lastSale?.price || null;
+  reportToFill.dataValues.lastSaleDate =
+    propData?.sale?.lastSale?.saleDate || null;
   reportToFill.dataValues.yearBuilt = propData?.building?.yearBuilt || null;
   reportToFill.adjustments.yearBuiltAdj = 0;
   reportToFill.dataValues.bed = propData?.building?.bedroomCount || null;
   reportToFill.adjustments.bedAdj = 0;
-  reportToFill.dataValues.bath = propData?.building?.calculatedBathroomCount || null;
+  reportToFill.dataValues.bath =
+    propData?.building?.calculatedBathroomCount || null;
   reportToFill.adjustments.bathAdj = 0;
-  reportToFill.dataValues.livingArea = propData?.building?.livingAreaSquareFeet || null;
+  reportToFill.dataValues.livingArea =
+    propData?.building?.livingAreaSquareFeet || null;
   reportToFill.adjustments.livingAreaAdj = 0;
-  reportToFill.dataValues.basementArea = propData?.building?.basementSquareFeet || null;
+  reportToFill.dataValues.basementArea =
+    propData?.building?.basementSquareFeet || null;
   reportToFill.adjustments.basementAreaAdj = 0;
   reportToFill.dataValues.heating = propData?.building?.heatSource || null;
   reportToFill.adjustments.heatingAdj = 0;
-  reportToFill.dataValues.ac = propData?.building?.airConditioningSource || null;
+  reportToFill.dataValues.ac =
+    propData?.building?.airConditioningSource || null;
   reportToFill.adjustments.acAdj = 0;
   reportToFill.dataValues.garage =
     String(propData?.building?.garageParkingSpaceCount || "") +
@@ -94,6 +101,9 @@ const fillReportData = async (reporting, context) => {
     case "DVR":
       await fillReportDvr(reporting, context);
       break;
+    case "BPO":
+      await fillReportBpo(reporting, context);
+      break;
     default:
       break;
   }
@@ -105,5 +115,5 @@ const fillReportData = async (reporting, context) => {
 module.exports = {
   fillCompAnalysis,
   fillReportData,
-  fillCompAnalysisDataMapping
+  fillCompAnalysisDataMapping,
 };

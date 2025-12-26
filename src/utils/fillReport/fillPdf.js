@@ -37,15 +37,32 @@ const fillPdf = async (reporting, context) => {
   // 1. Pull PDF template from Blob Storage
   const connectionString = process.env.AZURE_STORAGE_CONNECTION_STRING;
   const containerName = "pdf-report-templates";
-  const blobServiceClient =
-    BlobServiceClient.fromConnectionString(connectionString);
-  const containerClient = blobServiceClient.getContainerClient(containerName);
-  const pdfBlobName = `${reportType}-template.pdf`;
-  const pdfBlobClient = containerClient.getBlobClient(pdfBlobName);
-  const pdfDownloadResponse = await pdfBlobClient.download();
-  const pdfBuffer = await streamToBuffer(
-    pdfDownloadResponse.readableStreamBody
-  );
+  
+  let pdfBuffer;
+  try {
+    const blobServiceClient =
+      BlobServiceClient.fromConnectionString(connectionString);
+    const containerClient = blobServiceClient.getContainerClient(containerName);
+    const pdfBlobName = `${reportType}-template.pdf`;
+    const pdfBlobClient = containerClient.getBlobClient(pdfBlobName);
+    
+    // Check if blob exists
+    const exists = await pdfBlobClient.exists();
+    if (!exists) {
+      const errorMessage = `PDF template not found: ${pdfBlobName}`;
+      context.log(errorMessage);
+      throw new Error(errorMessage);
+    }
+    
+    const pdfDownloadResponse = await pdfBlobClient.download();
+    pdfBuffer = await streamToBuffer(
+      pdfDownloadResponse.readableStreamBody
+    );
+  } catch (error) {
+    const errorMessage = `Failed to retrieve PDF template from blob storage: ${error.message}`;
+    context.log(errorMessage);
+    throw new Error(errorMessage);
+  }
 
   // 2. Load PDF and fill form fields
   const pdfDoc = await PDFDocument.load(pdfBuffer);
