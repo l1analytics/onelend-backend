@@ -3,6 +3,7 @@
   "Values": {
     "FUNCTIONS_WORKER_RUNTIME": "node",
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "AzureWebJobsMyStorageConnectionAppSetting": "UseDevelopmentStorage=true",
     "BATCHDATA_ENDPOINT": "https://api.batchdata.com/api/v1/",
     "BATCHDATA_KEY": "bAvjToxKsdPSjltgFTjw0uVf92Rjr3KPdwOBMfuE",
     "COSMOSDB_ENDPOINT": "https://cosmos-onelend-dev.documents.azure.com:443/",
