@@ -121,15 +121,15 @@ app.http("getOrder", {
       }
     }
 
-    // If getPropertyData == true, then it needs to provide orderId as well
+    // If propertyData == true, then it needs to provide orderId as well
     if (
-      requestBody.hasOwnProperty("getPropertyData") &&
-      requestBody.getPropertyData === true &&
+      requestBody.hasOwnProperty("propertyData") &&
+      requestBody.propertyData === true &&
       !requestBody.hasOwnProperty("orderId")
     ) {
       const error_message = JSON.stringify({
         error:
-          "Field 'orderId' is required when 'getPropertyData' is set to true",
+          "Field 'orderId' is required when 'propertyData' is set to true",
       });
       context.log(error_message);
       return {
@@ -137,8 +137,8 @@ app.http("getOrder", {
         body: error_message,
       };
     } else if (
-      requestBody.hasOwnProperty("getPropertyData") &&
-      requestBody.getPropertyData === true &&
+      requestBody.hasOwnProperty("propertyData") &&
+      requestBody.propertyData === true &&
       typeof requestBody.orderId !== "number" &&
       !Array.isArray(requestBody.orderId)
     ) {
@@ -269,11 +269,11 @@ app.http("getOrder", {
     context.log(finalMessage);
 
     //==============================================================================
-    //   If getPropertyData is true, then retrieve property data and comps data
+    //   If propertyData is true, then retrieve property data and comps data
     //==============================================================================
     if (
-      requestBody.hasOwnProperty("getPropertyData") &&
-      requestBody.getPropertyData === true
+      requestBody.hasOwnProperty("propertyData") &&
+      requestBody.propertyData === true
     ) {
       for (const order of orders) {
         // Retrieve subject property data
