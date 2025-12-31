@@ -1,0 +1,819 @@
+openapi: "3.0.3"
+info:
+  version: 1.3.0
+  title: StickyWicket API
+  description: >
+    Documentation to connect and interact with the StickyWicket API.
+  contact:
+    name: technical-support@clearcapital.com
+tags:
+  - name: StickyWicket API
+    description: Endpoints to interact with the StickyWicket API
+paths:
+  /OneLend:
+    post:
+      tags:
+        - StickyWicket API
+      summary: Requests a OneLend on an appraisal
+      description: Calling this requests a OneLend on an appraisal
+      operationId: createOneLend
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RiskAssessmentRequest"
+        required: true
+      responses:
+        "200":
+          description: Returns the riskAssessmentId and a URL to upload the appraisal to
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RiskAssessmentCreateResponse'
+        "401":
+          description: API key is missing or invalid
+        "403":
+          description: Forbidden; User does not have the correct permissions
+        "400":
+          description: Bad Request, request parameters are invalid
+        "500":
+          description: Internal Server Error
+
+  /risk-assessment:
+    post:
+      tags:
+        - StickyWicket API
+      summary: Requests a full Risk Assessment on an appraisal
+      description: Calling this requests a full Risk Assessment on an appraisal
+      operationId: createRiskAssessment
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RiskAssessmentRequest"
+        required: true
+      responses:
+        "200":
+          description: Returns the riskAssessmentId and a URL to upload the appraisal to
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RiskAssessmentCreateResponse'
+        "401":
+          description: API key is missing or invalid
+        "403":
+          description: Forbidden; User does not have the correct permissions
+        "400":
+          description: Bad Request, request parameters are invalid
+        "500":
+          description: Internal Server Error
+
+  /risk-assessment/{riskAssessmentId}:
+    get:
+      tags:
+        - StickyWicket API
+      summary: Gets Risk Assessment results by riskAssessmentId
+      description: Calling this gets Risk Assessment results by riskAssessmentId
+      operationId: getRiskAssessmentResults
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: riskAssessmentId
+          in: path
+          required: true
+          description: the riskAssessmentId of the Risk Assessment request
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Returns the Risk Assessment results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RiskAssessmentResultsV2'
+        "401":
+          description: API key is missing or invalid
+        "403":
+          description: Forbidden; User does not have the correct permissions
+        "404":
+          description: Risk Assessment results not found for riskAssessmentId
+        "500":
+          description: Internal Server Error
+
+  /rules:
+    get:
+      tags:
+        - StickyWicket API
+      summary: Retrieve StickyWicket OneLend rule definitions
+      description: Retrieve StickyWicket OneLend rule definitions
+      operationId: getRules
+      security:
+        - ApiKeyAuth: []
+      responses:
+        "200":
+          description: The list of StickyWicket OneLend rule definitions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StickyWicketRule'
+        "401":
+          description: API key is missing or invalid
+        "403":
+          description: Forbidden; User does not have the correct permissions
+        "404":
+          description: No StickyWicket OneLend rule definitions found
+
+  /ruleSets:
+    get:
+      tags:
+        - StickyWicket API
+      summary: Retrieve the StickyWicket OneLend rule set definitions for the given customer
+      description: Retrieve the OneLend StickyWicket rule set definitions for the given customer
+      operationId: getRuleSets
+      security:
+        - ApiKeyAuth: [ ]
+      responses:
+        "200":
+          description: The list of StickyWicket OneLend customer rule set definitions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StickyWicketRuleSet'
+        "401":
+          description: API key is missing or invalid
+        "403":
+          description: Forbidden; User does not have the correct permissions
+        "404":
+          description: No StickyWicket OneLend rule set definitions found
+
+    put:
+      tags:
+        - StickyWicket API
+      summary: Save an StickyWicket OneLend customer rule set (deprecated)
+      description: |
+        Save an StickyWicket OneLend customer rule set. This PUT endpoint has been deprecated. Callers should leverage
+        the POST version of this endpoint instead. This endpoint will be removed in a future release.
+      operationId: saveRuleSetDeprecated
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StickyWicketRuleSet"
+      responses:
+        "201":
+          description: The StickyWicket OneLend customer rule set was saved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StickyWicketRuleSet'
+        "400":
+          description: StickyWicket customer rule set did not pass validation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleSetValidationResults'
+        "401":
+          description: API key is missing or invalid
+        "403":
+          description: Forbidden; User does not have the correct permissions
+
+    post:
+      tags:
+        - StickyWicket API
+      summary: Save an StickyWicket OneLend customer rule set
+      description: Save an StickyWicket OneLend customer rule set
+      operationId: saveRuleSet
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StickyWicketRuleSet"
+      responses:
+        "201":
+          description: The StickyWicket OneLend customer rule set was saved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StickyWicketRuleSet'
+        "400":
+          description: StickyWicket customer rule set did not pass validation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleSetValidationResults'
+        "401":
+          description: API key is missing or invalid
+        "403":
+          description: Forbidden; User does not have the correct permissions
+
+  /ruleSets/{ruleSetId}:
+    get:
+      tags:
+        - StickyWicket API
+      summary: Retrieve the StickyWicket customer rule set having the given ID
+      description: Retrieve the StickyWicket customer rule set having the given ID
+      operationId: getRuleSet
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - name: ruleSetId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: The StickyWicket customer rule set was retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StickyWicketRuleSet'
+        "401":
+          description: API key is missing or invalid
+        "403":
+          description: Forbidden; User does not have the correct permissions
+        "404":
+          description: The StickyWicket OneLend customer rule set was not found
+
+    delete:
+      tags:
+        - StickyWicket API
+      summary: Delete an StickyWicket OneLend customer rule set
+      description: Delete an StickyWicket OneLend customer rule set
+      operationId: deleteRuleSet
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - name: ruleSetId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: The StickyWicket customer rule set was deleted
+        "401":
+          description: API key is missing or invalid
+        "403":
+          description: Forbidden; User does not have the correct permissions
+        "404":
+          description: The StickyWicket OneLend customer rule set was not found
+
+  /defaultRuleSet:
+    get:
+      tags:
+        - StickyWicket API
+      summary: Retrieves the StickyWicket OneLend default rule set definition
+      description: Retrieves the StickyWicket OneLend default rule set definition
+      operationId: getDefaultRuleSet
+      security:
+        - ApiKeyAuth: [ ]
+      responses:
+        "200":
+          description: The StickyWicket OneLend default rule set
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StickyWicketRuleSet'
+        "401":
+          description: API key is missing or invalid
+        "403":
+          description: Forbidden; User does not have the correct permissions
+        "404":
+          description: The StickyWicket OneLend default rule set was not found
+
+servers:
+  - url: "{template-to-be-replaced}"
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+
+  schemas:
+    RiskAssessmentCreateResponse:
+      type: object
+      description: Risk Assessment response object.
+      properties:
+        riskAssessmentId:
+          type: string
+          format: uuid
+          description: riskAssessmentId of the Risk Assessment request
+        uploadUrl:
+          type: string
+          description: URL to upload the appraisal to
+
+    RiskAssessmentArtifacts:
+      type: string
+      enum:
+        - OneLend
+        - VEROS
+        - REPORT_SUMMARY
+        - REPORT_SUMMARY_JSON
+
+    RiskAssessmentRequest:
+      type: object
+      properties:
+        lenderCredentials:
+          $ref: "#/components/schemas/LenderCredentials"
+        clientDocumentId:
+          type: string
+          description: |
+            A customer-specific unique identifier for an appraisal that will be submitted. 
+            If the submitted appraisal is a revision of a previously submitted appraisal,
+            the unique identifier from the previous submission should be provided.
+            This value is required for all requests that will include Veros results.
+        clientName:
+          type: string
+          description: |
+            If provided, this value will be displayed as the client name on the Report Summary PDF.
+            If not provided, the customer ID will be displayed instead.
+        mediaType:
+          type: string
+          description: If not provided, defaults to xml
+          enum:
+            - xml
+            - pdf
+        ruleSetName:
+          type: string
+          description: |
+            If provided, the request will be processed using the rules defined in the specified rule set.
+            If not provided, the request will be processed using the default rule set.
+            Note that, if a rule set name is provided, a rule set ID should NOT be provided.
+        ruleSetId:
+          type: string
+          format: uuid
+          description: |
+            If provided, the request will be processed using the rules defined in the specified rule set.
+            If not provided, the request will be processed using the default rule set.
+            Note that, if a rule set ID is provided, a rule set name should NOT be provided.
+        artifacts:
+          description: |
+            The artifacts that should be generated by the service.
+            If not provided, the service will generate all artifacts.
+          type: array
+          items:
+            $ref: "#/components/schemas/RiskAssessmentArtifacts"
+
+    LenderCredentials:
+      type: object
+      description: Required for Veros
+      properties:
+        freIdNumber:
+          type: string
+        fnmSellerNumber:
+          type: string
+        ucdpBusinessUnit:
+          type: string
+        fhaLenderId:
+          type: string
+        eadBusinessUnit:
+          type: string
+
+    RiskAssessmentAddress:
+      type: object
+      properties:
+        addressLine1:
+          type: string
+        addressLine2:
+          type: string
+        unitNumber:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zip:
+          type: string
+        county:
+          type: string
+        country:
+          type: string
+
+    ProcessorState:
+      type: string
+      enum:
+        - Waiting
+        - Processing
+        - Completed
+        - Failed
+
+    RiskAssessmentResultsV2:
+      type: object
+      properties:
+        requestId:
+          type: string
+          format: uuid
+        customerId:
+          type: string
+        clientName:
+          type: string
+        clientDocumentId:
+          type: string
+        ruleSetName:
+          type: string
+        ruleSetId:
+          type: string
+          format: uuid
+        address:
+          $ref: '#/components/schemas/RiskAssessmentAddress'
+        state:
+          $ref: '#/components/schemas/ProcessorState'
+        pdfConversion:
+          $ref: '#/components/schemas/RiskAssessmentResult'
+        veros:
+          $ref: '#/components/schemas/RiskAssessmentResult'
+        OneLend:
+          # 20250317 - srylander - TODO - Temporarily using OneLendResult
+          #
+          # At least one customer was identified as using the reportSummaryUrl link within the
+          # OneLend result to access the Report Summary PDF. This link is being restored until
+          # all customers have been migrated to leverage the link in the reportSummary section.properties:
+          #
+          #$ref: '#/components/schemas/RiskAssessmentResult'
+          $ref: '#/components/schemas/OneLendResult'
+        reportSummary:
+          $ref: '#/components/schemas/RiskAssessmentResult'
+        reportSummaryJson:
+          $ref: '#/components/schemas/RiskAssessmentResult'
+
+    RiskAssessmentResult:
+      type: object
+      properties:
+        state:
+          $ref: '#/components/schemas/ProcessorState'
+        url:
+          type: string
+        status:
+          type: integer
+          format: int32
+        message:
+          type: string
+
+    OneLendResult:
+      allOf:
+        - $ref: "#/components/schemas/RiskAssessmentResult"
+        - properties:
+            reportSummaryUrl:
+              type: string
+
+    StickyWicketRule:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the rule
+        name:
+          type: string
+          description: The rule name
+        description:
+          type: string
+          description: Describes the functionality of the rule
+        category:
+          type: string
+          description: The category assigned to the rule
+        ruleParameters:
+          type: array
+          items:
+            $ref: '#/components/schemas/RuleParameter'
+
+    RuleParameter:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the rule parameter
+        name:
+          type: string
+          description: The name of the rule parameter
+        description:
+          type: string
+          description: Describes the functionality of the rule parameter
+        ruleParameterType:
+          $ref: "#/components/schemas/RuleParameterType"
+        required:
+          type: boolean
+          description: Identifies is the rule parameter is required by the rule at runtime
+        defaultValue:
+          type: string
+          description: The default value that will be assigned to the rule parameter if not provided at runtime
+
+    RuleParameterType:
+      description: |
+        The rule parameter type is used to define the input type of a rule parameter. 
+        Each type provides a number of constraints that can be used to validate the rule parameter value.
+        These constraints can be applied within a user interface to restrict the values that can be entered for the rule parameter.
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum:
+            - number
+            - percent
+            - currency
+            - boolean
+            - text
+            - text_list
+            - select
+        min:
+          type: integer
+          description: The minimum value that the rule parameter will accept. Only applicable for number, percent, and currency types.
+        max:
+          type: integer
+          description: The maximum value that the rule parameter will accept. Only applicable for number, percent, and currency types.
+        precision:
+          type: integer
+          description: The maximum number of decimal places that the rule parameter will accept. Only applicable for number, percent, and currency types.
+        pattern:
+          type: string
+          description: A pattern that the rule parameter value must match in order to be valid. Only applicable for test and text-list types.
+        minLength:
+          type: integer
+          description: The minimum text length that the rule parameter will accept. Only applicable for test and text-list types.
+        maxLength:
+          type: integer
+          description: The maximum text length that the rule parameter will accept. Only applicable for test and text-list types.
+        multi:
+          type: boolean
+          description: Identifies if the rule parameter will accept multiple values. Only applicable for select type.
+        options:
+          type: array
+          items:
+            type: string
+            description: A list of values that the rule parameter will accept. Only applicable for select type.
+
+    StickyWicketRuleSet:
+      type: object
+      description: A named collection of rules (customer-specific)
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          description: |
+            The unique identifier assigned to the rule set.
+            When creating a new rule set, this value should not be provided. Instead, it will be generated by the service.
+            When updating an existing rule set, provide the value that was assigned previously.
+          format: uuid
+        name:
+          type: string
+          description: The name of the rule set. This value should be unique for the customer.
+        description:
+          type: string
+          description: A free-form description for the rule set.
+        rules:
+          type: array
+          description: |
+            The list of rules included in the rule set. 
+            Each rule will include the parameter values to be used when the rule is evaluated.
+          items:
+            $ref: "#/components/schemas/StickyWicketRuleSetRule"
+
+    StickyWicketRuleSetRule:
+      type: object
+      description: A rule included in a rule set
+      required:
+        - ruleId
+      properties:
+        ruleId:
+          type: string
+        parameterValues:
+          type: array
+          items:
+            $ref: "#/components/schemas/StickyWicketParameterValue"
+
+    StickyWicketParameterValue:
+      type: object
+      description: The value is be provided for the given rule parameter when the rule is evaluated.
+      required:
+        - id
+        - value
+      properties:
+        id:
+          type: string
+          description: the unique identifier of a parameter for a rule
+        value:
+          type: string
+          description: The value to be provided for the parameter when the rule is evaluated.
+
+    RuleSetValidationResults:
+      type: object
+      properties:
+        message:
+          type: string
+        status:
+          type: integer
+        errors:
+          type: array
+          items:
+            type: string
+
+    ReportSummaryJson:
+      type: object
+      description: Reflects the data used when generating the Report Summary PDF
+      properties:
+        subjectProperty:
+          $ref: "#/components/schemas/RiskAssessmentAddress"
+        loanNumber:
+          type: string
+        clientName:
+          type: string
+        providerName:
+          type: string
+        productName:
+          type: string
+        effectiveDate:
+          type: string
+        summaryValue:
+          type: string
+        ruleSetName:
+          type: string
+        fhaEadValue:
+          type: string
+        ruleResultsFail:
+          type: array
+          items:
+            $ref: "#/components/schemas/ReportSummaryJsonRuleResult"
+        ruleResultsSuccess:
+          type: array
+          items:
+            $ref: "#/components/schemas/ReportSummaryJsonRuleResult"
+        ruleResultsNotRun:
+          type: array
+          items:
+            $ref: "#/components/schemas/ReportSummaryJsonRuleResult"
+        freddieMacFindings:
+          type: array
+          items:
+            $ref: "#/components/schemas/ReportSummaryJsonFindingMessage"
+        fannieMaeFindings:
+          type: array
+          items:
+            $ref: "#/components/schemas/ReportSummaryJsonFindingMessage"
+        fhaFindings:
+          type: array
+          items:
+            $ref: "#/components/schemas/ReportSummaryJsonFindingMessage"
+        rankedCompsSummarySale:
+          $ref: "#/components/schemas/ReportSummaryJsonRankedCompSummary"
+        rankedCompsSale:
+          type: array
+          items:
+            $ref: "#/components/schemas/ReportSummaryJsonRankedComp"
+        rankedCompsSummaryList:
+          $ref: "#/components/schemas/ReportSummaryJsonRankedCompSummary"
+        rankedCompsList:
+          type: array
+          items:
+            $ref: "#/components/schemas/ReportSummaryJsonRankedComp"
+        valuationAnalysis:
+          $ref: '#/components/schemas/ReportSummaryJsonValuationAnalysis'
+
+    ReportSummaryJsonRuleResult:
+      type: object
+      properties:
+        ruleName:
+          type: string
+        ruleWeight:
+          type: string
+        ruleResultMessage:
+          type: string
+        ruleResultDetails:
+          type: array
+          items:
+            type: string
+
+    ReportSummaryJsonFindingMessage:
+      type: object
+      properties:
+        code:
+          type: string
+        formSection:
+          type: string
+        formField:
+          type: string
+        dataPoint:
+          type: string
+        propertyAffected:
+          type: string
+        actionMessage:
+          type: string
+        severity:
+          type: string
+
+    ReportSummaryJsonRankedCompSummary:
+      type: object
+      properties:
+        compContext:
+          type: string
+        averageValue:
+          type: string
+        medianValue:
+          type: string
+        lowValue:
+          type: string
+        highValue:
+          type: string
+
+    ReportSummaryJsonRankedComp:
+      type: object
+      properties:
+        rank:
+          type: string
+        address1:
+          type: string
+        address2:
+          type: string
+        latitude:
+          type: string
+        longitude:
+          type: string
+        price:
+          type: string
+        date:
+          type: string
+        distToSubject:
+          type: string
+        gla:
+          type: string
+        beds:
+          type: string
+        baths:
+          type: string
+        lotSize:
+          type: string
+        dataSource:
+          type: string
+        rankFormatId:
+          type: string
+
+    ReportSummaryJsonValuationAnalysis:
+      type: object
+      properties:
+        accuracyScore:
+          $ref: "#/components/schemas/ReportSummaryJsonDoubleScore"
+        qualityScore:
+          $ref: "#/components/schemas/ReportSummaryJsonDoubleScore"
+        delta:
+          $ref: "#/components/schemas/ReportSummaryJsonDoubleScore"
+        isOver:
+          type: boolean
+        isUnder:
+          type: boolean
+        minAmount:
+          $ref: "#/components/schemas/ReportSummaryJsonDoubleScore"
+        maxAmount:
+          $ref: "#/components/schemas/ReportSummaryJsonDoubleScore"
+        reportValue:
+          $ref: "#/components/schemas/ReportSummaryJsonIntegerScore"
+        confidenceScore:
+          $ref: "#/components/schemas/ReportSummaryJsonStringScore"
+        confidenceScoreAlt:
+          $ref: "#/components/schemas/ReportSummaryJsonDoubleScore"
+        freddieMacLcaScore:
+          $ref: "#/components/schemas/ReportSummaryJsonDoubleScore"
+        fannieMaeCuScore:
+          $ref: "#/components/schemas/ReportSummaryJsonDoubleScore"
+
+    ReportSummaryJsonDoubleScore:
+      type: object
+      properties:
+        value:
+          type: number
+          format: double
+        valueFormatted:
+          type: string
+
+    ReportSummaryJsonIntegerScore:
+      type: object
+      properties:
+        value:
+          type: integer
+        valueFormatted:
+          type: string
+
+    ReportSummaryJsonStringScore:
+      type: object
+      properties:
+        value:
+          type: string
+        valueFormatted:
+          type: string

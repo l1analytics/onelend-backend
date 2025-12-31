@@ -1,0 +1,52 @@
+{
+  "property_name": "string",
+  "property_street_address": "string",
+  "property_city": "string",
+  "property_state": "string",
+  "property_zipcode": "string",
+  "os_as_of_date": "01/31/2020",
+  "property_management_company_name": "FannieMae Office",
+  "submitter_email_addr": "MF_Digitizers_Development@fanniemae.com",
+  "seller_ln_nbr": "67890",
+  "property_mstr_nbr": 67890,
+  "statements": [
+    {
+      "os_type": "M1,M2,M3,M4,M5,M6,M7,M8,M9,M10,M11,M12,MRQ,YTD",
+      "period": "JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, DEC, Q1, Q2, Q3, Q4",
+      "gross_potential_rent": 0,
+      "loss_to_vacancy": 0,
+      "loss_to_bad_debt": 0,
+      "loss_to_concessions": 0,
+      "laundry_vending_income": 0,
+      "parking_income": 0,
+      "commercial_income": 0,
+      "other_income": 0,
+      "mgmt_fees": 0,
+      "gen_and_admin_expenses": 0,
+      "payroll_and_benefits_expenses": 0,
+      "utilities": 0,
+      "water_and_sewer": 0,
+      "advert_and_mrktg_expenses": 0,
+      "professional_fees": 0,
+      "ground_rent": 0,
+      "repairs_and_maint_expenses": 0,
+      "property_insurance": 0,
+      "real_estate_taxes": 0,
+      "other_expenses": 0,
+      "cashflow_debt_service_all_liens_PandI": 0,
+      "capexp_replacement_reserves": 0,
+      "capexp_extraordinary_expenditures": 0,
+      "unknown_income_expense": 0,
+      "additional_comments": "string",
+      "inc_and_exp_details": [
+        {
+          "inc_and_exp_osar_code": "GPR,VAC,BD,CCS,LV,PI,CI,OI,MFEE,GA,PB,UTL,WS,AM,PFEE,GDR,CFDSALL,RM,PINS,RET,OEXP,CAPEX,ECAPEX",
+          "os_std_detail_name": "string",
+          "os_custom_detail_name": "string",
+          "os_detail_amount": 0
+        }
+      ]
+    }
+  ],
+  "os_injestion_user_id": "string"
+}

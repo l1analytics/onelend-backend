@@ -1,0 +1,3100 @@
+
+openapi: "3.0.2"
+info:
+  version: "1.40"
+  title: Property Valuation API
+servers:
+  - url: https://api.onelend.com/property-valuation-order-management-api
+
+paths:
+  /orders:
+    post:
+      tags:
+        - Order Management
+      summary: Submits a request to place a new order.
+      description: |
+        Submits a request to place a new order. See Product Descriptions for additional ordering options and rules
+      operationId: orderCreate
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderRequest'
+            examples:              
+              Appraisal:
+                value: {
+                  "product": "1004H_STANDALONE",
+                  "purpose": "SERVICING",
+                  "address": {
+                    "street": "123 Main St",
+                    "unitNumber": "22",
+                    "city": "Springfield",
+                    "state": "IL",
+                    "zipcode": "12345"
+                  },
+                  "dueDate": "2022-03-24T22:06:43.874Z",
+                  "rush": false,
+                  "paymentMethod": "INVOICE",
+                  "loan": {
+                    "loanNumber": "123456789",
+                    "loanType": "CONVENTIONAL",
+                    "duCaseNumber": "8675309"
+                  },
+                  "contacts": [
+                    {
+                      "firstName": "Bob",
+                      "lastName": "Smith",
+                      "type": "AGENT",
+                      "isInteriorAccess": true,
+                      "email": "bob.smith@appraiser.com",
+                      "phoneNumbers": [
+                        {
+                          "type": "CELL_PHONE",
+                          "value": "5555555555"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              AURA:
+                value: {
+                  "product": "AURA",
+                  "address": {
+                    "street": "123 Main St",
+                    "unitNumber": "22",
+                    "city": "Springfield",
+                    "state": "IL",
+                    "zipcode": "12345"
+                  },                 
+                  "paymentMethod": "INVOICE"
+                }
+              BPO:
+                value: {
+                  "product": "BPO_INTERIOR",
+                  "address": {
+                    "street": "123 Main St",
+                    "unitNumber": "22",
+                    "city": "Springfield",
+                    "state": "IL",
+                    "zipcode": "12345"
+                  },
+                  "dueDate": "2022-03-24T22:06:43.874Z",
+                  "loan": {
+                    "loanNumber": "123456789"
+                  }
+                }
+              CDA:
+                value: {
+                  "product": "CDA_MLS",
+                  "address": {
+                    "street": "123 Main St",
+                    "unitNumber": "22",
+                    "city": "Springfield",
+                    "state": "IL",
+                    "zipcode": "12345"
+                  },
+                  "dueDate": "2022-03-24T22:06:43.874Z",
+                  "loan": {
+                    "loanNumber": "123456789"
+                  }
+                }
+              Data Collection:
+                value: {
+                  "product": "UDC",
+                  "purpose": "PURCHASE",
+                  "address": {
+                    "street": "123 Main St",
+                    "unitNumber": "22",
+                    "city": "Springfield",
+                    "state": "IL",
+                    "zipcode": "12345"
+                  },
+                  "dueDate": "2022-03-24T22:06:43.874Z",
+                  "rush": false,
+                  "paymentMethod": "INVOICE",
+                  "loan": {
+                    "loanNumber": "123456789",
+                    "loanType": "CONVENTIONAL",
+                    "duCaseNumber": "8675309"
+                  },
+                  "contacts": [
+                    {
+                      "firstName": "Bob",
+                      "lastName": "Smith",
+                      "type": "AGENT",
+                      "isInteriorAccess": true,
+                      "email": "bob.smith@appraiser.com",
+                      "phoneNumbers": [
+                        {
+                          "type": "CELL_PHONE",
+                          "value": "5555555555"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              Inspection:
+                value: {
+                  "product": "PCI_INTERIOR",
+                  "purpose": "SERVICING",
+                  "address": {
+                    "street": "123 Main St",
+                    "unitNumber": "22",
+                    "city": "Springfield",
+                    "state": "IL",
+                    "zipcode": "12345"
+                  },
+                  "dueDate": "2022-03-24T22:06:43.874Z",
+                  "loan": {
+                    "loanNumber": "123456789"
+                  }
+                }
+              Commercial BPO:
+                value: {
+                  "product": "COMMERCIAL_BPO_EXT_SALES_ONLY",
+                  "address": {
+                    "street": "123 Main St",
+                    "unitNumber": "22",
+                    "city": "Springfield",
+                    "state": "IL",
+                    "zipcode": "12345"
+                  },
+                  "dueDate": "2022-03-24T22:06:43.874Z",
+                  "loan": {
+                    "loanNumber": "123456789"
+                  }
+                }
+              Commercial Evaluation:
+                value: {
+                  "product": "COMMERCIAL_EVAL_EXT_SALES_INCOME_EVAL_TIER_1",
+                  "address": {
+                    "street": "123 Main St",
+                    "unitNumber": "22",
+                    "city": "Springfield",
+                    "state": "IL",
+                    "zipcode": "12345"
+                  },
+                  "dueDate": "2022-03-24T22:06:43.874Z",
+                  "loan": {
+                    "loanNumber": "123456789"
+                  }
+                } 
+              Commercial Inspection:
+                value: {
+                  "product": "COMMERCIAL_PCI_EXTERIOR",
+                  "purpose": "SERVICING",
+                  "address": {
+                    "street": "123 Main St",
+                    "unitNumber": "22",
+                    "city": "Springfield",
+                    "state": "IL",
+                    "zipcode": "12345"
+                  },
+                  "dueDate": "2022-03-24T22:06:43.874Z",
+                  "loan": {
+                    "loanNumber": "123456789"
+                  }
+                }               
+      responses:
+        '202':
+          description: Request to place a new order accepted. Watch your webhook subscription for further processing Events.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+        '400':
+          description: Invalid input
+        '401':
+          description: API key is missing or invalid
+        '403':
+          description: Forbidden; User does not have the correct permissions
+        '409':
+          description: Conflict; Duplicate order
+        '500':
+          description: Internal Server Error
+
+  /orders/{orderId}/cancels:
+    post:
+      tags:
+        - Order Management
+      summary: cancel an order
+      operationId: cancelOrder
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CancelRequest'
+      responses:
+        '200':
+          description: Successfully submitted request to cancel. Watch your webhook logs for the SNS subscription confirmation
+        '400':
+          description: Invalid input
+        '401':
+          description: API key is missing or invalid
+        '403':
+          description: Forbidden; User does not have the correct permissions
+        '404':
+          description: Order cannot be found
+        '409':
+          description: Conflict; Order is in a status that does not support this operation
+        '500':
+          description: Internal Server Error
+
+  /orders/{orderId}/contacts:
+    post:
+      tags:
+        - Order Management
+      summary: add contact(s) to the order
+      operationId: addContacts
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Contact'
+      responses:
+        '200':
+          description: Successfully added contact(s) to order.
+        '400':
+          description: Invalid input
+        '401':
+          description: API key is missing or invalid
+        '403':
+          description: Forbidden; User does not have the correct permissions
+        '404':
+          description: Order cannot be found
+        '409':
+          description: Conflict; Order is in a status that does not support this operation
+        '500':
+          description: Internal Server Error
+
+  /orders/{orderId}/documents:
+    post:
+      tags:
+        - Order Management
+      summary: request to upload a document
+      description: |
+        Returns an AWS presigned upload url which can then be used to provide documents to Clear Capital. 
+        See https://docs.aws.amazon.com/AmazonS3/latest/userguide/PresignedUrlUploadObject.html for more information
+        <br><br>**Please Note:** All uploads use a content-type header of *null* regardless of mime type for the document getting uploaded
+      operationId: getDocumentUploadUrl
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadUrl'
+        '400':
+          description: Invalid input
+        '401':
+          description: API key is missing or invalid
+        '403':
+          description: Forbidden; User does not have the correct permissions
+        '404':
+          description: Order cannot be found
+        '500':
+          description: Internal Server Error
+
+    get:
+      tags:
+        - Order Management
+      summary: request to get documents associated with an order
+      description: |
+        Returns a list of all documents associated with an order
+      operationId: getOrderDocumentList
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+        - $ref: '#/components/parameters/TenantId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentListResponse'
+        '400':
+          description: Invalid input
+        '401':
+          description: API key is missing or invalid
+        '403':
+          description: Forbidden; User does not have the correct permissions
+        '404':
+          description: Order cannot be found
+        '500':
+          description: Internal Server Error
+
+  /orders/{orderId}/documents/{documentId}:
+    get:
+      tags:
+        - Order Management
+      summary: retrieve document via 302 redirect
+      operationId: getDocumentById
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+        - $ref: '#/components/parameters/DocumentId'
+        - $ref: '#/components/parameters/TenantId'
+      responses:
+        '200':
+          description: document contents
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '302':
+          description: Redirect to signed document download
+        '401':
+          description: API key is missing or invalid
+        '403':
+          description: Forbidden; User does not have the correct permissions
+        '404':
+          description: Order or Document cannot be found
+        '500':
+          description: Internal Server Error
+
+  /orders/{orderId}/export:
+    get:
+      tags:
+        - Order Management
+      summary: get the raw data for the deliverable
+      operationId: getDeliverableData
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+        - $ref: '#/components/parameters/TenantId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExportResponse'
+        '400':
+          description: Invalid status. Data only available on completed orders
+        '401':
+          description: API key is missing or invalid
+        '403':
+          description: Forbidden; User does not have the correct permissions
+        '404':
+          description: Order cannot be found
+        '500':
+          description: Internal Server Error
+
+  /orders/{orderId}/holds:
+    post:
+      tags:
+        - Order Management
+      summary: add/update a customer requested hold
+      operationId: setHold
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HoldRequest'
+      responses:
+        '200':
+          description: Successfully submitted hold request.  Watch your webhook logs for the SNS subscription confirmation
+        '400':
+          description: Invalid input
+        '401':
+          description: API key is missing or invalid
+        '403':
+          description: Forbidden; User does not have the correct permissions
+        '404':
+          description: Order cannot be found
+        '409':
+          description: Conflict; Order is in a status that does not support this operation
+        '500':
+          description: Internal Server Error
+
+    delete:
+      tags:
+        - Order Management
+      summary: remove all customer requested hold(s)
+      operationId: removeHold
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+        - $ref: '#/components/parameters/TenantId'
+      responses:
+        '200':
+          description: Successfully removed any Customer Requested holds. Report can still be on hold at ClearCapital for other reasons
+        '400':
+          description: Invalid input
+        '401':
+          description: API key is missing or invalid
+        '403':
+          description: Forbidden; User does not have the correct permissions
+        '404':
+          description: Order cannot be found
+        '409':
+          description: Conflict; Order is in a status that does not support this operation
+        '500':
+          description: Internal Server Error
+
+  /orders/{orderId}/messages:
+    post:
+      tags:
+        - Order Management
+      summary: add a message to the order
+      operationId: addMessage
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageRequest'
+      responses:
+        '200':
+          description: Successfully added a message to the order.
+        '400':
+          description: Invalid input
+        '401':
+          description: API key is missing or invalid
+        '403':
+          description: Forbidden; User does not have the correct permissions
+        '404':
+          description: Order cannot be found
+        '500':
+          description: Internal Server Error
+
+  /orders/{orderId}/revisions:
+    post:
+      tags:
+        - Order Management
+      summary: submit a revision request
+      operationId: submitRevisionRequest
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RevisionRequest'
+      responses:
+        '200':
+          description: Successfully submitted revision request.
+        '400':
+          description: Invalid input
+        '401':
+          description: API key is missing or invalid
+        '403':
+          description: Forbidden; User does not have the correct permissions
+        '404':
+          description: Order cannot be found
+        '409':
+          description: Conflict; Order is in a status that does not support this operation
+        '500':
+          description: Internal Server Error
+
+  /orders/avm:
+    post:
+      tags:
+        - Order Management
+      summary: Submits a request to place a new AVM order.
+      description: |
+        Submits a request to place a new AVM order. See Product Descriptions for additional ordering options and rules
+      operationId: orderCreateAvm
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderRequestAvm'
+            examples:
+              AVM:
+                value:  {
+                  "product": "CLEAR_AVM_FULLY_SUPPORTED",
+                  "address": {
+                    "street": "123 Main St",
+                    "unitNumber": "22",
+                    "city": "Springfield",
+                    "state": "IL",
+                    "zipcode": "12345"
+                  }
+                }
+
+      responses:
+        '200':
+          description: AVM successfully processed, details are included
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvmResponse'
+        '204':
+          description: No Hit - AVM was not able to be processed, either address is invalid or no data was available
+        '400':
+          description: Invalid input
+        '401':
+          description: API key is missing or invalid
+        '403':
+          description: Forbidden; User does not have the correct permissions
+        '500':
+          description: Internal Server Error
+
+
+  /products:
+    get:
+      tags:
+        - Order Management
+      summary: Get a list of available Products and the configured pricing
+      description: |
+        Returns a list of the Products and their pricing as configured for the Customer Account.
+        Return a base price if the address is not provided.  Appraisal products require a complete address for adjusted pricing, the final price may vary if the location of the address cannot be automatically determined or needs to be adjusted.
+        Turn times and estimated due dates are calculated based on the time of day the order is submitted.  Additionally, business vs calendar day calculations are specific to each customer.
+      operationId: getProducts
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - in: query
+          name: products
+          schema:
+            type: array
+            items:
+              type: string
+          description: A set of product codes to filter by, if not provided all configured products will be returned
+          style: form
+          explode: true
+        - in: query
+          name: limitPricesBy
+          schema:
+            $ref: '#/components/schemas/ProductRequestLimitPricesByEnum'
+          description: |
+            If populated, limits the returned prices to a single value per product.  If not specified all configured prices/turn times will be returned for each product. |
+            If DEFAULT is used, then the price/turn time will be the value if an order is placed with no due date or rush provided. This will be the longest configured turn time. |
+            If CLOSEST_DUE_DATE is used, then a dueDate must be populated and the price/turn time that most closely matches the provided date will be returned.
+            If RUSH is used then the price for the shortest available turn time will be returned.
+        - in: query
+          name: dueDate
+          schema:
+            type: string
+            format: date
+          description: The requested due date which is required if the limitPricesBy value is CLOSEST_DUE_DATE, it should not be populated for other options
+        - in: query
+          name: street
+          schema:
+            type: string
+          description: customer supplied street address
+        - in: query
+          name: city
+          schema:
+            type: string
+          description: customer supplied city
+        - in: query
+          name: state
+          schema:
+            type: string
+          description: customer supplied state
+        - in: query
+          name: zipcode
+          schema:
+            type: string
+          description: customer supplied zip
+        - in: query
+          name: unitNumber
+          schema:
+            type: string
+          description: customer supplied unit number
+      responses:
+        '200':
+          description: An array of products and the associated pricing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+        '400':
+          description: Invalid input
+        '401':
+          description: API key is missing or invalid
+        '403':
+          description: Forbidden; User does not have the correct permissions
+        '500':
+          description: Internal Server Error
+
+  ## Webhook API Definitions
+  /events/subscription:
+    post:
+      tags:
+        - Order Management Webhook API
+      summary: Creates a subscription for the given webhook to be called with order management events
+      description: |
+        The supplied URL must comply with AWS SNS webhook conventions described here. https://docs.aws.amazon.com/sns/latest/dg/sns-subscribe-https-s-endpoints-to-topic.html
+        Currently, only one webhook is allowed per customer per environment. The supplied webhook URL will be sent a SubscriptionConfirmation notification with a SubscribeURL.
+        You must visit the SubscribeURL to activate the subscription.
+        
+        **See Callbacks tab below for more information on events you may receive**
+      operationId: subscribeOrdermanagement
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  format: uri
+                  example: https://myserver.com/send/callback/here
+      responses:
+        '200':
+          description: Successfully subscribed.  Watch your webhook logs for the SNS subscription confirmation
+        '400':
+          description: Invalid input
+        '401':
+          description: API key is missing or invalid
+        '403':
+          description: Forbidden; User does not have the correct permissions
+        '500':
+          description: Internal Server Error
+      callbacks:
+        Events:
+          '{$request.body#/url}':
+            post:
+              summary: Customer supplied URL to be called with order management events
+              requestBody:
+                $ref: '#/components/requestBodies/WebhookBody'
+              responses:
+                '200':
+                  description: OK
+
+    delete:
+      tags:
+        - Order Management Webhook API
+      summary: Removes the organizations subscription
+      description: After calling this method your webhook will no longer receive notifications
+      operationId: unsubscribeOrderManagement
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: Successfully unsubscribed from webhook events
+        '400':
+          description: Invalid input
+        '401':
+          description: API key is missing or invalid
+        '403':
+          description: Forbidden; User does not have the correct permissions
+        '500':
+          description: Internal Server Error
+
+  ## Mocked SNS Order Management
+  /mock:
+    post:
+      tags:
+        - Mock Order Management (Test Only)
+      summary: Mock Order Management Events
+      operationId: mockOrderEvent
+      description: |
+        Mock SNS Order Management
+        
+        **See Callbacks tab below for more information on events you may receive**
+        
+        <sup>**Callbacks will send the MOCKED order management event to your subscribed URL.**</sup>
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - in: query
+          name: event
+          required: true
+          description:  |
+            - OrderAccepted
+            - OrderDeclined
+            - OrderAssigned
+            - OrderCompleted
+            - OrderCanceled
+            - InspectionScheduled
+            - InspectionCompleted
+            - HoldAdded
+            - HoldRemoved
+            - MessageAdded
+            - EstimatedCompletionDateChanged
+            - RevisionRequestDenied
+            - UnderReview
+          schema:
+            $ref: '#/components/schemas/EventType'
+        - in: query
+          name: orderId
+          required: true
+          schema:
+            type: string
+          description: orderId to mock event with
+        - in: query
+          name: referenceIdentifier
+          schema:
+            type: string
+          description: reference identifier to mock event with            
+      responses:
+        '200':
+          description: Successfully Mocked Event Pushed to Customer Subscribed Webhook.
+        '400':
+          description: Invalid input
+        '401':
+          description: API key is missing or invalid
+        '403':
+          description: Forbidden; User does not have the correct permissions
+        '500':
+          description: Internal Server Error
+      callbacks:
+        Events:
+          'subscribed-webhook':
+            post:
+              summary: Customer supplied URL to be called with MOCKED order management events
+              requestBody:
+                $ref: '#/components/requestBodies/WebhookBody'
+              responses:
+                '200':
+                  description: OK
+
+  /mock/orders/{orderId}/documents/{documentId}:
+    get:
+      tags:
+        - Mock Order Management (Test Only)
+      summary: Mock retrieve document via 302 redirect
+      operationId: getMockDocumentById
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+        - $ref: '#/components/parameters/DocumentId'
+        - $ref: '#/components/parameters/TenantId'
+      responses:
+        '200':
+          description: document contents
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '302':
+          description: Redirect to signed document download
+        '401':
+          description: API key is missing or invalid
+        '403':
+          description: Forbidden; User does not have the correct permissions
+        '404':
+          description: Order or Document cannot be found
+        '500':
+          description: Internal Server Error
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+
+  parameters:
+    OrderId:
+      name: orderId
+      in: path
+      required: true
+      schema:
+        type: string
+
+    DocumentId:
+      name: documentId
+      in: path
+      required: true
+      schema:
+        type: integer
+
+    TenantId:
+      name: x-tenant-id
+      in: header
+      required: false
+      description: Required in multi-tenant integrations such as a Loan Origination System submitting on behalf of its customers
+      schema:
+        type: string
+
+  schemas:
+    Address:
+      type: object
+      required:
+        - street
+        - zipcode
+      properties:
+        street:
+          type: string
+          description: customer supplied street address
+        city:
+          type: string
+          description: customer supplied city
+        state:
+          type: string
+          description: customer supplied state
+        zipcode:
+          type: string
+          description: customer supplied zip
+        unitNumber:
+          type: string
+          description: customer supplied unit number
+        apn:
+          type: string
+          description: assessors parcel number
+
+    CancelRequest:
+      type: object
+      required:
+        - reason
+      properties:
+        reason:
+          type: string
+
+    Contact:
+      type: object
+      required:
+        - firstName
+        - type
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        type:
+          type: string
+          description: |
+            - BORROWER
+            - HOMEOWNER
+            - LISTING_AGENT
+            - LOAN_PROCESSOR
+            - ORDER_REQUESTOR
+            - SELLING_AGENT
+            - TENANT
+            - OTHER
+        email:
+          type: string
+          description: |
+            Required when no phone numbers are provided
+        isInteriorAccess:
+          type: boolean
+          default: false
+        phoneNumbers:
+          type: array
+          description: |
+            At least one phone number is required if no email is provided
+          items:
+            $ref: '#/components/schemas/PhoneNumber'
+
+    ExportResponse:
+      type: object
+      description: |
+        - BrokerPriceOpinionExportResponse
+        - EvaluationExportResponse
+        - PropertyConditionInspectionExportResponse
+        - PropertyDisasterInspectionExportResponse
+        - CollateralDesktopAnalysisExportResponse
+
+    Geo:
+      type: object
+      properties:
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+
+    PhoneNumber:
+      type: object
+      required:
+        - type
+        - value
+      properties:
+        type:
+          type: string
+          description: |
+            - HOME_PHONE
+            - CELL_PHONE
+            - WORK_PHONE
+            - OTHER
+        value:
+          type: string
+
+    ProductRequestLimitPricesByEnum:
+      type: string
+      enum:
+        - DEFAULT
+        - CLOSEST_DUE_DATE
+        - RUSH
+
+    PropertyDetails:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Address'
+        - properties:
+            condoFloorNumber:
+              type: integer
+            fips:
+              type: string
+              description: Federal Information Processing Standards (FIPS) code representing the county for this property
+            geo:
+              $ref: '#/components/schemas/Geo'
+
+    DocumentListResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/DocumentResponse'
+
+    DocumentResponse:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Document'
+        - properties:
+            uploadDate:
+              $ref: '#/components/schemas/Timestamp'
+            documentType:
+              type: string
+              description: |
+                - UCDP_SSR_FANNIE
+                - UCDP_SSR_FREDDIE
+                - SSR_FHA
+                - DELIVERABLE_PDF
+                - INVOICE
+                - AIR_CERT
+                - IMAGE_ADDENDUM
+                - IMAGE_ZIP     
+                - APPRAISAL_MISMO
+                - PURCHASE_AGREEMENT
+                - SUPPLEMENTAL
+                - TITLE_DOCUMENTS
+                - PLANS_OR_SPECIFICATIONS
+                - APPRAISAL_PDF
+
+    Document:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/DocumentRequest'
+        - properties:
+            documentId:
+              type: string
+              description: a unique id associated to the document within Clear Capital systems
+            documentType:
+              type: string
+              description: |
+                - UCDP_SSR_FANNIE
+                - UCDP_SSR_FREDDIE
+                - SSR_FHA
+                - DELIVERABLE_PDF
+                - APPRAISAL_MISMO
+                - INVOICE
+                - AIR_CERT
+                - IMAGE_ADDENDUM
+                - IMAGE_ZIP
+            url:
+              type: string
+              description: url to retrieve the document
+
+    DocumentRequest:
+      type: object
+      properties:
+        fileName:
+          type: string
+          description: full file name including extension
+          example: original_appraisal.pdf
+        documentType:
+          type: string
+          description: |
+            - APPRAISAL_PDF
+            - APPRAISAL_MISMO
+            - BPO_PDF
+            - PURCHASE_AGREEMENT
+            - SUPPLEMENTAL
+            - TITLE_DOCUMENTS
+            - PLANS_OR_SPECIFICATIONS
+
+    HoldRequest:
+      type: object
+      required:
+        - reason
+      properties:
+        reason:
+          type: string
+
+    MessageRequest:
+      type: object
+      required:
+        - message
+      properties:
+        subject:
+          type: string
+        message:
+          type: string
+        isUrgent:
+          type: boolean
+          default: false
+
+    RevisionRequest:
+      type: object
+      required:
+        - reason
+      properties:
+        reason:
+          type: string
+
+    OrderRequest:
+      type: object
+      required:
+        - address
+        - product
+        - loan
+      properties:
+        product:
+          type: string
+          description: |
+            See Product Descriptions for additional ordering options and rules
+        purpose:
+          type: string
+          description: |
+            - PURCHASE
+            - REFINANCE
+            - SERVICING
+            - PREFUNDING_DECISION
+            - HOME_EQUITY
+            - ASSET_VALUATION
+            - APPRAISAL_UPDATE
+            - DISTRESSED
+            - CONSTRUCTION
+            - OTHER
+            - Note - BPOs ignore purpose values
+        loan:
+          $ref: '#/components/schemas/Loan'
+        address:
+          $ref: '#/components/schemas/Address'
+        instructions:
+          type: string
+          description: any special instructions for the vendor to complete the report
+        dueDate:
+          description: the requested due date for the order. Must not be populated if turnTime is populated
+          $ref: '#/components/schemas/Timestamp'
+        turnTime:
+          type: number
+          description: the requested turn time in hours, should match a valid turnTime from the getProducts response. Must not be populated if dueDate is populated
+        rush:
+          type: boolean
+          default: false
+          description: indicates if the order is a rush, is not used if a dueDate or turnTime is provided
+        trackingIdentifiers:
+          type: array
+          items:
+            type: string
+          maxItems: 3
+        paymentMethod:
+          type: string
+          description: |
+            - INVOICE
+            - PAYMENT_LINK
+            - LENDER_CARD
+          default:
+            INVOICE
+        paymentLinkEmail:
+          type: string
+          description: Recipient email for payment link. Required when paymentMethod = PAYMENT_LINK
+        paymentReferenceNumber:
+          type: string
+          description: Used to provide a reference when payment is handled before placing the order.
+        contacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Contact'
+        lenderClient:
+          type: string
+          description: Replaces Customer Name on Report.  Used if ordered on behalf of a different Lender or Client.
+        investor:
+          type: string
+          description: Name of the related investor.
+        referenceIdentifier:
+          $ref: '#/components/schemas/ReferenceIdentifier'
+        invoiceIdentifier:
+          type: string
+          description: An optional identifier that if passed on the order will be populated on the invoice pdf as the Customer Provided Unique Id.
+        lockbox:
+          type: string
+          description: Lockbox code(s) or details that are needed to access the property
+
+    OrderRequestAvm:
+      type: object
+      required:
+        - address
+        - product
+      properties:
+        product:
+          type: string
+          description: |
+            Currently CLEAR_AVM_FULLY_SUPPORTED
+        loan:
+          $ref: '#/components/schemas/Loan'
+        address:
+          $ref: '#/components/schemas/Address'
+        trackingIdentifiers:
+          type: array
+          items:
+            type: string
+          maxItems: 2
+        effectiveDate:
+          type: string
+          format: date
+        referenceIdentifier:
+          $ref: '#/components/schemas/ReferenceIdentifier'
+
+    AvmOrderMetadata:
+        type: object
+        description: The identifying AVM order information provided on each deliverable
+        properties:
+          orderId:
+            $ref: '#/components/schemas/OrderId'
+          product:
+            type: string
+            description: The product code being delivered
+          loan:
+            $ref: '#/components/schemas/Loan'
+          suppliedAddress:
+            $ref: '#/components/schemas/Address'
+          trackingIdentifiers:
+            type: array
+            items:
+              type: string
+            maxItems: 3
+          dateEffective:
+            type: string
+            format: date
+          dateOrdered:
+            $ref: '#/components/schemas/Timestamp'
+          dateCompleted:
+            $ref: '#/components/schemas/Timestamp'
+          feeAmount:
+            type: number
+            format: double
+
+    AvmResponse:
+      type: object
+      properties:
+        order:
+          $ref: '#/components/schemas/AvmOrderMetadata'
+        data:
+          $ref: '#/components/schemas/AvmResult'
+
+    AvmValues:
+      description: AVM values for the subject property
+      type: object
+      properties:
+        marketValue:
+          description: The AVM’s prediction of market value for the given property. If isRetro == TRUE, then this will be the Market Value for the given property, as of the effective date provided.
+          type: integer
+        lowValue:
+          description: A numeric value representing the lower bounds of the estimated market value of the subject property.
+          type: integer
+        highValue:
+          description: A numeric value representing the estimated upper  bounds of the estimated market value of the subject property.
+          type: integer
+        confidenceScore:
+          description: The confidence associated with the AVM. This value can be expressed in either numeric or string based on the provider's communicating confidence.
+          type: string
+        confidenceScoreAlt:
+          description: An alternative way of describing confidence associated with the AVM. This value can be expressed in either numeric or string and can change by provider.
+          type: string
+        forecastStdDev:
+          description: "If supported by the AVM Provider used, this will be a Numeric value representing the Forecasted Standard Deviation (FSD), a numeric indicator between 0 and 1, tied to the AVM prediction. Note: FSD methodology varies among AVM providers."
+          type: number
+          format: float
+        dateEffective:
+          type: string
+          format: date
+
+    AvmResult:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/AvmValues'
+        - properties:
+            providerKey:
+              description: The key/ID of the Provider that returned the AVM.
+              type: string
+            providerModel:
+              description: Provider model name of the AVM returned.
+              type: string
+            providerName:
+              description: The name of the provider that returned the AVM.
+              type: string
+            termsOfUse:
+              type: string
+              description: The terms of usage for the AVM Products returned.
+            subject:
+              type: object
+              properties:
+                propertyDetails:
+                  $ref: '#/components/schemas/PropertyDetails'
+                publicRecordsCharacteristics:
+                  $ref: '#/components/schemas/PropertyCharacteristics'
+                mlsCharacteristics:
+                  $ref: '#/components/schemas/PropertyCharacteristics'
+                listingHistory:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/ListingEvent"
+            comparables:
+              type: object
+              properties:
+                soldCompsMessage:
+                  type: string
+                  description: A message usually indicating that Sold Comps were not available to be returned at this time.
+                soldComps:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/AvmComparableProperty"
+                listCompsMessage:
+                  type: string
+                  description: A message usually indicating that List Comps were not available to be returned at this time.
+                listComps:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/AvmComparableProperty"
+
+    DocumentId:
+      type: integer
+      example: 4868931
+
+    OrderId:
+          type: string
+          example: '356725665819205101'
+
+    OrderResponse:
+      type: object
+      required:
+        - orderId
+      properties:
+        orderId:
+          $ref: '#/components/schemas/OrderId'
+
+    ReferenceIdentifier:
+      type: string
+      description: an optional identifier that if passed on the order will be passed back on outbound events
+
+    Timestamp:
+      type: string
+      format: 'date-time'
+
+    UploadUrl:
+      type: string
+
+    # EVENT definitions
+    EventType:
+      type: string
+      description: |
+        - OrderAccepted
+        - OrderDeclined
+        - OrderAssigned
+        - OrderCompleted
+        - OrderCanceled
+        - InspectionScheduled
+        - InspectionCompleted
+        - HoldAdded
+        - HoldRemoved
+        - MessageAdded
+        - EstimatedCompletionDateChanged
+        - RevisionRequestDenied
+        - UnderReview
+
+    EstimatedCompletionDateChanged:
+      type: object
+      description: Estimated order completion date has changed.
+      properties:
+        event:
+          type: string
+          description: EstimatedCompletionDateChanged
+        tenantId:
+          type: string
+          description: Provided when report was submitted on behalf of a customer. For example, via a Loan Origination System (LOS)
+        orderId:
+          $ref: '#/components/schemas/OrderId'
+        estimatedCompletionDate:
+          $ref: '#/components/schemas/Timestamp'
+        timestamp:
+          $ref: '#/components/schemas/Timestamp'
+        referenceIdentifier:
+          $ref: '#/components/schemas/ReferenceIdentifier'
+
+    HoldAdded:
+      type: object
+      description: Hold added by Clear Capital.
+      properties:
+        event:
+          type: string
+          description: HoldAdded
+        tenantId:
+          type: string
+          description: Provided when report was submitted on behalf of a customer. For example, via a Loan Origination System (LOS)
+        orderId:
+          $ref: '#/components/schemas/OrderId'
+        reason:
+          type: string
+        timestamp:
+          $ref: '#/components/schemas/Timestamp'
+        referenceIdentifier:
+          $ref: '#/components/schemas/ReferenceIdentifier'
+
+    HoldRemoved:
+      type: object
+      description: All Clear Capital Holds have been removed.
+      properties:
+        event:
+          type: string
+          description: HoldRemoved
+        tenantId:
+          type: string
+          description: Provided when report was submitted on behalf of a customer. For example, via a Loan Origination System (LOS)
+        orderId:
+          $ref: '#/components/schemas/OrderId'
+        timestamp:
+          $ref: '#/components/schemas/Timestamp'
+        referenceIdentifier:
+          $ref: '#/components/schemas/ReferenceIdentifier'
+
+    InspectionScheduled:
+      type: object
+      description: Inspection is scheduled or has been rescheduled.
+      properties:
+        event:
+          type: string
+          description: InspectionScheduled
+        tenantId:
+          type: string
+          description: Provided when report was submitted on behalf of a customer. For example, via a Loan Origination System (LOS)
+        orderId:
+          $ref: '#/components/schemas/OrderId'
+        inspectionDate:
+          $ref: '#/components/schemas/Timestamp'
+        previousInspectionDate:
+          $ref: '#/components/schemas/Timestamp'
+        timestamp:
+          $ref: '#/components/schemas/Timestamp'
+        referenceIdentifier:
+          $ref: '#/components/schemas/ReferenceIdentifier'
+
+    InspectionCompleted:
+      type: object
+      description: Inspection is completed.
+      properties:
+        event:
+          type: string
+          description: InspectionCompleted
+        tenantId:
+          type: string
+          description: Provided when report was submitted on behalf of a customer. For example, via a Loan Origination System (LOS)
+        orderId:
+          $ref: '#/components/schemas/OrderId'
+        timestamp:
+          $ref: '#/components/schemas/Timestamp'
+        referenceIdentifier:
+          $ref: '#/components/schemas/ReferenceIdentifier'
+
+    Loan:
+      type: object
+      required:
+        - loanNumber
+      properties:
+        loanNumber:
+          type: string
+          description: |
+            Used for duplicate order matching logic; prints on some reports. Provide a unique ID if no loan number exists.
+            <br>**Not required for AURA**
+        loanType:
+          type: string
+          description: |
+            Required for Appraisals & Data Collections
+            - FHA
+            - CONVENTIONAL
+            - USDA
+            - VA
+        closingDate:
+          type: string
+          format: date
+        contingencyDate:
+          type: string
+          format: date
+        rateLockDate:
+          type: string
+          format: date
+        borrowerName:
+          type: string          
+        duCaseNumber:
+          type: string
+          description: |
+            Used to submit data collection results to the Fannie Mae Property Data API in support of Value Acceptance + Property Data or Hybrid Appraisal programs. Required when ordering UDC, 1004H_BIFURCATED, or 1073H_465H_BIFURCATED and primaryGSE is FANNIE.
+        lpaCaseNumber:
+          type: string
+          description: |
+            Optional field identifying the loan in the Freddie LPA system, may be used to match data collections and appraisals
+        fhaCaseNumber:
+          type: string
+          description: required when the loanType is FHA
+        primaryGse:
+          type: string
+          enum:
+            - FANNIE
+            - FREDDIE
+          description: identifies which GSE is primary for universal data collections
+        estimatedValue:
+          type: number
+          description: the estimated value of the property if known
+        salesPrice:
+          type: number
+          description: the sales price for a purchase loan
+        loanAmount:
+          type: number
+          description: the amount that the loan is for
+
+    OrderAccepted:
+      type: object
+      description: The Order has been successfully created by Clear Capital.
+      properties:
+        event:
+          type: string
+          description: OrderAccepted
+        tenantId:
+          type: string
+          description: Provided when report was submitted on behalf of a customer. For example, via a Loan Origination System (LOS)
+        orderId:
+          $ref: '#/components/schemas/OrderId'
+        timestamp:
+          $ref: '#/components/schemas/Timestamp'
+        referenceIdentifier:
+          $ref: '#/components/schemas/ReferenceIdentifier'
+
+    OrderDeclined:
+      type: object
+      description: Clear Capital cannot create the Order.
+      properties:
+        event:
+          type: string
+          description: OrderDeclined
+        tenantId:
+          type: string
+          description: Provided when report was submitted on behalf of a customer. For example, via a Loan Origination System (LOS)
+        orderId:
+          $ref: '#/components/schemas/OrderId'
+        reason:
+          type: string
+        timestamp:
+          $ref: '#/components/schemas/Timestamp'
+        referenceIdentifier:
+          $ref: '#/components/schemas/ReferenceIdentifier'
+
+    OrderAssigned:
+      type: object
+      description: The Order has been placed with a broker or appraiser.
+      properties:
+        event:
+          type: string
+          description: OrderAssigned
+        tenantId:
+          type: string
+          description: Provided when report was submitted on behalf of a customer. For example, via a Loan Origination System (LOS)
+        orderId:
+          $ref: '#/components/schemas/OrderId'
+        timestamp:
+          $ref: '#/components/schemas/Timestamp'
+        referenceIdentifier:
+          $ref: '#/components/schemas/ReferenceIdentifier'
+
+    OrderCompleted:
+      type: object
+      description: The Order is completed. Documents are ready for retrieval. Invoices and SSR's can be added after this event.
+      properties:
+        event:
+          type: string
+          description: OrderCompleted
+        tenantId:
+          type: string
+          description: Provided when report was submitted on behalf of a customer. For example, via a Loan Origination System (LOS)
+        orderId:
+          $ref: '#/components/schemas/OrderId'
+        deliverables:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document'
+        exportUrl:
+          type: string
+          description: Url to retrieve order data in json format using product defined specifications
+          example: https://api.clearcapital.com/property-valuation-api/123456/export
+        timestamp:
+          $ref: '#/components/schemas/Timestamp'
+        referenceIdentifier:
+          $ref: '#/components/schemas/ReferenceIdentifier'
+
+    OrderCanceled:
+      type: object
+      description: The Order is canceled.
+      properties:
+        event:
+          type: string
+          description: OrderCanceled
+        tenantId:
+          type: string
+          description: Provided when report was submitted on behalf of a customer. For example, via a Loan Origination System (LOS)
+        orderId:
+          $ref: '#/components/schemas/OrderId'
+        reason:
+          type: string
+        fee:
+          type: number
+          format: double
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document'
+        timestamp:
+          $ref: '#/components/schemas/Timestamp'
+        referenceIdentifier:
+          $ref: '#/components/schemas/ReferenceIdentifier'
+
+    MessageAdded:
+      description: a new message has been added by ClearCapital
+      type: object
+      properties:
+        event:
+          type: string
+          description: MessageAdded
+        tenantId:
+          type: string
+          description: Provided when report was submitted on behalf of a customer. For example, via a Loan Origination System (LOS)
+        orderId:
+          $ref: '#/components/schemas/OrderId'
+        isUrgent:
+          type: boolean
+          default: false
+        message:
+          type: string
+        timestamp:
+          $ref: '#/components/schemas/Timestamp'
+        referenceIdentifier:
+          $ref: '#/components/schemas/ReferenceIdentifier'
+
+    RevisionRequestDenied:
+      type: object
+      description: Denial of a revision request
+      properties:
+        event:
+          type: string
+          description: RevisionRequestDenied
+        tenantId:
+          type: string
+          description: Provided when report was submitted on behalf of a customer. For example, via a Loan Origination System (LOS)
+        orderId:
+          $ref: '#/components/schemas/OrderId'
+        reason:
+          type: string
+        timestamp:
+          $ref: '#/components/schemas/Timestamp'
+        referenceIdentifier:
+          $ref: '#/components/schemas/ReferenceIdentifier'
+
+    UnderReview:
+      type: object
+      description: Under Quality Assurance review.
+      properties:
+        event:
+          type: string
+          description: UnderReview
+        tenantId:
+          type: string
+          description: Provided when report was submitted on behalf of a customer. For example, via a Loan Origination System (LOS)
+        orderId:
+          $ref: '#/components/schemas/OrderId'
+        timestamp:
+          $ref: '#/components/schemas/Timestamp'
+        referenceIdentifier:
+          $ref: '#/components/schemas/ReferenceIdentifier'
+
+    OrderMetadata:
+      type: object
+      description: The identifying order information provided on each deliverable
+      properties:
+        orderId:
+          $ref: '#/components/schemas/OrderId'
+        product:
+          type: string
+          description: The product code being delivered
+        loan:
+          $ref: '#/components/schemas/Loan'
+        suppliedAddress:
+          $ref: '#/components/schemas/Address'
+        trackingIdentifiers:
+          type: array
+          items:
+            type: string
+          maxItems: 3
+        dateEffective:
+          $ref: '#/components/schemas/Timestamp'
+        dateOrdered:
+          $ref: '#/components/schemas/Timestamp'
+        dateCompleted:
+          $ref: '#/components/schemas/Timestamp'
+        feeAmount:
+          type: number
+          format: double
+
+    PropertyDisasterInspectionExportResponse:
+      type: object
+      description: The raw data from the Property Disaster Inspection
+      properties:
+        order:
+          $ref: '#/components/schemas/OrderMetadata'
+        broker:
+          $ref: '#/components/schemas/Vendor'
+        neighborhood:
+          type: object
+          properties:
+            estimatedPercentDamagedDueToDisaster:
+              type: string
+              description: |
+                - 0_TO_10_PERCENT
+                - 10_TO_50_PERCENT
+                - 50_PERCENT_PLUS
+            damageDescription:
+              type: string
+              description: describe any damage in the neighborhood (such as flooding, wind, fire, power lines down, debris, road closures, sink holes, etc.)
+        subject:
+          type: object
+          properties:
+            propertyDetails:
+              $ref: '#/components/schemas/PropertyDetails'
+            isLocatedInFemaDisasterArea:
+              type: boolean
+              description:  Subject located in an active FEMA disaster area? (If declared by FEMA as Individual or Public Assistance)
+            isVisibleDuringInspection:
+              type: boolean
+              description: Was the subject property visible during the inspection?
+            rateDamageToSubject:
+              type: string
+              description: |
+                - NO_DAMAGE
+                - MINOR_DAMAGE
+                - SEVERE_DAMAGE
+            disasterTypeItems:
+              type: array
+              items:
+                type: object
+                properties:
+                  disasterType:
+                    type: string
+                    description: |
+                      - CHEMICAL/BIOLOGICAL
+                      - COASTAL_STORM
+                      - DAM/LEVEE_BREAK
+                      - DROUGHT
+                      - EARTHQUAKE
+                      - EMERGENCY_PLANNING_AND_SECURITY
+                      - EXPLOSIONS
+                      - EXTREME_TEMPERATURES
+                      - FIRE
+                      - FLOODING
+                      - HURRICANE/TROPICAL_STORM
+                      - INDUSTRY_HARDSHIP
+                      - MUDSLIDE_AND_LANDSLIDE
+                      - RADIATION_LEAK
+                      - SEVERE_STORMS
+                      - SNOW_STORM
+                      - STRAIGHT-LINE_WINDS
+                      - TECHNOLOGICAL
+                      - TERRORISM
+                      - TORNADOES
+                      - TSUNAMI
+                      - TYPHOON
+                      - VIRUS_THREAT
+                      - VOLCANO
+                      - WILDFIRE
+                      - WINTER_STORMS
+            isStructurallyDamaged:
+              type: boolean
+              description: Structural Damage?
+            isRoofDamaged:
+              type: boolean
+              description: Roof Damage?
+            isSidingDamaged:
+              type: boolean
+              description: Siding Damage?
+            isWindowDamaged:
+              type: boolean
+              description: Window Damage?
+            isFoundationDamaged:
+              type: boolean
+              description: Foundation Damage?
+            isLandscapingDamaged:
+              type: boolean
+              description: Landscaping Damage?
+            isInteriorSignificantlyDamaged:
+              type: boolean
+              description: Does it appear that the interior suffered significant damage?
+            estimatedRepairCost:
+              type: string
+              description: |
+                - UNDER_1000
+                - 1000_TO_10000
+                - 10000_TO_25000
+                - 25000_TO_50000
+                - 50000_PLUS
+                - TOTAL_LOSS
+            estimatedRepairTime:
+              type: string
+              description: |
+                - LESS_THAN_30_DAYS
+                - 30_TO_90_DAYS
+                - 90_DAYS_PLUS
+            damageDescription:
+              type: string
+              description: description of the property's disaster related damage
+            freeOfDisasterRelatedDamages:
+              type: boolean
+              description: DEPRECATED - This data point is no longer supported and will be removed in a later release.
+              deprecated: true
+            damagesAffectedMarketability:
+              type: boolean
+              description: Did the disaster affect the property's marketability?
+        femaDisasterAreaDetail:
+          type: object
+          description: FEMA disaster area designation
+          properties:
+            femaDeclaredDisasterDate:
+              type: string
+              format: date
+              description: Date declared Fema Disaster
+            femaDisasterType:
+              type: string
+              description: Fema disaster type designation
+            femaId:
+              type: string
+              description: Fema Identifier
+            femaAssistanceTypeItems:
+              type: array
+              items:
+                type: object
+                properties:
+                  assistanceType:
+                    type: string
+                    description: |
+                      PUBLIC
+                      INDIVIDUAL
+
+    PropertyConditionInspectionExportResponse:
+      type: object
+      description: The raw data from the Property Condition Inspection
+      properties:
+        order:
+          $ref: '#/components/schemas/OrderMetadata'
+        broker:
+          $ref: '#/components/schemas/Vendor'
+        subject:
+          type: object
+          properties:
+            propertyDetails:
+              $ref: '#/components/schemas/PropertyDetails'
+            propertyType:
+              type: string
+              description: |
+                - SFR
+                - CONDO
+                - COMMERCIAL
+                - DUPLEX
+                - MULTIFAMILY
+                - 3_PLEX
+                - 4_PLEX
+                - MANUF_HOME
+                - OTHER
+            zoningType:
+              type: string
+              description: zoning type
+            currentUse:
+              type: string
+              description: current use
+            projectedUse:
+              type: string
+              description: projected use
+            occupancy:
+              type: string
+              description: |
+                - OCCUPIED
+                - VACANT
+                - UNKNOWN
+            condition:
+              type: string
+              description: |
+                - GOOD
+                - AVERAGE
+                - FAIR
+                - POOR
+                - EXCELLENT
+            conditionComments:
+              type: string
+              description: Subject condition comments
+            isRepairNeeded:
+              type: boolean
+              description: Significant repairs needed?
+            repairsNeededComments:
+              type: string
+              description: Significant repairs needed comments
+            isZoningViolation:
+              type: boolean
+              description: Are you aware of any current zoning violations or potential zoning changes?
+            zoningViolationsComments:
+              type: string
+              description: Any current zoning violations or potential zoning changes comments
+            isConforming:
+              type: boolean
+              description: Does the subject conform to the neighborhood in quality, age, style, & size?
+            conformityComments:
+              type: string
+              description: Subject conforms to the neighborhood in quality, age, style, & size comments
+            isExternalitiesNegative:
+              type: boolean
+              description: Are there any negative externalities affecting marketability?
+            negativeExternalitiesComments:
+              type: string
+              description: Negative externalities comments affecting marketability
+            isExternalitiesPositive:
+              type: boolean
+              description: Are there any positive externalities affecting marketability?
+            positiveExternalitiesComments:
+              type: string
+              description: Positive externalities comments affecting marketability
+        neighborhood:
+          type: object
+          properties:
+            condition:
+              type: string
+              description: | 
+                - GOOD
+                - AVERAGE
+                - FAIR
+                - POOR
+                - EXCELLENT
+            conditionComments:
+              type: string
+              description: Average condition of neighboring properties comments
+        repairs:
+          $ref: '#/components/schemas/repairs'
+        avmAddendum:
+          $ref: '#/components/schemas/AvmValues'
+
+    repairs:
+      type: object
+      properties:
+        repairItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/RepairItem'
+        estimatedInteriorRepairCost:
+          type: number
+        estimatedExteriorRepairCost:
+          type: number
+        totalEstimatedRepairCost:
+          type: number
+
+    BrokerPriceOpinionExportResponse:
+      type: object
+      description: The raw data from the Broker Price Opinion
+      properties:
+        order:
+          $ref: '#/components/schemas/OrderMetadata'
+        subject:
+          type: object
+          properties:
+            propertyDetails:
+              $ref: '#/components/schemas/PropertyDetails'
+            characteristics:
+              $ref: '#/components/schemas/BrokerPriceOpinionPropertyCharacteristics'
+        broker:
+          $ref: '#/components/schemas/Vendor'
+        hoa:
+          $ref: '#/components/schemas/HomeOwnersAssociation'
+        neighborhood:
+          type: object
+          properties:
+            locationType:
+              type: string
+              description: |
+                - RURAL
+                - SUBURBAN
+                - URBAN
+            localEconomy:
+              type: string
+              description: |
+                - EXCELLENT
+                - IMPROVING
+                - STABLE
+                - SLOW
+                - DEPRESSED
+            supplyAndDemand:
+              type: string
+              description: |
+                Evaluations only. 
+                - NORMAL
+                - SHORTAGE
+                - SURPLUS
+            sales:
+              type: object
+              properties:
+                lowValue:
+                  type: number
+                highValue:
+                  type: number
+                predominantValue:
+                  type: number
+                  description: Evaluations only
+            marketCondition:
+              type: number
+              description: |
+                Percentage of value the property has either increased or decreased over the past 6 months
+            normalMarketingDays:
+              type: string
+            comments:
+              type: string
+        comparables:
+          type: object
+          properties:
+            soldComps:
+              type: array
+              description: the set of sold comparables
+              items:
+                $ref: '#/components/schemas/BrokerPriceOpinionComparableProperty'
+            listComps:
+              type: array
+              description: the set of listing comparables
+              items:
+                $ref: '#/components/schemas/BrokerPriceOpinionComparableProperty'
+            distanceToSubjectCalculation:
+              type: string
+              description: Describes how the distances from subject to current listings and recent sales were calculated
+        repairs:
+          $ref: '#/components/schemas/repairs'
+        generalConditions:
+          $ref: '#/components/schemas/BrokerPriceOpinionGeneralConditions'
+        subjectHistory:
+          $ref: '#/components/schemas/SubjectHistory'
+        marketingStrategy:
+          type: object
+          properties:
+            listing:
+              type: object
+              properties:
+                asIsPrice:
+                  type: number
+                repairedPrice:
+                  type: number
+            sale:
+              type: object
+              properties:
+                asIsPrice:
+                  type: number
+                repairedPrice:
+                  type: number
+            quickSalePrice:
+              type: number
+            comments:
+              type: string
+            estimatedMonthlyRent:
+              type: number
+        reportConditions:
+          type: array
+          items:
+            type: string
+        rentalAddendum:
+          $ref: '#/components/schemas/BrokerPriceOpinionRentalAddendum'
+
+    EvaluationExportResponse:
+      type: object
+      description: The raw data from the Evaluation Report
+      properties:
+        order:
+          $ref: '#/components/schemas/OrderMetadata'
+        subject:
+          type: object
+          properties:
+            propertyDetails:
+              $ref: '#/components/schemas/PropertyDetails'
+            characteristics:
+              $ref: '#/components/schemas/BrokerPriceOpinionPropertyCharacteristics'
+        broker:
+          $ref: '#/components/schemas/Vendor'
+        hoa:
+          $ref: '#/components/schemas/HomeOwnersAssociation'
+        neighborhood:
+          type: object
+          properties:
+            locationType:
+              type: string
+              description: |
+                - RURAL
+                - SUBURBAN
+                - URBAN
+            localEconomy:
+              type: string
+              description: |
+                - EXCELLENT
+                - IMPROVING
+                - STABLE
+                - SLOW
+                - DEPRESSED
+            supplyAndDemand:
+              type: string
+              description: |
+                Evaluations only. 
+                - NORMAL
+                - SHORTAGE
+                - SURPLUS
+            sales:
+              type: object
+              properties:
+                lowValue:
+                  type: number
+                highValue:
+                  type: number
+                predominantValue:
+                  type: number
+                  description: Evaluations only
+            marketCondition:
+              type: number
+              description: |
+                Percentage of value the property has either increased or decreased over the past 6 months
+            normalMarketingDays:
+              type: string
+            comments:
+              type: string
+        comparables:
+          type: object
+          properties:
+            soldComps:
+              type: array
+              description: the set of sold comparables
+              items:
+                $ref: '#/components/schemas/BrokerPriceOpinionComparableProperty'
+            listComps:
+              type: array
+              description: the set of listing comparables
+              items:
+                $ref: '#/components/schemas/BrokerPriceOpinionComparableProperty'
+            distanceToSubjectCalculation:
+              type: string
+              description: Describes how the distances from subject to current listings and recent sales were calculated
+        repairs:
+          type: object
+          properties:
+            repairItems:
+              type: array
+              items:
+                $ref: '#/components/schemas/RepairItem'
+            estimatedInteriorRepairCost:
+              type: number
+            estimatedExteriorRepairCost:
+              type: number
+            totalEstimatedRepairCost:
+              type: number
+        generalConditions:
+          $ref: '#/components/schemas/EvaluationGeneralConditions'
+        subjectHistory:
+          $ref: '#/components/schemas/SubjectHistoryEvaluation'
+        valueConclusion:
+          type: object
+          properties:
+            suggestedList:
+              type: object
+              properties:
+                asIsPrice:
+                  type: number
+                repairedPrice:
+                  type: number
+            finalConclusion:
+              type: object
+              properties:
+                asIsPrice:
+                  type: number
+                repairedPrice:
+                  type: number
+                30DayValue:
+                  type: number
+                  description: Associated with Product Codes; EVALUATION_INTERIOR_30DAY_VALUE and EVALUATION_EXTERIOR_30DAY_VALUE
+            estimatedMonthlyRent:
+              type: number
+            summary:
+              type: string
+
+    BrokerPriceOpinionRentalAddendum:
+      type: object
+      properties:
+        marketTrends:
+          $ref: '#/components/schemas/BrokerPriceOpinionRentalMarketTrends'
+        comparables:
+          type: array
+          items:
+            $ref: '#/components/schemas/BrokerPriceOpinionRentalComparableProperty'
+        marketingStrategy:
+          $ref: '#/components/schemas/BrokerPriceOpinionRentalMarketStrategy'
+
+    BrokerPriceOpinionRentalMarketTrends:
+      type: object
+      properties:
+        rentalMarketRadius:
+          type: integer
+          description: in miles with subject at origin/center
+        currentRentalInventory:
+          type: integer
+          description: |
+            within the subject's rental market
+        rentalRates:
+          type: string
+          description: |
+            - INCREASING
+            - STABLE
+            - DECLINING
+        typicalDaysOnRentalMarket:
+          type: string
+          description: |
+            - LESS_THAN_60
+            - 60_TO_120
+            - GREATER_THAN_!20
+        rentalSupply:
+          type: string
+          description: |
+            - INCREASING
+            - STABLE
+            - DECLINING
+        rentalDemand:
+          type: string
+          description: |
+            - INCREASING
+            - STABLE
+            - DECLINING
+
+    BrokerPriceOpinionRentalComparableProperty:
+      type: object
+      properties:
+        type:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+        datasource:
+          type: string
+        distanceToSubject:
+          type: number
+        condition:
+          type: string
+        garageDescription:
+          type: string
+          description: |
+            Describes the total number of cars and primary type/mode of parking available at the property. For example, Attached 2 Car(s), Detached 1 Car, Carport 2 Car(s)
+        heating:
+          type: string
+        cooling:
+          type: string
+        otherUtility:
+          type: string
+        utilitiesIncludedWithRent:
+          type: string
+        leaseStatus:
+          type: string
+          description: |
+            - CLOSED_LEASE
+            - FOR_RENT
+        leasePeriod:
+          type: string
+          description: |
+            - UNKNOWN
+            - MONTHLY
+            - 6_MONTHS
+            - 12_MONTHS
+            - OTHER
+        propertyRentalMarket:
+          type: string
+          description: |
+            - EXCELLENT
+            - GOOD
+            - AVERAGE
+            - FAIR
+            - POOR
+        units:
+          type: array
+          items:
+            $ref: '#/components/schemas/BrokerPriceOpinionRentalUnit'
+        totalMonthlyRent:
+          type: number
+        isMostComparable:
+          type: boolean
+          description: Indicates this rental unit is most comparable to the subject
+        comment:
+          type: string
+
+    BrokerPriceOpinionRentalMarketStrategy:
+      type: object
+      properties:
+        estimatedMonthlyRent:
+          type: number
+        isLegallyRentable:
+          type: boolean
+        repairedCondition:
+          type: number
+        commentary:
+          type: string
+
+    BrokerPriceOpinionRentalUnit:
+      type: object
+      properties:
+        beds:
+          type: integer
+          description: |
+            The total number of bedrooms at the property.
+        baths:
+          type: integer
+          description: |
+            The total number of full bathrooms at the property. A full bathroom is typically a room containing the following minimum elements - Toilet, Sink, Bathtub or Shower Head.
+        halfBaths:
+          type: integer
+          description: |
+            The total number of half-baths at the property. A half-bathroom being a room typically containing 2 of the following 4 elements - Toilet, Sink, Bathtub or Shower Head. Most Half Baths contain a Sink and Toilet.
+        grossLivingArea:
+          type: integer
+        monthlyRent:
+          type: number
+
+    EvaluationGeneralConditions:
+      type: object
+      description: Represents properties of a comparable (listing or sale) property for an Automated Valuation Model
+      allOf:
+        - $ref: '#/components/schemas/GeneralConditions'
+        - properties:
+            datasource:
+              type: string
+            currentUse:
+              type: string
+            projectedUse:
+              type: string
+            economicObsolescence:
+              type: boolean
+            environmentalIssues:
+              type: boolean
+
+    BrokerPriceOpinionGeneralConditions:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/GeneralConditions'
+        - properties:
+            owner:
+              type: string
+            ownershipType:
+              type: string
+            isVisibleFromStreet:
+              type: boolean
+            roadType:
+              type: string
+
+    GeneralConditions:
+      type: object
+      properties:
+        propertyType:
+          type: string
+        zoning:
+          type: string
+        occupancy:
+          type: string
+        reTaxes:
+          type: number
+          description: aka Annual Property Tax
+        assessedValue:
+          type: number
+        isSecure:
+          type: boolean
+        secureComments:
+          type: string
+          description: Describes how the property is secured or unsecured
+        propertyCondition:
+          type: string
+          description: |
+            - EXCELLENT
+            - GOOD
+            - AVERAGE
+            - FAIR
+            - POOR
+        conditionComments:
+          type: string
+
+    ComparableProperty:
+      type: object
+      description: Represents common properties of a comparable (listing or sale) property
+      properties:
+        propertyDetails:
+          $ref: '#/components/schemas/PropertyDetails'
+        dataSource:
+          type: string
+          description: where the data was found, either public records or MLS
+        mlsNumber:
+          type: string
+          description: The identifier from the MLS for the listing when the source is MLS
+        distanceToSubject:
+          type: number
+        listDate:
+          type: string
+          format: date
+        listPrice:
+          type: number
+        salesType:
+          type: string
+          description: |
+            - AUCTION
+            - FAIR_MARKET_VALUE
+            - INVESTOR
+            - QUICK_SALE
+            - REO
+            - SHORT_SALE
+        salePrice:
+          type: number
+        saleDate:
+          type: string
+          format: date
+        daysOnMarket:
+          type: integer
+        comments:
+          type: string
+
+    AvmComparableProperty:
+      type: object
+      description: Represents properties of a comparable (listing or sale) property for an Automated Valuation Model
+      allOf:
+        - $ref: '#/components/schemas/ComparableProperty'
+        - properties:
+            characteristics:
+              $ref: '#/components/schemas/PropertyCharacteristics'
+
+    BrokerPriceOpinionComparableProperty:
+      type: object
+      description: Represents properties of a comparable (listing or sale) property for a Broker Price Opinion
+      allOf:
+        - $ref: '#/components/schemas/ComparableProperty'
+        - properties:
+            characteristics:
+              $ref: '#/components/schemas/BrokerPriceOpinionPropertyCharacteristics'
+            originalListPrice:
+              type: number
+            originalListDate:
+              type: string
+              format: date
+            isMostComparable:
+              type: boolean
+              description: Indicates this comp is most comparable to the subject
+            adjustments:
+              type: object
+              properties:
+                adjustment:
+                  type: number
+                adjustedPrice:
+                  type: number
+                reason:
+                  type: string
+            typeOfFinancing:
+              type: string
+
+    BrokerPriceOpinionPropertyCharacteristics:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PropertyCharacteristics'
+        - properties:
+            hasBasement:
+              type: boolean
+            location:
+              type: object
+              properties:
+                rating:
+                  type: string
+                factor:
+                  type: string
+            view:
+              type: object
+              properties:
+                rating:
+                  type: string
+                factor:
+                  type: string
+
+    HomeOwnersAssociation:
+      type: object
+      properties:
+        projectType:
+          type: string
+          description: |
+            - CONDO
+            - PUD
+            - VOLUNTARY_HOA
+        name:
+          type: string
+        contact:
+          $ref: '#/components/schemas/Contact'
+        amenities:
+          type: array
+          items:
+            type: string
+          description: |
+            - POOL
+            - TENNIS
+            - LANDSCAPE
+            - GREENBELT
+            - INSURANCE
+            - OTHER
+        otherAmenities:
+          type: string
+          description: Contains additional information regarding amenities when OTHER is listed in amenities
+        fees:
+          type: object
+          properties:
+            amount:
+              type: number
+            term:
+              type: string
+              description: |
+                - MONTH
+                - QUARTER
+                - YEAR
+            isRequired:
+              type: boolean
+
+    SubjectHistory:
+      type: object
+      properties:
+        isCurrentlyListed:
+          type: boolean
+        listingAgency:
+          type: string
+        listingAgent:
+          type: string
+        listingAgentPhone:
+          type: string
+        salesLast12Months:
+          type: integer
+          description: How many times subject has sold in the last 12 months
+        listedLast12Months:
+          type: integer
+          description: How many times the subject has been listed and removed from the market in the last 12 months
+        comments:
+          type: string
+        listingEvents:
+          type: array
+          items:
+            $ref: '#/components/schemas/ListingEvent'
+
+    ListingEvent:
+      type: object
+      properties:
+        status:
+          type: string
+          description: |
+            - ORIGINAL_LIST_PRICE
+            - PRICE_CHANGE
+            - CURRENT_LIST_PRICE
+            - FINAL_LIST_PRICE
+            - PENDING
+            - SALE_PRICE
+            - WITHDRAWN
+            - CANCELED
+            - EXPIRED
+        dateEffective:
+          type: string
+          format: date
+        price:
+          type: number
+        dataSource:
+          type: string
+          description: |
+            - MLS
+            - PUBLIC_TAX_RECORDS
+        saleType:
+          type: string
+          description: |
+            - REO
+            - SHORT_SALE
+            - COURT_ORDERED
+            - ESTATE_SALE
+            - RELOCATION
+            - NON_ARMS_LENGTH
+            - ARMS_LENGTH
+        daysOnMarket:
+          description: May not be accurate for subject property.  Calculated value based on known conditions when work is performed.
+          type: integer
+        mlsNumber:
+          type: string
+          description: The MLS Number used to uniquely identify the MLS Listing event in the MLS system from which the listing information was sourced/obtained. In aggregate MLS systems, this identifier/number is often different from the MLS number generated by the originating system.
+
+    SubjectHistoryEvaluation:
+      type: object
+      properties:
+        datasource:
+          type: string
+        listingEvents:
+          type: array
+          items:
+            type: object
+            properties:
+              listDate:
+                type: string
+                format: '#/components/schemas/Timestamp'
+              listPrice:
+                type: number
+              soldDate:
+                type: string
+                format: '#/components/schemas/Timestamp'
+              soldPrice:
+                type: number
+
+    Vendor:
+      type: object
+      properties:
+        name:
+          type: string
+        license:
+          $ref: '#/components/schemas/VendorLicense'
+        contact:
+          type: object
+          properties:
+            phoneNumber:
+              $ref: '#/components/schemas/PhoneNumber'
+            faxNumber:
+              $ref: '#/components/schemas/PhoneNumber'
+            email:
+              type: string
+        yearsExperience:
+          type: integer
+        companyName:
+          type: string
+
+    VendorLicense:
+      type: object
+      description: license information for the vendor who completed the report
+      properties:
+        name:
+          type: string
+        licenseNumber:
+          type: string
+        licenseState:
+          type: string
+        licenseExpiration:
+          type: string
+          format: date
+
+    PropertyCharacteristics:
+      type: object
+      description: |
+        Common characteristics of the property. See Product specific documentation for additional details.
+      properties:
+        type:
+          type: string
+          description: |
+            property type values vary by product. Contact Clear Capital with questions.
+        style:
+          type: string
+          description: |
+            Describing the general architectural style of the property. For example, contemporary, ranch, tudor, bungalow.
+        beds:
+          type: integer
+          description: |
+            The total number of bedrooms at the property.
+        baths:
+          type: integer
+          description: |
+            The total number of full bathrooms at the property. A full bathroom is typically a room containing the following minimum elements - Toilet, Sink, Bathtub or Shower Head.
+        halfBaths:
+          type: integer
+          description: |
+            The total number of half-baths at the property. A half-bathroom being a room typically containing 2 of the following 4 elements - Toilet, Sink, Bathtub or Shower Head. Most Half Baths contain a Sink and Toilet.
+        totalRooms:
+          type: number
+          description: |
+            The total number of rooms associated with the property (dwelling).
+        units:
+          type: integer
+          description: |
+            The total number of separate habitable units (dwellings) on the property.
+        lotSize:
+          description: the total area of the lot in acres or square feet
+          type: number
+        lotSizeType:
+          description: |
+            - ACRES
+            - SQFT
+          type: string
+        grossLivingArea:
+          type: number
+        yearBuilt:
+          type: number
+          description: |
+            The 4-digit year value (formatted as YYYY) that describes when the house was built or an occupancy permit was first granted for the house or other local measure of initial habitability of the build was valid.
+        garageDescription:
+          type: string
+          description: |
+            Describes the total number of cars and primary type/mode of parking available at the property. For example, Attached 2 Car(s), Detached 1 Car, Carport 2 Car(s)
+        condition:
+          type: string
+          description: |
+            Indicates the overall condition of the property as indicated on the tax assessment. For example, excellent, fair, average
+        basementSqFt:
+          type: number
+          description: |
+            The total size of basement (below ground) area in sq-ft (if present), including any unfinished area.
+        basementSqFtFinished:
+          type: number
+          description: |
+            The total size of finished basement (below ground) area in sq-ft (if present), as per the tax assessment. Also referred to as Finished Below Grade Area.
+        poolSpa:
+          type: string
+          description: Describes the presence of a pool or spa at the property, and if present the primary type of pool and/or spa or features associated with the pool.
+        fence:
+          type: string
+          description: |
+            Lists the type of fencing around the subject property being sold.
+        deck:
+          type: string
+        porch:
+          type: string
+        patio:
+          type: string
+        fireplace:
+          type: string
+          description: Indicates either the presence of a fireplace at a property and/or the type of fireplace where available.
+        floorCount:
+          type: integer
+          description: The total number of levels (i.e stories) that the main dwelling unit has.
+        zoningCode:
+          type: string
+          description: Zoning Codes as represented by the city or county that the subject is located in.
+        other:
+          type: string
+          description: any other characteristics that were noted
+
+    RepairItem:
+      type: object
+      properties:
+        category:
+          type: string
+        comments:
+          type: string
+        estimatedCost:
+          type: number
+
+    ProductResponse:
+      type: object
+      properties:
+        products:
+          type: array
+          description: The available products and their details
+          items: 
+            $ref: '#/components/schemas/Product' 
+
+        addressWarning:
+          type: string
+          description: a warning message indicating if there was a concern resolving a provided address.  If there is an issue resolving the address, geographical pricing may not be accurate
+
+    Product:
+      type: object
+      properties:
+        product:
+          type: string
+          description: the product code
+        description:
+          type: string
+          description: the friendly name for the product
+        paymentMethods:
+          type: array
+          description: "a list of payment methods available for the given product: INVOICE, PAYMENT_LINK"
+          items:
+            type: string
+        prices:
+          type: array
+          description: a list of prices for the available turn times configured for the given product
+          items:
+            $ref: '#/components/schemas/Price'
+        warning:
+          description: state, regulatory or other impacts that could affect the price or product details
+          type: string
+
+    Price:
+      type: object
+      properties:
+        estimate:
+          type: number
+          description: the estimated price based on the parameters provided
+        estimatedDueDate:
+          type: string
+          format: date
+          description: the estimated due date that would be used if ordered as of the date of the pricing request, this date could change once the order is actually placed
+        turnTime:
+          type: number
+          description: the number of hours used to calculate the estimated due date
+        creditCardFee:
+          type: number
+          description: the fee that will be added to the estimate if a credit card is used for payment
+
+    CdaComparableProperty:
+      type: object
+      description: Represents a comparable property in the context of a Collateral Desktop Analysis
+      allOf:
+        - $ref: '#/components/schemas/ComparableProperty'
+        - properties:
+            characteristics:
+              $ref: '#/components/schemas/PropertyCharacteristics'
+
+
+    CollateralDesktopAnalysisExportResponse:
+      type: object
+      description: The raw data from the Collateral Desktop Analysis
+      properties:
+        order:
+          $ref: '#/components/schemas/OrderMetadata'
+        lenderClient:
+          type: string
+        subject:
+          type: object
+          properties:
+            propertyDetails:
+              $ref: '#/components/schemas/PropertyDetails'
+            characteristics:
+              $ref: '#/components/schemas/PropertyCharacteristics'
+            legalDescription:
+              type: string
+            rightsAppraised:
+              type: string
+              description: the rights appraised, if other, the description is appended to the value
+        analysis:
+          type: object
+          properties:
+            value:
+              type: number
+              description: the value conclusion of the reviewer, note that the value will not be given when the riskScore is Indeterminate
+            variance:
+              type: number
+              description: the variance between the CDA value and the appraisal value as a percentage, note that the variance will not be given when the riskScore is Indeterminate
+            riskScore:
+              type: string
+              description: |
+                - Low Risk
+                - Moderate Risk
+                - High Risk
+                - Indeterminate
+            reviewRecommended:
+              type: boolean
+              description: Indicates if additional review is recommended
+            subjectRiskIndicators:
+              type: array
+              items:
+                type: string
+            comparableRiskIndicators:
+              type: array
+              items:
+                type: string
+            marketConditionComments:
+              type: string
+              description: Are the market conditions accurately and adequately described?
+            subjectPropertyComments:
+              type: string
+              description: Is the subject property accurately and adequately described?
+            transferHistoryComments:
+              type: string
+              description: Has the prior sale or transfer history analysis of the subject and comparables been accurately and adequately provided?
+            comparableComments:
+              type: string
+              description: Were the comparables adequately selected, analyzed and accurately presented?
+            valueConclusionComments:
+              type: string
+              description: Is the value conclusion of the appraisal under review reasonable and adequately supported as of the effective date of the appraisal?
+            summaryComments:
+              type: string
+              description: Final appraisal analysis and deficiencies summary
+            disagreementComments:
+              type: string
+              description: If you disagree with the final value conclusion of the appraisal under review, summarize your value conclusion
+            additionalReviewComments:
+              type: string
+              description: Do you recommend an additional review to be conducted on this appraisal?
+        originalAppraisal:
+          type: object
+          description: data from the appraisal under review
+          properties:
+            value:
+              type: number
+            effectiveDate:
+              type: string
+              format: date
+            reportDate:
+              type: string
+              format: date
+            appraiserName:
+              type: string
+        comparables:
+          type: object
+          properties:
+            soldComps:
+              type: array
+              description: the set of sales comparables
+              items:
+                $ref: '#/components/schemas/CdaComparableProperty'
+            listComps:
+              description: the set of listing comparables
+              type: array
+              items:
+                $ref: '#/components/schemas/CdaComparableProperty'
+        appraiser:
+          $ref: '#/components/schemas/Vendor'
+
+    ReconExportResponse:
+      type: object
+      description: The raw data from the recon
+      properties:
+        order:
+          $ref: '#/components/schemas/OrderMetadata'
+        lenderClient:
+          type: string
+        subject:
+          type: object
+          properties:
+            propertyDetails:
+              $ref: '#/components/schemas/PropertyDetails'
+        analysis:
+          type: object
+          properties:
+            value:
+              type: number
+              description: the value conclusion of the reviewer
+            variance:
+              type: number
+              description: the variance between the recon value and the benchmark source document value as a percentage
+            repairedValue:
+              type: number
+              description: the value that includes costs to repair
+            repairCosts:
+              type: number
+              description: the total repair costs
+            marketConditionComments:
+              type: string
+              description: market condition comments
+            subjectPropertyComments:
+              type: string
+              description: subject property comments
+            valueConclusionComments:
+              type: string
+              description: value conclusion comments
+            appraisalComments:
+              type: string
+              description: appraisal comments
+            bpoComments:
+              type: string
+              description: bpo comments
+            supplementalComments:
+              type: string
+              description: supplemental comments
+        sourceDocumentData:
+          type: array
+          items:
+            type: object
+            properties:
+              value:
+                type: number
+                description: vendor assigned value
+              repairedValue:
+                type: number
+                description: the value that includes costs to repair
+              repairCosts:
+                type: number
+                description: the total repair costs
+              effectiveDate:
+                type: string
+                format: date
+              signatureDate:
+                type: string
+                format: date
+              vendorName:
+                type: string
+                description: vendor name
+              benchmark:
+                type: boolean
+                description: source document used as basis for recon value
+              variance:
+                type: string
+                description: variance of the source document value from the recon value
+              sourceDocumentType:
+                type: string
+                description: |
+                  - APPRAISAL
+                  - BPO
+        appraiser:
+          $ref: '#/components/schemas/Vendor'
+
+  requestBodies:
+    WebhookBody:
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/OrderAccepted'
+              - $ref: '#/components/schemas/OrderDeclined'
+              - $ref: '#/components/schemas/OrderAssigned'
+              - $ref: '#/components/schemas/OrderCompleted'
+              - $ref: '#/components/schemas/OrderCanceled'
+              - $ref: '#/components/schemas/HoldAdded'
+              - $ref: '#/components/schemas/HoldRemoved'
+              - $ref: '#/components/schemas/InspectionScheduled'
+              - $ref: '#/components/schemas/InspectionCompleted'
+              - $ref: '#/components/schemas/MessageAdded'
+              - $ref: '#/components/schemas/EstimatedCompletionDateChanged'
+              - $ref: '#/components/schemas/RevisionRequestDenied'
+              - $ref: '#/components/schemas/UnderReview'
+          examples:
+            OrderAccepted:
+              value: {
+                "event": "OrderAccepted",
+                "tenantId": "123456",
+                "orderId": "356725665819205112",
+                "timestamp": "2020-06-11T22:31:59Z"
+              }
+            OrderDeclined:
+              value: {
+                "event": "OrderDeclined",
+                "tenantId": "123456",
+                "orderId": "356725665819205112",
+                "timestamp": "2020-06-11T22:31:59Z"
+              }
+            OrderAssigned:
+              value: {
+                "event": "OrderAssigned",
+                "tenantId": "123456",
+                "orderId": "356725665819205112",
+                "timestamp": "2020-06-11T22:31:59Z"
+              }
+            OrderCompleted:
+              value: {
+                "event": "OrderCompleted",
+                "orderId": "356725665819205112",
+                "deliverables": [
+                  {
+                    "fileName": "Appraisal.xml",
+                    "documentType": "APPRAISAL_MISMO",
+                    "url": "https://property-valuation-api.clearcollateral.com/356725665819205112/documents/987654321",
+                    "timestamp": "2020-06-11T22:31:59Z"
+                  }
+                ],
+                "timestamp": "2020-06-11T22:31:59Z"
+              }
+            OrderCanceled:
+              value: {
+                "event": "OrderCanceled",
+                "tenantId": "123456",
+                "orderId": "356725665819205112",
+                "reason": "cancelation reason",
+                "fee": 100.00,
+                "invoiceUrl": "https://property-valuation-api.clearcollateral.com/356725665819205112/documents/987654321",
+                "timestamp": "2020-06-11T22:31:59Z"
+              }
+            HoldAdded:
+              value: {
+                "event": "HoldAdded",
+                "tenantId": "123456",
+                "orderId": "356725665819205112",
+                "reason": "reason for the hold",
+                "timestamp": "2020-06-11T22:31:59Z"
+              }
+            HoldRemoved:
+              value: {
+                "event": "HoldRemoved",
+                "tenantId": "123456",
+                "orderId": "356725665819205112",
+                "timestamp": "2020-06-11T22:31:59Z"
+              }
+            InspectionScheduled:
+              value: {
+                "event": "InspectionScheduled",
+                "tenantId": "123456",
+                "orderId": "356725665819205112",
+                "inspectionDate": "2020-06-12T22:31:59Z",
+                "timestamp": "2020-06-11T22:31:59Z"
+              }
+            InspectionCompleted:
+              value: {
+                "event": "InspectionCompleted",
+                "tenantId": "123456",
+                "orderId": "356725665819205112",
+                "timestamp": "2020-06-11T22:31:59Z"
+              }
+            MessageAdded:
+              value: {
+                "event": "MessageAdded",
+                "tenantId": "123456",
+                "orderId": "356725665819205112",
+                "isUrgent": false,
+                "message": "A message was added by Clear Capital",
+                "timestamp": "2020-06-11T22:31:59Z"
+              }
+            EstimatedCompletionDateChanged:
+              value: {
+                "event": "EstimatedCompletionDateChanged",
+                "tenantId": "123456",
+                "orderId": "356725665819205112",
+                "estimatedCompletionDate": "2020-07-11T22:31:59Z",
+                "timestamp": "2020-06-11T22:31:59Z"
+              }
+            RevisionRequestDenied:
+              value: {
+                "event": "RevisionRequestDenied",
+                "tenantId": "123456",
+                "orderId": "356725665819205112",
+                "reason": "Revision request was denied",
+                "timestamp": "2020-06-11T22:31:59Z"
+              }
+            UnderReview:
+              value: {
+                "event": "UnderReview",
+                "tenantId": "123456",
+                "orderId": "356725665819205112",
+                "timestamp": "2020-06-11T22:31:59Z"
+              }

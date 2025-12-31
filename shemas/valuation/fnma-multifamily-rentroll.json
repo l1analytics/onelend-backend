@@ -1,0 +1,547 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+      "title": "Multifamily Rent Roll Submission API",
+      "description": "Multifamily Rent Roll Submission API to support digitization of rent roll collection.",
+      "termsOfService": "Terms of Service",
+      "contact": {
+        "name": "MF Digitizers Development",
+        "email": "MF_Digitizers_Development@fanniemae.com"
+      },
+      "license": {
+        "name": "Fannie Mae License"
+      },
+      "version": "3.0.0"
+    },
+    "externalDocs": {},
+    "servers": [
+      {
+        "url": "https://api-int.fanniemae.com"
+      }
+    ],
+    "paths": {
+      "/multifamily/assetmanagement/rentroll/v1/validation": {
+        "post": {
+          "tags": [
+            "rent-roll-controller"
+          ],
+          "summary": "Validating the rent-roll(s) submitted by user",
+          "operationId": "validation",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RentRollRequest"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "400": {
+              "description": "BAD REQUEST",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/RentRollResponse"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal Server Error"
+            }
+          }
+        }
+      },
+      "/multifamily/assetmanagement/rentroll/v1/submission": {
+        "post": {
+          "tags": [
+            "rent-roll-controller"
+          ],
+          "summary": "Validating and persisting the rent-roll(s) submitted by user",
+          "operationId": "submission",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RentRollRequest"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "400": {
+              "description": "BAD REQUEST",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/RentRollResponse"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal Server Error"
+            }
+          }
+        }
+      },
+      "/multifamily/assetmanagement/rentroll/healthcheck": {
+        "get": {
+          "tags": [
+            "health-check-controller"
+          ],
+          "operationId": "get",
+          "responses": {
+            "200": {
+              "description": "OK",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "AdditionalFee": {
+          "required": [
+            "additional_fee_detailed_amount",
+            "additional_fee_type"
+          ],
+          "type": "object",
+          "properties": {
+            "additional_fee_detailed_amount": {
+              "type": "number",
+              "description": "The dollar amount detailing the breakdown of any additional amount that tenant pays in addition to the contract rent.",
+              "format": "double"
+            },
+            "additional_fee_type": {
+              "type": "string",
+              "description": "A code indicating the type of charges that tenant pays, in addition to contract rent.",
+              "enum": [
+                "Laundry, Carport, Garage, Gym/Pool/Courts/Health Club, Other, Parking, Pet/animal, Storage, Application Fee, Bike Room, Community Room, Move-In/Move-Out Fees, Renter Insurance, Short Term Lease, Utilities Reimbursement, Damages, Late Fees and/or Penalties, Lock Out Fees, Furniture/Equipment Fees"
+              ]
+            },
+            "additional_fee_other_description": {
+              "type": "string",
+              "description": "Additional Fee Other Description."
+            }
+          },
+          "description": "Details of Additional Fees"
+        },
+        "RentRollRequest": {
+          "required": [
+            "property_city",
+            "property_management_company_name",
+            "property_name",
+            "property_state",
+            "property_street_address",
+            "property_zipcode",
+            "rent_roll_as_of_date",
+            "units"
+          ],
+          "type": "object",
+          "properties": {
+            "property_street_address": {
+              "type": "string",
+              "description": "A free-form text to capture the current address of the property serving as mortgage collateral. If the property has been defeased, then leave field empty. For loan level reporting, if multiple properties, then print \"Various\". For substituted properties, populate with the new property information."
+            },
+            "property_city": {
+              "type": "string",
+              "description": "The city of the residence or primary business office for the party."
+            },
+            "property_name": {
+              "type": "string",
+              "description": "The current name of the property that serves as mortgage collateral."
+            },
+            "property_state": {
+              "type": "string",
+              "description": "The U.S. state or territory in which the residence or primary business office of the party is located."
+            },
+            "property_zipcode": {
+              "type": "string",
+              "description": "The current zip (or postal) code for the property or properties which serve as mortgage collateral, captured as submitted by the lender."
+            },
+            "rent_roll_as_of_date": {
+              "type": "string",
+              "description": "The date on which the rent roll information for the property is as of.",
+              "example": "01/31/2020"
+            },
+            "property_management_company_name": {
+              "type": "string",
+              "description": "Property Management Company"
+            },
+            "units": {
+              "type": "array",
+              "description": "List of all units associated with the property.",
+              "items": {
+                "$ref": "#/components/schemas/Unit"
+              }
+            },
+            "seller_ln_nbr": {
+              "type": "string",
+              "description": "Seller-assigned Loan Number"
+            },
+            "property_mstr_nbr": {
+              "type": "integer",
+              "description": "Property Master Number"
+            },
+            "submitter_email_addr": {
+              "type": "string",
+              "description": "Submitter Email Address",
+              "example": "MF_Digitizers_Development@fanniemae.com"
+            }
+          }
+        },
+        "RentSubsidy": {
+          "required": [
+            "rent_subsidy_type"
+          ],
+          "type": "object",
+          "properties": {
+            "rent_subsidy_detailed_amount": {
+              "type": "number",
+              "description": "The dollar amount of federal, state, and/or local rental assistance provided to income-restricted tenants, per unit.",
+              "format": "double"
+            },
+            "rent_subsidy_type": {
+              "type": "string",
+              "description": "A code indicating the type of financial assistance (aid) received by income restricted tenants.",
+              "enum": [
+                "Community Development Block Grant, Housing Assistance Payments (HAP) Contract, HOME Investment Partnerships Program (HOME),Housing Rental Assistance USDA, Local Initiative, Low Income Tax Housing Credit, Other, Section 8 Portable Vouchers, State Initiative"
+              ]
+            },
+            "rent_subsidy_other_description": {
+              "type": "string",
+              "description": "A Free-form text field to capture Other Subsidy Description when the 'Subsidy Rent Type' is selected as 'Other'"
+            }
+          },
+          "description": "Details of Rent Subsidies"
+        },
+        "Tenant": {
+          "required": [
+            "mailing_city",
+            "mailing_state",
+            "mailing_street_address",
+            "mailing_zipcode",
+            "tenant_lease_status_type",
+            "tenant_name"
+          ],
+          "type": "object",
+          "properties": {
+            "tenant_name": {
+              "type": "string",
+              "description": "Name of Tenant. Maximum allowed length is 50 characters."
+            },
+            "mailing_street_address": {
+              "type": "string",
+              "description": "A free-form text to capture the current mailing address of the tenant."
+            },
+            "mailing_city": {
+              "type": "string",
+              "description": "The city of the tenant's mailing address."
+            },
+            "mailing_state": {
+              "type": "string",
+              "description": "The U.S. state or territory of the tenant's mailing address."
+            },
+            "mailing_zipcode": {
+              "type": "string",
+              "description": "The current zip (or postal) code of the tenant's mailing address."
+            },
+            "tenant_guarantor_names": {
+              "type": "string",
+              "description": "A free-form text field indicating the name of the tenant's guarantor per the lease contract.",
+              "example": "FNU LNU, FirstName LastName"
+            },
+            "tenant_lease_status_type": {
+              "type": "string",
+              "description": "A code indicating the current status of the lease on the unit.",
+              "enum": [
+                "Occupied, Vacant, Employee, Letter Of Intent, Down, Model, Other, Signed Lease Not Occupied, Expired, Police Security"
+              ]
+            }
+          },
+          "description": "At least one tenant record is required if lease status type Occupied/Expired/Signed Lease Not Occupied."
+        },
+        "Unit": {
+          "required": [
+            "bedroom_count",
+            "deferral_agreement_indicator",
+            "full_bathrooms_count",
+            "half_bathrooms_count",
+            "lease_status_type",
+            "market_comparable_rent_amount",
+            "payment_frequency",
+            "security_deposit_amount",
+            "tenant_guarantee_indicator",
+            "unit_identifier",
+            "unit_tenant_contract_rent_amount",
+            "unit_type"
+          ],
+          "type": "object",
+          "properties": {
+            "additional_fees": {
+              "type": "array",
+              "description": "Details of Additional Fees",
+              "items": {
+                "$ref": "#/components/schemas/AdditionalFee"
+              }
+            },
+            "ami_percent_restriction_level": {
+              "type": "string",
+              "description": "The Area Median Income to which a multifamily unit is restricted, expressed as a percentage.",
+              "enum": [
+                "At Or Below 50 Percent, At Or Below 60 Percent, At Or Below 80 Percent, At Or Below 100 Percent, At Or Below 120 Percent, Above 120 Percent"
+              ]
+            },
+            "bedroom_count": {
+              "type": "integer",
+              "description": "The total number of bedroom(s) in the individual unit of the property. Value must be a positive whole number.",
+              "format": "int32"
+            },
+            "billing_amount": {
+              "type": "number",
+              "description": "The dollar amount of rent billed to the tenant for the period. The amount includes the net of credits and subsidies.",
+              "format": "double"
+            },
+            "charge_amount": {
+              "type": "number",
+              "description": "The dollar amount of rent charged to the tenant before any credits or subsidies are applied.",
+              "format": "double"
+            },
+            "rent_concession_amount": {
+              "type": "number",
+              "description": "The dollar amount of cash or other incentive given by property managers to tenants on a monthly basis as a leasing incentive to move in to an unoccupied unit.",
+              "format": "double"
+            },
+            "rent_concession_term_count": {
+              "type": "integer",
+              "description": "The number of months for which the leasing concession amount is applicable if the concession is offered as free rent.",
+              "format": "int32"
+            },
+            "deferral_agreement_indicator": {
+              "type": "string",
+              "description": "Is Unit Subject to a Deferral Agreement?"
+            },
+            "deferral_repayment_rent_amount": {
+              "type": "number",
+              "description": "Deferral Repayment Rent Amount",
+              "format": "double"
+            },
+            "deferral_total_amount": {
+              "type": "number",
+              "description": "Total Amount of Deferral",
+              "format": "double"
+            },
+            "floor_plan_name": {
+              "type": "string",
+              "description": "A free-form text field indicating the name of the floor plan that the unit is marketed as."
+            },
+            "full_bathrooms_count": {
+              "type": "integer",
+              "description": "The total number of full bathrooms in an individual unit.",
+              "format": "int32"
+            },
+            "half_bathrooms_count": {
+              "type": "integer",
+              "description": "The total number of half bathrooms in an individual unit.",
+              "format": "int32"
+            },
+            "unit_identifier": {
+              "type": "string",
+              "description": "A unique number (or alpha numeric) assigned to identify the Unit occupied by the tenant. Maximum allowed length is 10 characters"
+            },
+            "lease_begin_date": {
+              "type": "string",
+              "description": "The date when the lease of the property becomes effective. This date may be different from the 'move in' date of the tenant.",
+              "example": "01/31/2020"
+            },
+            "lease_comment_text": {
+              "type": "string",
+              "description": "A text field used for additional descriptive information about the lease."
+            },
+            "lease_end_date": {
+              "type": "string",
+              "description": "The date that marks the end of the Lease of the property and does not include any option periods.",
+              "example": "01/31/2020"
+            },
+            "lease_status_type": {
+              "type": "string",
+              "description": "A code indicating the current status of the lease on the unit.",
+              "enum": [
+                "Occupied, Vacant, Employee, Letter Of Intent, Down, Model, Other, Signed Lease Not Occupied, Expired, Police Security"
+              ]
+            },
+            "market_comparable_rent_amount": {
+              "type": "number",
+              "description": "The dollar amount of the asking rent of the unit, derived from appraisals or neighborhood market comparable and based on the payment frequency type and is the market comparable info used in underwriting.",
+              "format": "double"
+            },
+            "move_in_date": {
+              "type": "string",
+              "description": "The date when tenant physically started to occupy the unit. This date may be different from 'Lease Begin' date.",
+              "example": "01/31/2020"
+            },
+            "move_out_date": {
+              "type": "string",
+              "description": "The date when tenant physically vacated the unit. This date may be different from the 'Lease End Date'.",
+              "example": "01/31/2020"
+            },
+            "other_concession_amount": {
+              "type": "number",
+              "description": "Other Concession Amount",
+              "format": "double"
+            },
+            "paid_through_date": {
+              "type": "string",
+              "description": "The date through which the tenant’s contract rent amount of the unit is paid.",
+              "example": "01/31/2020"
+            },
+            "payment_frequency": {
+              "type": "string",
+              "description": "A code indicating the payment frequency.",
+              "enum": [
+                "Monthly, Other"
+              ]
+            },
+            "rent_due_30_days_past_due_amount": {
+              "type": "number",
+              "description": "Total Amount of Rent that is 31 to 59 Days Past Due.",
+              "format": "double"
+            },
+            "rent_due_60_days_past_due_amount": {
+              "type": "number",
+              "description": "Total Amount of Rent that is 61 to 89 Days Past Due.",
+              "format": "double"
+            },
+            "rent_due_90_plus_days_past_due_amount": {
+              "type": "number",
+              "description": "Total Amount of Rent that is 90+ Days Past Due.",
+              "format": "double"
+            },
+            "rent_subsidies": {
+              "type": "array",
+              "description": "Details of Rent Subsidies",
+              "items": {
+                "$ref": "#/components/schemas/RentSubsidy"
+              }
+            },
+            "security_deposit_amount": {
+              "type": "number",
+              "description": "The dollar amount, provided by the tenant to the property manager in good faith towards the fulfillment of the rental agreement. The dollar amount is refundable if the tenant fulfills all the requirements set forth in the rental agreement between the tenant and the property manager.",
+              "format": "double"
+            },
+            "square_feet_number": {
+              "type": "integer",
+              "description": "The amount of dwelling space, measured in square feet, for the given unit in the property.",
+              "format": "int32"
+            },
+            "sub_unit_type": {
+              "type": "string",
+              "description": "A code indicating the type of dwelling subunit for the property.",
+              "enum": [
+                "Apartment, Bed, Pad, Commercial, Other"
+              ]
+            },
+            "suffix": {
+              "type": "string",
+              "description": "The unique identifier assigned to portions of the unit in case of multiple occupancy. Value can be of max length 2."
+            },
+            "unit_tenant_contract_rent_amount": {
+              "type": "number",
+              "description": "The actual dollar amount paid per the rental agreement on the unit.",
+              "format": "double"
+            },
+            "tenant_guarantee_indicator": {
+              "type": "string",
+              "description": "An identifier indicating whether the payment by the tenant has a guaranty"
+            },
+            "tenants": {
+              "type": "array",
+              "description": "At least one tenant record is required if lease status type Occupied/Expired/Signed Lease Not Occupied.",
+              "items": {
+                "$ref": "#/components/schemas/Tenant"
+              }
+            },
+            "unit_type": {
+              "type": "string",
+              "description": "A code indicating the type of dwelling unit for the property.",
+              "enum": [
+                "Apartment, Bed, Pad, Commercial, Other"
+              ]
+            },
+            "utilities_included_in_contract_rent_indicator": {
+              "type": "string",
+              "description": "An indicator identifying if any utilities are included in the contract rent amount for the unit."
+            }
+          },
+          "description": "List of all units associated with the property."
+        },
+        "Error": {
+          "type": "object",
+          "properties": {
+            "field": {
+              "type": "string"
+            },
+            "record_type": {
+              "type": "string"
+            },
+            "record_number": {
+              "type": "string"
+            },
+            "unit_identifier": {
+              "type": "string"
+            },
+            "suffix": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "REQUIRED_FIELD_EXCEPTION",
+                "OUT_OF_RANGE_EXCEPTION",
+                "INVALID_VALUE_EXCEPTION",
+                "INVALID_PROPERTY",
+                "NOT_ACTIVE_PROPERTY",
+                "CONDITIONALLY_REQUIRED_FIELD_EXCEPTION"
+              ]
+            }
+          }
+        },
+        "RentRollResponse": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "errorList": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Error"
+              }
+            }
+          }
+        }
+      },
+      "securitySchemes": {
+        " ": {
+          "type": "http"
+        }
+      }
+    }
+  }

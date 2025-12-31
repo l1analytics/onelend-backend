@@ -1,0 +1,413 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+      "title": "Multifamily Operating Statements Submission API",
+      "description": "Multifamily OS Submission API to support digitization of Operating Statements Collection.",
+      "termsOfService": "Terms of Service",
+      "contact": {
+        "name": "MF Digitizers Development",
+        "email": "MF_Digitizers_Development@fanniemae.com"
+      },
+      "license": {
+        "name": "Fannie Mae License"
+      },
+      "version": "3.0.0"
+    },
+    "externalDocs": {},
+    "servers": [
+      {
+        "url": "https://api-int.fanniemae.com"
+      }
+    ],
+    "paths": {
+      "/multifamily/assetmanagement/operatingstatements/external/v1/validation": {
+        "post": {
+          "tags": [
+            "os-ingestion-controller"
+          ],
+          "summary": "Validating the operating statement(s) submitted by user",
+          "operationId": "validation",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpStmtIngestionRequest"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "400": {
+              "description": "BAD REQUEST ",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OpStmtIngestionResponse"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal Server Error"
+            }
+          }
+        }
+      },
+      "/multifamily/assetmanagement/operatingstatements/external/v1/submission": {
+        "post": {
+          "tags": [
+            "os-ingestion-controller"
+          ],
+          "summary": "Validating and persisting the operating statement(s) submitted by user",
+          "operationId": "submission",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpStmtIngestionRequest"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "400": {
+              "description": "BAD REQUEST",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OpStmtIngestionResponse"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal Server Error"
+            }
+          }
+        }
+      },
+      "/multifamily/assetmanagement/operatingstatements/external/healthcheck": {
+        "get": {
+          "tags": [
+            "health-check-controller"
+          ],
+          "operationId": "get",
+          "responses": {
+            "200": {
+              "description": "OK",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "ExpenditureDetails": {
+          "required": [
+            "inc_and_exp_osar_code",
+            "os_detail_amount",
+            "os_std_detail_name"
+          ],
+          "type": "object",
+          "properties": {
+            "inc_and_exp_osar_code": {
+              "type": "string",
+              "description": "Operating Statement Detail Type",
+              "enum": [
+                "GPR,VAC,BD,CCS,LV,PI,CI,OI,MFEE,GA,PB,UTL,WS,AM,PFEE,GDR,CFDSALL,RM,PINS,RET,OEXP,CAPEX,ECAPEX"
+              ]
+            },
+            "os_std_detail_name": {
+              "type": "string",
+              "description": "Operating Statement Standard Detail Name"
+            },
+            "os_custom_detail_name": {
+              "type": "string",
+              "description": "Operating Statement Custom Detail Name"
+            },
+            "os_detail_amount": {
+              "type": "number",
+              "description": "Operating Statement Detail Amount"
+            }
+          },
+          "description": "List of all income and expenditure details associate with given statement."
+        },
+        "OpStmtIngestionRequest": {
+          "required": [
+            "os_as_of_date",
+            "property_city",
+            "property_name",
+            "property_state",
+            "property_street_address",
+            "property_zipcode",
+            "statements",
+            "submitter_email_addr"
+          ],
+          "type": "object",
+          "properties": {
+            "property_name": {
+              "type": "string",
+              "description": "The current name of the property that serves as mortgage collateral."
+            },
+            "property_street_address": {
+              "type": "string",
+              "description": "A free-form text to capture the current address of the property serving as mortgage collateral. If the property has been defeased, then leave field empty. For loan level reporting, if multiple properties, then print \"Various\". For substituted properties, populate with the new property information."
+            },
+            "property_city": {
+              "type": "string",
+              "description": "The city of the residence or primary business office for the party."
+            },
+            "property_state": {
+              "type": "string",
+              "description": "The U.S. state or territory in which the residence or primary business office of the party is located."
+            },
+            "property_zipcode": {
+              "type": "string",
+              "description": "The current zip (or postal) code for the property or properties which serve as mortgage collateral, captured as submitted by the lender."
+            },
+            "os_as_of_date": {
+              "type": "string",
+              "description": "The date on which the operating statement information for the property is as of.",
+              "example": "01/31/2020"
+            },
+            "property_management_company_name": {
+              "type": "string",
+              "description": "The name of the current entity/firm responsible for ensuring effective administration, leasing, marketing and maintenance of the multifamily property",
+              "example": "FannieMae Office"
+            },
+            "submitter_email_addr": {
+              "type": "string",
+              "description": "Borrower Lender Submitter Email Address",
+              "example": "MF_Digitizers_Development@fanniemae.com"
+            },
+            "seller_ln_nbr": {
+              "type": "string",
+              "description": "Lender Servicer Loan Number",
+              "example": "67890"
+            },
+            "property_mstr_nbr": {
+              "type": "integer",
+              "description": "Property Master Number",
+              "example": 67890
+            },
+            "statements": {
+              "type": "array",
+              "description": "List of all associated records with given property.",
+              "items": {
+                "$ref": "#/components/schemas/Statement"
+              }
+            },
+            "os_injestion_user_id": {
+              "type": "string"
+            }
+          }
+        },
+        "Statement": {
+          "required": [
+            "capexp_replacement_reserves",
+            "commercial_income",
+            "gross_potential_rent",
+            "inc_and_exp_details",
+            "laundry_vending_income",
+            "loss_to_bad_debt",
+            "loss_to_concessions",
+            "loss_to_vacancy",
+            "os_type",
+            "parking_income",
+            "property_insurance",
+            "real_estate_taxes",
+            "unknown_income_expense"
+          ],
+          "type": "object",
+          "properties": {
+            "os_type": {
+              "type": "string",
+              "description": "Statement Type",
+              "enum": [
+                "M1,M2,M3,M4,M5,M6,M7,M8,M9,M10,M11,M12,MRQ,YTD"
+              ]
+            },
+            "period": {
+              "type": "string",
+              "description": "Name of the Month / Quarter depending on Statement Type",
+              "enum": [
+                "JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, DEC, Q1, Q2, Q3, Q4"
+              ]
+            },
+            "gross_potential_rent": {
+              "type": "number",
+              "description": "Borrower Income Gross Potential Rent"
+            },
+            "loss_to_vacancy": {
+              "type": "number",
+              "description": "Loss to Vacancy"
+            },
+            "loss_to_bad_debt": {
+              "type": "number",
+              "description": "Loss to Bad Debt"
+            },
+            "loss_to_concessions": {
+              "type": "number",
+              "description": "Loss to Concessions"
+            },
+            "laundry_vending_income": {
+              "type": "number",
+              "description": "Borrower Income Laundry Vending Income"
+            },
+            "parking_income": {
+              "type": "number",
+              "description": "Borrower Income Parking Income"
+            },
+            "commercial_income": {
+              "type": "number",
+              "description": "Borrower Income Commercial Income"
+            },
+            "other_income": {
+              "type": "number",
+              "description": "Borrower Other Income"
+            },
+            "mgmt_fees": {
+              "type": "number",
+              "description": "Borrower Expense Management Fees"
+            },
+            "gen_and_admin_expenses": {
+              "type": "number",
+              "description": "Borrower Expense General & Administrative"
+            },
+            "payroll_and_benefits_expenses": {
+              "type": "number",
+              "description": "Borrower Expense Payroll & Benefits"
+            },
+            "utilities": {
+              "type": "number",
+              "description": "Borrower Expense Utilities "
+            },
+            "water_and_sewer": {
+              "type": "number",
+              "description": "Borrower Expense Water & Sewer"
+            },
+            "advert_and_mrktg_expenses": {
+              "type": "number",
+              "description": "Borrower Expense Advertising & Marketing"
+            },
+            "professional_fees": {
+              "type": "number",
+              "description": "Borrower Expense Professional Fees"
+            },
+            "ground_rent": {
+              "type": "number",
+              "description": "Borrower Expense Ground Rent"
+            },
+            "repairs_and_maint_expenses": {
+              "type": "number",
+              "description": "Borrower Expense Repairs & Maintenance"
+            },
+            "property_insurance": {
+              "type": "number",
+              "description": "Borrower Expense Property Insurance"
+            },
+            "real_estate_taxes": {
+              "type": "number",
+              "description": "Borrower Expense Real Estate Taxes"
+            },
+            "other_expenses": {
+              "type": "number",
+              "description": "Borrower Other Expenses"
+            },
+            "cashflow_debt_service_all_liens_PandI": {
+              "type": "number",
+              "description": "Borrower Other Expenses"
+            },
+            "capexp_replacement_reserves": {
+              "type": "number",
+              "description": "Borrower Capital Expenditures Replacement Reserves"
+            },
+            "capexp_extraordinary_expenditures": {
+              "type": "number",
+              "description": "Borrower Extraordinary Capital Expenditures"
+            },
+            "unknown_income_expense": {
+              "type": "number",
+              "description": "Unknown Income Expenses"
+            },
+            "additional_comments": {
+              "type": "string",
+              "description": "Additional Comments"
+            },
+            "inc_and_exp_details": {
+              "type": "array",
+              "description": "List of all income and expenditure details associate with given statement.",
+              "items": {
+                "$ref": "#/components/schemas/ExpenditureDetails"
+              }
+            }
+          },
+          "description": "List of all associated records with given property."
+        },
+        "Error": {
+          "type": "object",
+          "properties": {
+            "field": {
+              "type": "string"
+            },
+            "record_type": {
+              "type": "string"
+            },
+            "record_number": {
+              "type": "string"
+            },
+            "unit_identifier": {
+              "type": "string"
+            },
+            "suffix": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "REQUIRED_FIELD_EXCEPTION",
+                "OUT_OF_RANGE_EXCEPTION",
+                "INVALID_VALUE_EXCEPTION",
+                "CONDITIONALLY_REQUIRED_FIELD_EXCEPTION",
+                "NEGATIVE_VALUES_ERROR"
+              ]
+            }
+          }
+        },
+        "OpStmtIngestionResponse": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "errorList": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Error"
+              }
+            }
+          }
+        }
+      },
+      "securitySchemes": {
+        " ": {
+          "type": "http"
+        }
+      }
+    }
+  }

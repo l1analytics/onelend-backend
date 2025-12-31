@@ -1,0 +1,64 @@
+{
+    "definition": {
+        "$schema": "<workflow-definition-language-schema-version>",
+        "actions": {
+            "<action-name>": {
+                "inputs": {
+                    "method": "GET",
+                    "uri": "https://www.microsoft.com"
+                },
+                "runAfter": {},
+                "runtimeConfiguration": {
+                    "staticResult": {
+                        "name": "HTTP0",
+                        "staticResultOptions": "Enabled"
+                    }
+                },
+                "type": "Http"
+            }
+        },
+        "contentVersion": "<workflow-definition-version-number>",
+        "outputs": {
+            "<workflow-output-definitions>"
+        },
+        "parameters": {
+            "<parameter-name>": {
+                "type": "<parameter-type>",
+                "defaultValue": <default-parameter-value>,
+                "allowedValues": [ <array-with-permitted-parameter-values>
+                ],
+                "metadata": {
+                    "description": "<parameter-description>"
+                }
+            }
+        },
+        "staticResults": {
+            "<static-result-definition-name>": {
+                "outputs": {
+            <output-attributes-and-values-returned>,
+                    "headers": { <header-values>
+                    },
+                    "statusCode": "<status-code-returned>"
+                },
+                "status": "<action-status>"
+            }
+        },
+        "<trigger-name>": {
+            "type": "<trigger-type>",
+            "inputs": {
+                "<trigger-inputs>"
+            },
+            "recurrence": {
+                "frequency": "<time-unit>",
+                "interval": <number-of-time-units>
+            },
+            "conditions": [
+                "<array-with-conditions>"
+            ],
+            "runtimeConfiguration": {
+                "<runtime-config-options>"
+            },
+            "splitOn": "<splitOn-expression>",
+            "operationOptions": "<operation-option>"
+        },
+    }

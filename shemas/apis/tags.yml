@@ -1,0 +1,204 @@
+- name: Authentication
+  - name: Authentication > Get Access Token
+  - name: Authentication > User Impersonation
+  - name: Consumer Engagement
+  - name: Consumer Engagement > Prospect Engagement
+  - name: Consumer Engagement > Loan Opportunities
+  - name: Consumer Engagement > Loan Opportunities > Manage Loan Opportunities
+  - name: >-
+      Consumer Engagement > Loan Opportunities > Contract Generator for
+      Conversion
+  - name: Consumer Engagement > Loan Opportunities > Loan Opportunity Selector
+  - name: Consumer Engagement > Loan Opportunities > Settings
+  - name: Consumer Engagement > Loan Opportunities > Settings > Feature Management
+  - name: >-
+      Consumer Engagement > Loan Opportunities > Settings > Affordability
+      Qualification
+  - name: Consumer Engagement > Loan Opportunities > Settings > Email Templates
+  - name: Consumer Engagement > Loan Opportunities > Settings > Letter Templates
+  - name: OneLend Contacts
+  - name: OneLend Contacts > Business Contacts
+    description: APIs that are going to part of 17.3 release
+  - name: OneLend Contacts > Borrower Contacts
+    description: APIs that are going to part of 17.3 release
+  - name: OneLend Contacts > Contact Groups
+  - name: Document Delivery
+  - name: Document Delivery > Point of Sale Integration Framework
+  - name: >-
+      Document Delivery > Point of Sale Integration Framework >
+      DeliveryRoomSessions
+  - name: Document Delivery > Delivery Packages
+  - name: OneLend Docs
+  - name: OneLend Docs > Send OneLend Docs
+  - name: OneLend Docs > Send OneLend Docs > Initial Disclosures
+  - name: OneLend Docs > Send OneLend Docs > Closing Disclosures
+  - name: OneLend Docs > Send OneLend Docs > On Demand Disclosures with Forms
+  - name: >-
+      OneLend Docs > Send OneLend Docs > Upload additional documents to
+      eFolder
+  - name: OneLend Docs > Send OneLend Docs > Webhooks
+  - name: OneLend Docs > Print OnDemand
+  - name: OneLend Loan
+  - name: OneLend Loan > Associates & Milestones
+  - name: OneLend Loan > Associates & Milestones > V3 Milestones
+  - name: OneLend Loan > Associates & Milestones > V1 Milestones
+  - name: OneLend Loan > Audit Trail
+  - name: OneLend Loan > AUS Tracking Logs
+  - name: OneLend Loan > Batch Update
+  - name: OneLend Loan > Borrower Pairs
+  - name: OneLend Loan > Borrower Vesting
+  - name: OneLend Loan > Conversation Log
+  - name: OneLend Loan > Conversation Log > V3 Conversation Logs
+    description: Folder for v1
+  - name: OneLend Loan > Conversation Log > V1 Conversation Logs
+    description: Folder for v1
+  - name: OneLend Loan > Disclosure Tracking
+  - name: >-
+      OneLend Loan > Disclosure Tracking > V3 Disclosure Tracking Log Email
+      Messages
+  - name: >-
+      OneLend Loan > Disclosure Tracking > V3 Add Manual Disclosure Tracking
+      2015 Logs
+  - name: OneLend Loan > Disclosure Tracking > V3 DT Log - Manual Fulfillment
+  - name: >-
+      OneLend Loan > Disclosure Tracking > V3 Update Disclosure Tracking
+      (including eConsent and UCD)
+  - name: OneLend Loan > Disclosure Tracking > V1 Disclosure Tracking 2015 Logs
+  - name: OneLend Loan > Disclosure Tracking > V3 Disclosure Tracking Snapshots
+  - name: OneLend Loan > eFolder Documents
+  - name: OneLend Loan > eFolder Documents > V3 Manage Documents
+    description: This folder has all loan management related API calls
+  - name: OneLend Loan > eFolder Documents > V1 Manage Documents
+    description: This folder has all loan management related API calls
+  - name: OneLend Loan > eFolder Attachments
+  - name: OneLend Loan > eFolder Attachments > V1 Manage Attachments
+    description: This folder has all loan management related API calls
+  - name: OneLend Loan > eFolder Attachments > V3 Manage Attachments
+    description: This folder has all loan management related API calls
+  - name: OneLend Loan > eFolder Attachments > eFolder Attachment Metadata
+  - name: OneLend Loan > eFolder History
+  - name: OneLend Loan > Enhanced Conditions
+  - name: OneLend Loan > Enhanced Conditions > Manage Enhanced Conditions
+  - name: OneLend Loan > Enhanced Conditions > Enhanced Condition Settings
+  - name: OneLend Loan > Enhanced Conditions > eFolder Export Attachments
+  - name: OneLend Loan > Import from File
+  - name: OneLend Loan > Import from File > V3 Support for MISMO 3.4
+  - name: OneLend Loan > Loan Conditions
+  - name: OneLend Loan > Loan Conditions > UnderWriting Conditions
+  - name: OneLend Loan > Loan Conditions > Preliminary Conditions
+  - name: OneLend Loan > Loan Conditions > PostClosing Conditions
+  - name: OneLend Loan > Loan Folder
+  - name: OneLend Loan > Loan Folder > V3 Loan Folders
+  - name: OneLend Loan > Loan Management
+  - name: OneLend Loan > Loan Management > V3 Manage Loan
+  - name: OneLend Loan > Loan Management > V1 Manage Loan
+    description: This folder has all loan management related API calls
+  - name: OneLend Loan > Loan Pipeline
+  - name: OneLend Loan > Loan Pipeline > V3 Loan Pipeline
+  - name: OneLend Loan > Loan Pipeline > V1 Loan Pipeline
+  - name: OneLend Loan > Loan Schema
+  - name: OneLend Loan > Loan Schema > V3 Loan Schema
+  - name: OneLend Loan > Loan Schema > V1 Loan Schema
+  - name: OneLend Loan > Rate Locks
+  - name: OneLend Loan > Registration Logs
+  - name: OneLend Loan > Resource Lock
+  - name: OneLend Loan > Resource Lock > V1 Resource Locks
+    description: This folder has all loan management related API calls
+  - name: OneLend Loan > Manage Loan Sub-collections
+  - name: OneLend Loan > Manage Loan Sub-collections > Manage VoDs
+  - name: OneLend Loan > Manage Loan Sub-collections > Manage VoLs
+  - name: OneLend Loan > Manage Loan Sub-collections > Manage REO Properties
+  - name: OneLend Loan > Manage Loan Sub-collections > Manage Residences
+  - name: OneLend Loan > Manage Loan Sub-collections > Manage Employment
+  - name: OneLend Loan > Manage Loan Sub-collections > Manage Non-VOLs
+  - name: >-
+      OneLend Loan > Manage Loan Sub-collections > Manage Settlement Service
+      Provider Contacts in Loan
+  - name: >-
+      OneLend Loan > Manage Loan Sub-collections > Manage Home Counseling
+      Providers in Loan
+  - name: >-
+      OneLend Loan > Manage Loan Sub-collections > Manage Affiliated Business
+      Arrangements in Loan
+  - name: OneLend Loan > Manage Loan Sub-collections > Manage VooAs
+  - name: OneLend Loan > Manage Loan Sub-collections > Manage VooIs
+  - name: OneLend Loan > Manage Loan Sub-collections > Manage VoGGs
+  - name: >-
+      OneLend Loan > Manage Loan Sub-collections > Manage Alternate Names
+      Collection in Loan Application
+  - name: >-
+      OneLend Loan > Manage Loan Sub-collections > Manage Additional Loans
+      Collection in Loan Application
+  - name: OneLend Loan > Manage Loan Sub-collections > Manage Disasters
+  - name: OneLend Loan > Manage Loan Sub-collections > Manage NBOs
+  - name: Secondary and Trades
+  - name: Secondary and Trades > Trade Management
+  - name: Secondary and Trades > Secondary Settings
+  - name: Secondary and Trades > Funding Templates
+  - name: Services
+  - name: Services > Partner Services
+    description: Folder for partner
+  - name: Services > OneLend Compliance Service
+  - name: Services > OneLend Product and Pricing Service
+  - name: Services > OneLend Product and Pricing Service > User Mapping
+  - name: Services > OneLend Product and Pricing Service > Rates
+  - name: Services > OneLend Product and Pricing Service > Lookups
+  - name: Settings and Utilities
+  - name: Settings and Utilities > Custom Field Management
+  - name: Settings and Utilities > Custom Field Management > V3 Custom Fields
+  - name: >-
+      Settings and Utilities > Custom Field Management > V1 Custom Fields
+      Settings
+  - name: Settings and Utilities > Custom Data Objects
+    description: Collection for Loan, Global and User CDOs.
+  - name: 'Settings and Utilities > Custom Data Objects > CDO GLOBAL '
+  - name: 'Settings and Utilities > Custom Data Objects > CDO USER '
+  - name: 'Settings and Utilities > Custom Data Objects > CDO LOAN '
+  - name: 'Settings and Utilities > Settings: Business Contacts'
+  - name: 'Settings and Utilities > Settings: Document Settings'
+  - name: 'Settings and Utilities > Settings: External Organizations'
+  - name: >-
+      Settings and Utilities > Settings: External Organizations > Manage
+      External Orgs
+  - name: 'Settings and Utilities > Settings: External Organizations > Manage DBA'
+  - name: >-
+      Settings and Utilities > Settings: External Organizations > Manage
+      Warehouse
+  - name: 'Settings and Utilities > Settings: External Organizations > TPO Settings'
+  - name: 'Settings and Utilities > Settings: External Users'
+  - name: 'Settings and Utilities > Settings: Loan Templates'
+  - name: 'Settings and Utilities > Settings: Loan Templates > V3 Loan Templates'
+  - name: 'Settings and Utilities > Settings: Loan Templates > V1 Loan Templates'
+  - name: 'Settings and Utilities > Settings: Organizations'
+  - name: 'Settings and Utilities > Settings: Personas'
+  - name: 'Settings and Utilities > Settings: Personas > V3 Personas'
+  - name: 'Settings and Utilities > Settings: Personas > V1 Persona Settings'
+  - name: 'Settings and Utilities > Settings: Policies'
+  - name: 'Settings and Utilities > Settings: Policies > V3 URLA Support'
+  - name: 'Settings and Utilities > Settings: Roles'
+  - name: 'Settings and Utilities > Settings: Roles > Settings: V3 Roles'
+  - name: 'Settings and Utilities > Settings: Roles > Settings: V1 Roles'
+  - name: 'Settings and Utilities > Settings: Internal Users'
+  - name: 'Settings and Utilities > Settings: Internal Users > Settings: V1 Users'
+  - name: 'Settings and Utilities > Settings: Internal Users > Settings: V3 Users'
+  - name: 'Settings and Utilities > Settings: SCIM Provisioning'
+  - name: 'Settings and Utilities > Settings: SCIM Account Linking'
+  - name: 'Settings and Utilities > Settings: Fees Itemization'
+  - name: 'Settings and Utilities > Tools: Loan Transformer'
+  - name: 'Settings and Utilities > Tools: Search'
+  - name: 'Settings and Utilities > Tools: Transient Calculator'
+  - name: >-
+      Settings and Utilities > Tools: Transient Calculator > Compliance Calendar
+      Calculator
+  - name: >-
+      Settings and Utilities > Tools: Transient Calculator > Print Form
+      Calculators
+  - name: 'Settings and Utilities > Tools: Transient Calculator > Loan Calculator'
+  - name: 'Settings and Utilities > Settings: HMDA Profile'
+  - name: Settings and Utilities > New Folder
+  - name: 'Settings and Utilities > Settings: Milestones'
+  - name: 'Settings and Utilities > Settings: OneLend Compliance Service (ECS )'
+  - name: Webhook
+  - name: Workflow Management
+  - name: Workflow Management > Task Configuration
+  - name: Workflow Management > Task Instance Management

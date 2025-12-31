@@ -1,0 +1,832 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "description": "Facilitates the process for ordering a Broker Price Opinion (BPO) or appraisal to establish the current estimated value of a property for the purpose of evaluating a loan for Mortgage Insurance (MI) termination, processing a Fannie Mae short sale or mortgage release, issuing bidding instructions for a mortgage loan referred for foreclosure, or requesting approval for a charge-off of a first mortgage lien. Additionally, the API provides features to manage the order request, view the associated status messages and updates, and retrieve the Property Valuation Amount via the completed valuation PDF.",
+      "version": "1.0.0",
+      "title": "Loan Servicing Property Valuation Order Management API",
+      "x-fanniemae-asset": {
+        "id": "MSR03381",
+        "name": "smdu2aws"
+      },
+      "x-fanniemae-dataset-id": {
+        "id": "DSET00003797",
+        "name": "Loan Servicing Property Valuation Order Management"
+      },
+      "x-fanniemae-interface": {
+        "id": "G25218 ",
+        "name": "Loan Servicing Property Valuation Order Management API ICD"
+      }
+    },
+    "basePath": "/singlefamily/servicing/property-valuation",
+    "tags": [
+      {
+        "name": "orders",
+        "description": "Property Valuation Order Management"
+      }
+    ],
+    "schemes": [
+      "https"
+    ],
+    "paths": {
+      "/orders": {
+        "get": {
+          "tags": [
+            "orders"
+          ],
+          "summary": "Property Valuation Order Retrieval Since Date",
+          "description": "Retrieves a list of Property Valuation Orders Identifiers.  For orders that have been updated since a specified date and time.",
+          "operationId": "updatedOrdersSinceDateUsingGET",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "liquidationIndicator",
+              "in": "query",
+              "description": "Flag to indicate if user is querying Liquidation Property Valuation Orders. Values are true or false.",
+              "required": false,
+              "type": "string",
+              "allowEmptyValue": false
+            },
+            {
+              "name": "updatedOrdersSinceDate",
+              "in": "query",
+              "description": "Processing Date. Formatted in yyyy-MM-ddThh:mm:ss.  Date must be provided in Eastern Time(ET)",
+              "required": true,
+              "type": "string",
+              "allowEmptyValue": false
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Valid Request",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "400": {
+              "description": "The request is not well formed, syntactically incorrect, or violates schema",
+              "schema": {
+                "$ref": "#/definitions/ErrorResponse"
+              }
+            },
+            "403": {
+              "description": "The Consumer is authenticated but is not authorized.",
+              "schema": {
+                "$ref": "#/definitions/ErrorResponse"
+              }
+            },
+            "500": {
+              "description": "Internal Service Error"
+            },
+            "503": {
+              "description": "API is not available due to system being in maintenance mode",
+              "schema": {
+                "$ref": "#/definitions/ErrorResponse"
+              }
+            }
+          },
+          "deprecated": false
+        },
+        "post": {
+          "tags": [
+            "orders"
+          ],
+          "summary": "Property Valuation Order Creation",
+          "description": "Create a Property Valuation order for a given loan.  Property Valuation orders can be created for a BPO or appraisal for use in evaluating MI Termination based on Original Value, Current Value, or Current Value with Substantial Improvements.",
+          "operationId": "orderValuationUsingPOST",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "order",
+              "description": "order",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/PropertyValuationOrder"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Valid Request",
+              "schema": {
+                "$ref": "#/definitions/PropertyValuationOrderResponse"
+              }
+            },
+            "400": {
+              "description": "The request is not well formed, syntactically incorrect, or violates schema",
+              "schema": {
+                "$ref": "#/definitions/ErrorResponse"
+              }
+            },
+            "403": {
+              "description": "The Consumer is authenticated but is not authorized.",
+              "schema": {
+                "$ref": "#/definitions/ErrorResponse"
+              }
+            },
+            "500": {
+              "description": "Internal Service Error"
+            },
+            "503": {
+              "description": "API is not available due to system being in maintenance mode",
+              "schema": {
+                "$ref": "#/definitions/ErrorResponse"
+              }
+            }
+          },
+          "deprecated": false
+        }
+      },
+      "/orders/completed-liquidation-orders/{fannieMaeLoanIdentifier}": {
+        "get": {
+          "tags": [
+            "orders"
+          ],
+          "summary": "Completed Liquidation Property Valuation Order Information for a given Fannie Mae Loan number",
+          "description": "Retrieves a list of Property Valuation Orders Identifiers and Order Reasons for the given loan number.",
+          "operationId": "completedOrdersForLoanIdentifierUsingGET",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "fannieMaeLoanIdentifier",
+              "in": "path",
+              "description": "Fannie Mae Loan Number",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Valid Request",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/BPOInfoResponse"
+                }
+              }
+            },
+            "400": {
+              "description": "The request is not well formed, syntactically incorrect, or violates schema",
+              "schema": {
+                "$ref": "#/definitions/ErrorResponse"
+              }
+            },
+            "403": {
+              "description": "The Consumer is authenticated but is not authorized.",
+              "schema": {
+                "$ref": "#/definitions/ErrorResponse"
+              }
+            },
+            "500": {
+              "description": "Internal Service Error"
+            },
+            "503": {
+              "description": "API is not available due to system being in maintenance mode",
+              "schema": {
+                "$ref": "#/definitions/ErrorResponse"
+              }
+            }
+          },
+          "deprecated": false
+        }
+      },
+      "/orders/system-status": {
+        "get": {
+          "tags": [
+            "orders"
+          ],
+          "summary": "System Availability",
+          "description": "Intend as non-destructive ping to confirm application availability. Returns application specific meta information.",
+          "operationId": "statusUsingGET_1",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "Valid Request",
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            },
+            "400": {
+              "description": "The request is not well formed, syntactically incorrect, or violates schema",
+              "schema": {
+                "$ref": "#/definitions/ErrorResponse"
+              }
+            },
+            "403": {
+              "description": "The Consumer is authenticated but is not authorized.",
+              "schema": {
+                "$ref": "#/definitions/ErrorResponse"
+              }
+            },
+            "500": {
+              "description": "Internal Service Error"
+            },
+            "503": {
+              "description": "API is not available due to system being in maintenance mode",
+              "schema": {
+                "$ref": "#/definitions/ErrorResponse"
+              }
+            }
+          },
+          "deprecated": false
+        }
+      },
+      "/orders/{propertyValuationOrderIdentifier}": {
+        "get": {
+          "tags": [
+            "orders"
+          ],
+          "summary": "Property Valuation Order Retrieval",
+          "description": "Retrieve Property Valuation Order information such as order messages, order status, or completed order data.",
+          "operationId": "getValuationOrderUsingGET",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "propertyValuationOrderIdentifier",
+              "in": "path",
+              "description": "Property Valuation Order Identifier",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Valid Request",
+              "schema": {
+                "$ref": "#/definitions/PropertyValuationGetOrderResponse"
+              }
+            },
+            "400": {
+              "description": "The request is not well formed, syntactically incorrect, or violates schema",
+              "schema": {
+                "$ref": "#/definitions/ErrorResponse"
+              }
+            },
+            "403": {
+              "description": "The Consumer is authenticated but is not authorized.",
+              "schema": {
+                "$ref": "#/definitions/ErrorResponse"
+              }
+            },
+            "500": {
+              "description": "Internal Service Error"
+            },
+            "503": {
+              "description": "API is not available due to system being in maintenance mode",
+              "schema": {
+                "$ref": "#/definitions/ErrorResponse"
+              }
+            }
+          },
+          "deprecated": false
+        }
+      },
+      "/orders/{propertyValuationOrderIdentifier}/cancel": {
+        "post": {
+          "tags": [
+            "orders"
+          ],
+          "summary": "Cancel Property Valuation Order ",
+          "description": "Update Property Valuation order with request order status change such as Cancel.",
+          "operationId": "updateValuationOrderUsingPOST",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "propertyValuationOrderIdentifier",
+              "in": "path",
+              "description": "Property Valuation Order Identifier",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Valid Request"
+            },
+            "400": {
+              "description": "The request is not well formed, syntactically incorrect, or violates schema",
+              "schema": {
+                "$ref": "#/definitions/ErrorResponse"
+              }
+            },
+            "403": {
+              "description": "The Consumer is authenticated but is not authorized.",
+              "schema": {
+                "$ref": "#/definitions/ErrorResponse"
+              }
+            },
+            "500": {
+              "description": "Internal Service Error"
+            },
+            "503": {
+              "description": "API is not available due to system being in maintenance mode",
+              "schema": {
+                "$ref": "#/definitions/ErrorResponse"
+              }
+            }
+          },
+          "deprecated": false
+        }
+      },
+      "/orders/{propertyValuationOrderIdentifier}/messages": {
+        "post": {
+          "tags": [
+            "orders"
+          ],
+          "summary": "Add Messages to Property Valuation Order ",
+          "description": "Add messages to Property Valuation order.",
+          "operationId": "addMessagesUsingPOST",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "messages",
+              "description": "messages",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/OrderMessages"
+              }
+            },
+            {
+              "name": "propertyValuationOrderIdentifier",
+              "in": "path",
+              "description": "Property Valuation Order Identifier",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Valid Request"
+            },
+            "400": {
+              "description": "The request is not well formed, syntactically incorrect, or violates schema",
+              "schema": {
+                "$ref": "#/definitions/ErrorResponse"
+              }
+            },
+            "403": {
+              "description": "The Consumer is authenticated but is not authorized.",
+              "schema": {
+                "$ref": "#/definitions/ErrorResponse"
+              }
+            },
+            "500": {
+              "description": "Internal Service Error"
+            },
+            "503": {
+              "description": "API is not available due to system being in maintenance mode",
+              "schema": {
+                "$ref": "#/definitions/ErrorResponse"
+              }
+            }
+          },
+          "deprecated": false
+        }
+      }
+    },
+    "definitions": {
+      "BPOInfoResponse": {
+        "type": "object",
+        "properties": {
+          "orderReasonType": {
+            "type": "string",
+            "description": "The property valuation order reason code associated with the order"
+          },
+          "propertyValuationOrderIdentifier": {
+            "type": "string",
+            "description": "SMDU System provided TransactionID for the property valuation order (SMDU GUID)."
+          },
+          "statusDate": {
+            "type": "string",
+            "description": "The date the completed order was received in SMDU"
+          }
+        },
+        "title": "BPOInfoResponse"
+      },
+      "CompletedOrderInformation": {
+        "type": "object",
+        "properties": {
+          "propertyAsRepairedValueAmount": {
+            "type": "number",
+            "description": "The statement of property's  As Repaired value from a valid property valuation source."
+          },
+          "propertyBidType": {
+            "type": "string",
+            "description": "The type of bid determined via Fannie Mae’s program guidelines (Future use)."
+          },
+          "propertyCalculatedReservePrice": {
+            "type": "number",
+            "description": "The calculated reserve price amount."
+          },
+          "propertyEstimatedTotalDebt": {
+            "type": "number",
+            "description": "The estimated total debt amount (Future use)."
+          },
+          "propertyForeclosureSaleVendor": {
+            "type": "string",
+            "description": "The name of the vendor assigned to the property foreclosure sale (Future use)."
+          },
+          "propertyListPriceExpirationDate": {
+            "type": "string",
+            "example": "2022-04-15",
+            "description": "The date through which the List Price Guidance Amount is valid."
+          },
+          "propertyListPriceGuidanceAmount": {
+            "type": "number",
+            "description": "The suggested List Price Amount for the property."
+          },
+          "propertyValuationAmount": {
+            "type": "number",
+            "description": "The statement of property's value from a valid property valuation source."
+          },
+          "propertyValuationEffectiveDate": {
+            "type": "string",
+            "description": "The date on which the valuation of the real estate property was made effective."
+          },
+          "propertyValuationExpirationDate": {
+            "type": "string",
+            "example": "2022-04-15",
+            "description": "The date on which the valuation of the real estate property expires."
+          },
+          "propertyValuationMethodType": {
+            "type": "string",
+            "description": "Indicates the method by which the property value was assessed.",
+            "enum": [
+              "BPO",
+              "Appraisal"
+            ]
+          },
+          "valuationResponseFileName": {
+            "type": "string",
+            "description": "Name of the attached Valuation Response file for a completed order. Does not include file extension."
+          }
+        },
+        "title": "CompletedOrderInformation"
+      },
+      "ErrorMessagesContainer": {
+        "type": "object",
+        "properties": {
+          "errorMessage": {
+            "type": "string",
+            "description": "Error message"
+          },
+          "messageCode": {
+            "type": "string",
+            "description": "HTTP Response Status"
+          },
+          "messageType": {
+            "type": "string",
+            "example": "SMDU-API-1000",
+            "description": "API Prefix-message code"
+          }
+        },
+        "title": "ErrorMessagesContainer"
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "messages": {
+            "type": "array",
+            "description": "List of error messages",
+            "items": {
+              "$ref": "#/definitions/ErrorMessagesContainer"
+            }
+          }
+        },
+        "title": "ErrorResponse",
+        "description": "Error Response"
+      },
+      "OrderMessage": {
+        "type": "object",
+        "required": [
+          "messageText",
+          "userPrimaryName"
+        ],
+        "properties": {
+          "messageDate": {
+            "type": "string",
+            "description": "Date message created."
+          },
+          "messageText": {
+            "type": "string",
+            "description": "Message text."
+          },
+          "userPrimaryName": {
+            "type": "string",
+            "description": "Full name of user creating message."
+          }
+        },
+        "title": "OrderMessage"
+      },
+      "OrderMessageDetail": {
+        "type": "object",
+        "required": [
+          "messageText",
+          "userPrimaryName"
+        ],
+        "properties": {
+          "messageText": {
+            "type": "string",
+            "description": "Message text."
+          },
+          "userPrimaryName": {
+            "type": "string",
+            "description": "Full name of user creating message."
+          }
+        },
+        "title": "OrderMessageDetail"
+      },
+      "OrderMessages": {
+        "type": "object",
+        "properties": {
+          "orderMessages": {
+            "type": "array",
+            "description": "Communication messages in the property valuation order.",
+            "items": {
+              "$ref": "#/definitions/OrderMessageDetail"
+            }
+          }
+        },
+        "title": "OrderMessages"
+      },
+      "PropertySubstantialImprovement": {
+        "type": "object",
+        "required": [
+          "amount",
+          "date",
+          "description"
+        ],
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "The dollar amount of substantial improvements made to the subject property. Substantial improvements are improvements that impact collateral value by improving function, modernizing, enhancing market appeal, and/or extending its useful life."
+          },
+          "date": {
+            "type": "string",
+            "description": "The date the substantial improvements were made to the subject property."
+          },
+          "description": {
+            "type": "string",
+            "description": "A free-form text field used to collect descriptions of substantial improvements made to the subject property. Substantial improvements are improvements that impact collateral value by improving function, modernizing, enhancing market appeal, and/or extending its useful life."
+          }
+        },
+        "title": "PropertySubstantialImprovement"
+      },
+      "PropertyValuationGetOrderResponse": {
+        "type": "object",
+        "properties": {
+          "completedOrderInformation": {
+            "$ref": "#/definitions/CompletedOrderInformation"
+          },
+          "fannieMaeLoanIdentifier": {
+            "type": "string",
+            "description": "A unique identifier assigned by Fannie Mae which is associated with a loan secured by a property."
+          },
+          "orderMessages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/OrderMessage"
+            }
+          },
+          "propertyValuationOrderIdentifier": {
+            "type": "string",
+            "description": "SMDU System provided TransactionID for the property valuation order (SMDU GUID)."
+          },
+          "propertyValuationOrderStatus": {
+            "type": "string",
+            "description": "SMDU's status of the property valuation order.",
+            "enum": [
+              "NotOrdered",
+              "Failed",
+              "Submitted",
+              "Cancelled",
+              "In Progress",
+              "Pending Valuation",
+              "Appealed",
+              "Completed",
+              "No Valuation",
+              "Review Approved",
+              "Review Declined",
+              "Invalid",
+              "Approved",
+              "In Review"
+            ]
+          },
+          "propertyValuationOrderStatusDate": {
+            "type": "string",
+            "description": "The date upon which the Property Valuation Order Status was updated."
+          }
+        },
+        "title": "PropertyValuationGetOrderResponse"
+      },
+      "PropertyValuationOrder": {
+        "type": "object",
+        "required": [
+          "accessContact",
+          "accessInstructions",
+          "accessPhone",
+          "borrowerLastName",
+          "fannieMaeLoanIdentifier",
+          "propertyValuationMethodType",
+          "propertyValuationOrderReasonType"
+        ],
+        "properties": {
+          "accessContact": {
+            "type": "string",
+            "description": "The person to contact for information regarding access to the property."
+          },
+          "accessInstructions": {
+            "type": "string",
+            "description": "Special instructions to access the property."
+          },
+          "accessLockBox": {
+            "type": "string",
+            "description": "The combination to attached lock box."
+          },
+          "accessPhone": {
+            "type": "string",
+            "description": "The access contact's phone number."
+          },
+          "borrowerLastName": {
+            "type": "string",
+            "description": "The last name of the borrower."
+          },
+          "fannieMaeLoanIdentifier": {
+            "type": "string",
+            "description": "A unique identifier assigned by Fannie Mae which is associated with a loan secured by a property."
+          },
+          "foreclosureSaleDate": {
+            "type": "string",
+            "example": "2022-04-15",
+            "description": "The foreclosure sale date of the property."
+          },
+          "improvements": {
+            "type": "array",
+            "description": "Substantial improvements are improvements that impact collateral value by improving function, modernizing, enhancing market appeal, and/or extending its useful life.",
+            "items": {
+              "$ref": "#/definitions/PropertySubstantialImprovement"
+            }
+          },
+          "propertyValuationMethodType": {
+            "type": "string",
+            "description": "Indicates the method by which the property value was assessed.",
+            "enum": [
+              "BPO",
+              "Appraisal"
+            ]
+          },
+          "propertyValuationOrderReasonType": {
+            "type": "string",
+            "description": "A code indicating why the valuation was ordered."
+          }
+        },
+        "title": "PropertyValuationOrder"
+      },
+      "PropertyValuationOrderResponse": {
+        "type": "object",
+        "properties": {
+          "fannieMaeLoanIdentifier": {
+            "type": "string",
+            "description": "A unique identifier assigned by Fannie Mae which is associated with a loan secured by a property."
+          },
+          "invoiceDisclaimer": {
+            "type": "string",
+            "description": "States that the Servicer agrees to be invoiced for the amount indicated in the response."
+          },
+          "propertyFinancedDwellingUnitCount": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The number of individual family dwelling units being financed in the subject property."
+          },
+          "propertyStandardizedAddressCityName": {
+            "type": "string",
+            "description": "The reformatted (standardized/scrubbed) name of the city in which the subject street address is located."
+          },
+          "propertyStandardizedAddressCompleteStreetName": {
+            "type": "string",
+            "description": "The reformatted (standardized/scrubbed) textual description of an address to further qualify the primary location street address."
+          },
+          "propertyStandardizedAddressPostalCode": {
+            "type": "string",
+            "description": "The reformatted (Standardized/scrubbed) 5-digit number that corresponds to a United States Postal Servicer designated mail delivery region within a state or its International Counterpart."
+          },
+          "propertyStandardizedAddressStateCode": {
+            "type": "string",
+            "description": "The reformatted (standardized/scrubbed) two character postal abbreviation code that uniquely identifies a state within the United States of America or the US Territories."
+          },
+          "propertyType": {
+            "type": "string",
+            "description": "The category of the subject property.",
+            "enum": [
+              "Single Family Detached",
+              "Multi-Family, 2-unit",
+              "Multi-Family, 3-unit",
+              "Multi-Family, 4-unit",
+              "Unknown",
+              "Co-op",
+              "Commercial",
+              "Condo",
+              "CondoTel",
+              "Land Only",
+              "Manufactured",
+              "Mobile Land Attached",
+              "Modular",
+              "Single Family Attached",
+              "Townhome"
+            ]
+          },
+          "propertyValuationMethodType": {
+            "type": "string",
+            "description": "Indicates the method by which the property value was assessed.",
+            "enum": [
+              "BPO",
+              "Appraisal"
+            ]
+          },
+          "propertyValuationOrderIdentifier": {
+            "type": "string",
+            "description": "System provided identifier for the property valuation order."
+          },
+          "propertyValuationOrderReasonType": {
+            "type": "string",
+            "description": "A code indicating why the valuation was ordered.",
+            "enum": [
+              "MI Initial Value",
+              "MI Appeal Value",
+              "MI Termination Original Value",
+              "MI Termination Current Value",
+              "MI Termination Substantial Improvements",
+              "Reserve Price Bid Instructions",
+              "Charge Off",
+              "Mortgage Release",
+              "Short Sale",
+              "2nd Look Short Sale"
+            ]
+          },
+          "propertyValuationOrderStatus": {
+            "type": "string",
+            "description": "SMDU's status of the property valuation order.",
+            "enum": [
+              "NotOrdered",
+              "Failed",
+              "Submitted",
+              "Cancelled",
+              "In Progress",
+              "Pending Valuation",
+              "Appealed",
+              "Completed",
+              "No Valuation",
+              "Review Approved",
+              "Review Declined",
+              "Invalid",
+              "Approved",
+              "In Review"
+            ]
+          },
+          "propertyValuationOrderStatusDate": {
+            "type": "string",
+            "description": "The date upon which the Property Valuation Order Status was updated."
+          },
+          "servicerLoanIdentifier": {
+            "type": "string",
+            "description": "The identifier of a loan as defined by the servicer."
+          },
+          "valuationFeeAmount": {
+            "type": "number",
+            "description": "The cost associated to the property valuation product ordered."
+          }
+        },
+        "title": "PropertyValuationOrderResponse"
+      }
+    }
+  }
