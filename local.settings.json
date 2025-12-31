@@ -2,8 +2,13 @@
   "IsEncrypted": false,
   "Values": {
     "FUNCTIONS_WORKER_RUNTIME": "node",
-
-  "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-  "LOCAL_CONNECTION_STRING": "AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;DefaultEndpointsProtocol=http;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;"
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "AzureWebJobsMyStorageConnectionAppSetting": "UseDevelopmentStorage=true",
+    "BATCHDATA_ENDPOINT": "https://api.batchdata.com/api/v1/",
+    "BATCHDATA_KEY": "bAvjToxKsdPSjltgFTjw0uVf92Rjr3KPdwOBMfuE",
+    "COSMOSDB_ENDPOINT": "https://cosmos-onelend-dev.documents.azure.com:443/",
+    "DATABASE_NAME": "onelend-dev",
+    "AzureWebJobsStorage__connectionString": "DefaultEndpointsProtocol=https;AccountName=stonelenddev;EndpointSuffix=core.windows.net;AccountKey=wXVESuONXvg2BSC0pfwnhPeGOjg8jD3fZJbMY17HksSO9TCe08aK/COpNvDz2F8qYUpkU7anl7AK+ASt6eC1Kw==",
+    "AZURE_STORAGE_CONNECTION_STRING": "DefaultEndpointsProtocol=https;AccountName=visiononedev;AccountKey=wf89nSRoLYFYNu0wBcstO0e8Xf/pmBw2Rzd9ZP0aKHyPeCa/QuJnnfh1r1jx3NJ8dOwV69vTpkY6+ASt68x1qQ==;EndpointSuffix=core.windows.net"
   }
 }

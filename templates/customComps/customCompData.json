@@ -1,0 +1,29 @@
+{
+  "selectedCompFlag": "",
+  "distanceToSubejct": "",
+  "address": {
+    "street": "",
+    "city": "",
+    "state": "",
+    "zip": "",
+    "latitude": null,
+    "longitude": null
+  },
+  "general": {
+    "propertyTypeDetail": ""
+  },
+  "building": {
+    "unitCount": "",
+    "livingAreaSquareFeet": "",
+    "bedroomCount": "",
+    "calculatedBathroomCount": "",
+    "yearBuilt": ""
+  },
+  "listing": {
+    "status": "",
+    "listingNumber": "",
+    "soldPrice": "",
+    "soldDate": ""
+  },
+  "fipsCodePlusApn": ""
+}

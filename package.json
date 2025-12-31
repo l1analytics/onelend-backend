@@ -8,10 +8,17 @@
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
+    "@azure/app-configuration": "^1.9.0",
     "@azure/cosmos": "^4.3.0",
+    "@azure/data-tables": "^13.3.2",
     "@azure/functions": "^4.0.0",
     "@azure/identity": "^4.9.1",
-    "@faker-js/faker": "^9.7.0"
+    "@azure/openai": "^2.0.0",
+    "@azure/storage-blob": "^12.29.1",
+    "@faker-js/faker": "^9.7.0",
+    "axios": "^1.8.4",
+    "openai": "^5.0.1",
+    "pdf-lib": "^1.17.1"
   },
   "devDependencies": {
     "azure-functions-core-tools": "^4.x"
